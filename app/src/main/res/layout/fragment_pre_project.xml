@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="20dp"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".view.PreProjectFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/qanelabolt"
+        android:textColor="@color/txtTitle"
+        android:paddingVertical="5dp"
+        android:textSize="18sp"
+        android:text="@string/preprojects" />
+
+    <include android:id="@+id/recyclerviewPreproject" layout="@layout/recyclerciew"/>
+    <include android:id="@+id/shimmer" layout="@layout/shimmer"/>
+
+</LinearLayout>

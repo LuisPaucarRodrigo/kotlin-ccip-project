@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:orientation="vertical"
+    android:background="@color/azulccip">
+
+    <ImageView
+        android:id="@+id/elemento_imagen"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginVertical="2dp"
+        android:src="@drawable/logo_ccip_white"/>
+
+    <TextView
+        android:id="@+id/txtnombreuser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="2dp"
+        android:textSize="16sp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/txtdniuser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="2dp"
+        android:textSize="16sp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/txtemail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="2dp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

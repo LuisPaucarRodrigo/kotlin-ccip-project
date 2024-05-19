@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="textlogin">#FFFFFF</color>
+    <color name="btnlogin">#FF010B</color>
+    <color name="azulccip">#031F68</color>
+    <color name="celesteccip">#0C51DC</color>
+    <color name="editwhite">#FFFFFFFF</color>
+    <color name="greenccip">#4512FF01</color>
+
+    <color name="bgElement">#DC031F68</color>
+    <color name="txtElement">#FFFFFFFF</color>
+
+    <color name="bg">#FFFFFFFF</color>
+    <color name="txt">#031F68</color>
+    <color name="txtTitle">#031F68</color>
+
+    <color name="bgImage">#F5FFFFFF</color>
+
+    <color name="menuLateral">#FFFFFFFF</color>
+    <color name="menuLateralTools">#000000</color>
+
+    <color name="toolbar">#FFFFFFFF</color>
+    <color name="toolbarTools">#000000</color>
+
+    <color name="SuccessfulRequest">#28a745</color>
+</resources>
