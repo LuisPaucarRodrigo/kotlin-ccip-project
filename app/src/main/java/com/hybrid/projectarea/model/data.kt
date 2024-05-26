@@ -30,7 +30,7 @@ data class ElementPreProjectRecyclerView(
     val code: String,
     val description: String,
     val date: String,
-    val observation: String
+    val observation: String,
 )
 
 data class ProjectRecycler(
