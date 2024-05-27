@@ -2,6 +2,7 @@ package com.hybrid.projectarea.view
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -29,6 +30,7 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
@@ -48,6 +50,14 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.tasks.Task
+
+import android.location.LocationManager
+
 class PreProjectEspecificFragment : Fragment() {
 
     private var _binding:FragmentPreProjectEspecificBinding? = null
@@ -55,7 +65,6 @@ class PreProjectEspecificFragment : Fragment() {
     private var photoString:String? = null
     private var intent:Intent? = null
     private lateinit var file: File
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -203,8 +212,12 @@ class PreProjectEspecificFragment : Fragment() {
             }
             if(PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(dialogView.context,Manifest.permission.CAMERA) &&
              PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(dialogView.context,Manifest.permission.ACCESS_COARSE_LOCATION)){
-                startForResult.launch(intent)
-
+                checkGpsStatus().addOnSuccessListener {
+                    startForResult.launch(intent)
+                }
+                checkGpsStatus().addOnFailureListener {
+                    requestGPSEnable()
+                }
             }else{
                 requestPermissionLauncherCameraLocation.launch(
                     arrayOf(
@@ -245,24 +258,41 @@ class PreProjectEspecificFragment : Fragment() {
         ActivityResultContracts.StartActivityForResult()
     ){result ->
         if (result.resultCode == Activity.RESULT_OK){
-            val currentDateTime = DateTimeLocationManager.getCurrentDateTime()
-            DateTimeLocationManager.getCurrentLocation(requireContext()) { location ->
-                if (location != null) {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-                    val mutableBitmap = getBitmap().copy(Bitmap.Config.ARGB_8888, true)
-                    val logoBitmap = ContextCompat.getDrawable(requireContext(),R.drawable.logo_ccip_white)?.toBitmap()
-                    val logoSyze = Bitmap.createScaledBitmap(logoBitmap!!, 90, 60, false)
-                    val modifiedImage = ImageOverlay.overlayTextOnImage(mutableBitmap,logoSyze ,currentDateTime, latitude, longitude)
-                    photoString = encodeImage(modifiedImage)
-                    binding.photo.photoPreview.setImageBitmap(modifiedImage)
-                } else {
-                    photoString = encodeImage(getBitmap())
-                    binding.photo.photoPreview.setImageBitmap(getBitmap())
+                val currentDateTime = DateTimeLocationManager.getCurrentDateTime()
+                DateTimeLocationManager.getCurrentLocation(requireContext()) { location ->
+                    if (location != null) {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+                        val mutableBitmap = getBitmap().copy(Bitmap.Config.ARGB_8888, true)
+                        val logoBitmap = ContextCompat.getDrawable(requireContext(),R.drawable.logo_ccip_white)?.toBitmap()
+                        val modifiedImage = ImageOverlay.overlayTextOnImage(mutableBitmap,logoBitmap!! ,currentDateTime, latitude, longitude)
+                        photoString = encodeImage(modifiedImage)
+                        binding.photo.photoPreview.setImageBitmap(modifiedImage)
+                    } else {
+                        requestGPSEnable()
+                    }
                 }
-            }
+
+
+
         }
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        when (requestCode) {
+//            REQUEST_CHECK_SETTINGS -> {
+//                when (resultCode) {
+//                    Activity.RESULT_OK -> {
+//                        // GPS is enabled, proceed with your task
+//                    }
+//                    Activity.RESULT_CANCELED -> {
+//                        // The user did not enable the GPS, handle the situation
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -300,7 +330,12 @@ class PreProjectEspecificFragment : Fragment() {
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
         if (cameraPermissionGranted && coarseLocationGranted) {
-            startForResult.launch(intent)
+            checkGpsStatus().addOnSuccessListener {
+                startForResult.launch(intent)
+            }
+            checkGpsStatus().addOnFailureListener {
+                requestGPSEnable()
+            }
         } else {
             if (!cameraPermissionGranted) {
                 Snackbar.make(binding.root, getString(R.string.enable_camera_permission), Snackbar.LENGTH_LONG).show()
@@ -311,6 +346,34 @@ class PreProjectEspecificFragment : Fragment() {
         }
     }
 
+    private fun checkGpsStatus(): Task<LocationSettingsResponse> {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+
+        val settingsClient = LocationServices.getSettingsClient(requireContext())
+        return settingsClient.checkLocationSettings(builder.build())
+    }
+
+    fun requestGPSEnable() {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage("El GPS está desactivado, ¿quieres activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Sí") { dialog, id ->
+                    requireContext().startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    dialog.cancel()
+                }
+            val alert = builder.create()
+            alert.show()
+        }
+    }
 
     private fun dataCleaning() {
         binding.addDescription.text.clear()
