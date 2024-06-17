@@ -6,9 +6,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-//    private const val BASE_URL = "http://testingmerge.ccip.com.pe/api/"
-//    private const val BASE_URL = "http://192.168.1.9:8000/api/"
-    private const val BASE_URL = "http://testimagesproject.ccip.com.pe/api/"
+    private const val BASE_URL = "http://erm.ccip.conproco.ccip.com.pe/api/"
+//    private const val BASE_URL = "http://192.168.18.24:8000/api/"
 
     fun getClient(authToken: String? = null): Retrofit {
         val httpClient = OkHttpClient.Builder()

@@ -30,7 +30,6 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
@@ -272,27 +271,8 @@ class PreProjectEspecificFragment : Fragment() {
                         requestGPSEnable()
                     }
                 }
-
-
-
         }
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        when (requestCode) {
-//            REQUEST_CHECK_SETTINGS -> {
-//                when (resultCode) {
-//                    Activity.RESULT_OK -> {
-//                        // GPS is enabled, proceed with your task
-//                    }
-//                    Activity.RESULT_CANCELED -> {
-//                        // The user did not enable the GPS, handle the situation
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -312,16 +292,6 @@ class PreProjectEspecificFragment : Fragment() {
     }
 
     private fun getBitmap(): Bitmap = BitmapFactory.decodeFile(file.toString())
-
-//    private val requestPermissionLaunchercamera = registerForActivityResult(
-//        ActivityResultContracts.RequestPermission()
-//    ){isGranted ->
-//        if (isGranted){
-//            startForResult.launch(intent)
-//        }else{
-//            Snackbar.make(binding.root, getString(R.string.enable_camera_permission), Snackbar.LENGTH_LONG).show()
-//        }
-//    }
 
     private val requestPermissionLauncherCameraLocation = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
