@@ -3,11 +3,11 @@ package com.hybrid.projectarea.api
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.model.FormReportPreProject
+import com.hybrid.projectarea.model.FormReportProject
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
 import com.hybrid.projectarea.model.Photo
-
-import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.UsersResponse
@@ -31,7 +31,7 @@ interface ApiService {
     fun preproject(@Header("Authorization") token: String): Call<List<ElementPreProjectRecyclerView>>
 
     @POST("preprojectimage")
-    fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Call<Void>
+    fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: FormReportPreProject): Call<Void>
 
     @GET("preproject/code/{id}")
     fun codephotopreproject(@Header("Authorization") token: String,@Path("id") id: String): Call<List<CodePhotoPreProject>>
@@ -49,7 +49,7 @@ interface ApiService {
     fun projectshow(@Header("Authorization") token: String,@Path("id") id: String): Call<ProjectFind>
 
     @POST("project/store/image")
-    fun storephoto(@Header("Authorization") token: String, @Body photoRequest: PhotoRequest): Call<Void>
+    fun storephoto(@Header("Authorization") token: String, @Body photoRequest: FormReportProject): Call<Void>
 
     @POST("logout")
     fun logout(@Header("Authorization") token: String): Call<Void>

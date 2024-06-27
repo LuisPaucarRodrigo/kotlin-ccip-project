@@ -2,6 +2,7 @@ package com.hybrid.projectarea.view
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.drawable.ColorDrawable
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -28,6 +30,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
@@ -189,8 +196,12 @@ class ProjectShowFragment : Fragment() {
                     Manifest.permission.CAMERA) &&
                 PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(dialogView.context,
                     Manifest.permission.ACCESS_COARSE_LOCATION)){
-                startForResult.launch(intent)
-
+                checkGpsStatus().addOnSuccessListener {
+                    startForResult.launch(intent)
+                }
+                checkGpsStatus().addOnFailureListener {
+                    requestGPSEnable()
+                }
             }else{
                 requestPermissionLauncherCameraLocation.launch(
                     arrayOf(
@@ -245,8 +256,7 @@ class ProjectShowFragment : Fragment() {
                     photoString = encodeImage(modifiedImage)
                     binding.photo.photoPreview.setImageBitmap(modifiedImage)
                 } else {
-                    photoString = encodeImage(getBitmap())
-                    binding.photo.photoPreview.setImageBitmap(getBitmap())
+                    requestGPSEnable()
                 }
             }
         }
@@ -288,7 +298,12 @@ class ProjectShowFragment : Fragment() {
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
         if (cameraPermissionGranted && coarseLocationGranted) {
-            startForResult.launch(intent)
+            checkGpsStatus().addOnSuccessListener {
+                startForResult.launch(intent)
+            }
+            checkGpsStatus().addOnFailureListener {
+                requestGPSEnable()
+            }
         } else {
             if (!cameraPermissionGranted) {
                 Snackbar.make(binding.root, getString(R.string.enable_camera_permission), Snackbar.LENGTH_LONG).show()
@@ -296,6 +311,35 @@ class ProjectShowFragment : Fragment() {
             if (!coarseLocationGranted) {
                 Snackbar.make(binding.root, getString(R.string.enable_coarse_location_permission), Snackbar.LENGTH_LONG).show()
             }
+        }
+    }
+
+    private fun checkGpsStatus(): Task<LocationSettingsResponse> {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+
+        val settingsClient = LocationServices.getSettingsClient(requireContext())
+        return settingsClient.checkLocationSettings(builder.build())
+    }
+
+    fun requestGPSEnable() {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage("El GPS está desactivado, ¿quieres activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Sí") { dialog, id ->
+                    requireContext().startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    dialog.cancel()
+                }
+            val alert = builder.create()
+            alert.show()
         }
     }
 
