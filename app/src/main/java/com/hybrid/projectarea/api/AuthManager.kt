@@ -4,10 +4,11 @@ package com.hybrid.projectarea.api
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.model.FormReportPreProject
+import com.hybrid.projectarea.model.FormReportProject
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
 import com.hybrid.projectarea.model.Photo
-import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.UsersResponse
@@ -38,7 +39,7 @@ class AuthManager(private val apiService: ApiService) {
                     val errorMessage = try {
                         JSONObject(errorBody).getString("error")
                     } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
+                        "Ocurrió un error desconocido $e"
                     }
                     authListener.onLoginFailed(errorMessage)
                 }
@@ -91,8 +92,8 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun preProjectPhoto(token: String,id: String,description: String, image: String, authListener: PreProjectAddPhoto) {
-        val photoRequest = PhotoRequest(id,description, image)
+    fun preProjectPhoto(token: String,id: String,description: String, image: String,latitude:String,longitude:String, authListener: PreProjectAddPhoto) {
+        val photoRequest = FormReportPreProject(id,description, image,latitude,longitude)
         val call = apiService.addphotoreport(token,photoRequest)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -229,7 +230,7 @@ class AuthManager(private val apiService: ApiService) {
     }
 
     fun projectPhoto(token: String,id: String,description: String, image: String, authListener: ProjectStorePhoto) {
-        val photoRequest = PhotoRequest(id,description, image)
+        val photoRequest = FormReportProject(id,description, image)
         val call = apiService.storephoto(token,photoRequest)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

@@ -51,7 +51,7 @@
     <string name="check_connection">Sin conexión a internet</string>
     <string name="enable_galery_permission">Permisos de galeria no concedidos</string>
     <string name="enable_camera_permission">Permisos de camara no concedidos</string>
-    <string name="enable_coarse_location_permission">Permisos de ubicacion precisa no concedida</string>
+    <string name="enable_coarse_location_permission">Permisos de ubicacion no concedida</string>
 
     <!--    ActivityAuth-->
     <string name="enter_dni">Introduce Dni</string>

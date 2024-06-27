@@ -8,7 +8,7 @@ data class LoginRequest(
 )
 
 data class LoginResponse(
-    @SerializedName("id") val id: Int,
+    @SerializedName("id") val id: String,
     @SerializedName("token") val token: String
 )
 
@@ -19,10 +19,18 @@ data class UsersResponse(
     @SerializedName("email") val email: String
 )
 
-data class PhotoRequest(
-    @SerializedName("id") val id: String,
-    @SerializedName("description") val description: String,
-    @SerializedName("photo") val photo: String
+data class FormReportPreProject(
+    val id: String,
+    val description: String,
+    val photo: String,
+    val latitude:String,
+    val longitude:String
+)
+
+data class FormReportProject(
+    val id: String,
+    val description: String,
+    val photo: String,
 )
 
 data class ElementPreProjectRecyclerView(
