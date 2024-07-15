@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
@@ -25,7 +26,26 @@ import kotlinx.coroutines.launch
 
 class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    companion object{
+        const val FRAGMENT_PREPROJECT = 1
+        const val FRAGMENT_PREPROJECT_CODE = 2
+        const val FRAGMENT_PREPROJECT_STORE = 3
+        const val FRAGMENT_PROJECT = 10
+        const val FRAGMENT_PROJECT_STORE = 11
+    }
+
     private lateinit var binding:ActivityBaseBinding
+    private var currentFragmentIndex: Int = FRAGMENT_PREPROJECT
+
+    private val fragmentMap: Map<Int, Fragment> by lazy {
+        mapOf(
+            FRAGMENT_PREPROJECT to PreProjectFragment(),
+            FRAGMENT_PREPROJECT_CODE to CodePhotoFragment(),
+            FRAGMENT_PREPROJECT_STORE to PreProjectEspecificFragment(),
+            FRAGMENT_PROJECT to ProjectFragment(),
+            FRAGMENT_PROJECT_STORE to RegisterPhotoFragment()
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +84,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .show()
             }
         }
-        preproject()
+
+        if (savedInstanceState != null){
+            currentFragmentIndex = savedInstanceState.getInt("currentFragment", FRAGMENT_PREPROJECT)
+        }
+        displayFragment(currentFragmentIndex)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -78,24 +102,24 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_preproject -> preproject()
-            R.id.nav_project -> project()
+            R.id.nav_preproject -> showFragment(1)
+            R.id.nav_project -> showFragment(10)
             R.id.nav_logout -> cerrarsesion()
         }
         binding.layoutLateral.closeDrawer(GravityCompat.START)
         return true
     }
 
-    private fun project() {
-        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.contenedor, ProjectFragment())
-        transaction.commit()
+    private fun displayFragment(fragmentIndex: Int) {
+        val fragment = fragmentMap[fragmentIndex] ?: return
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.contenedor, fragment)
+            .commit()
     }
 
-    private fun preproject() {
-        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.contenedor, PreProjectFragment())
-        transaction.commit()
+    private fun showFragment(fragmentIndex: Int) {
+        currentFragmentIndex = fragmentIndex
+        displayFragment(fragmentIndex)
     }
 
     private fun cerrarsesion() {

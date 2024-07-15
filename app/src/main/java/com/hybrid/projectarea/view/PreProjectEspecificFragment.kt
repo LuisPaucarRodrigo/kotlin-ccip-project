@@ -72,6 +72,7 @@ class PreProjectEspecificFragment : Fragment() {
     private var longitude:String? = null
     private var intent:Intent? = null
     private lateinit var file: File
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -191,8 +192,7 @@ class PreProjectEspecificFragment : Fragment() {
                 }
             }
         }
-        if(PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.CAMERA) &&
-            PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION)){
+        if(allPermissionGranted()){
             checkGpsStatus().addOnSuccessListener {
                 startForResult.launch(intent)
             }
@@ -323,5 +323,13 @@ class PreProjectEspecificFragment : Fragment() {
         binding.addDescription.text.clear()
         binding.photo.photoPreview.setImageResource(0)
         photoString = null
+    }
+
+    private fun allPermissionGranted () = request_permissions.all{ permission ->
+        ContextCompat.checkSelfPermission(requireContext(),permission) == PackageManager.PERMISSION_GRANTED
+    }
+
+    companion object{
+        private val request_permissions = arrayOf(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION)
     }
 }
