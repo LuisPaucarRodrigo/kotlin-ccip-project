@@ -51,6 +51,7 @@ class PreProjectFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext())
+                println("Token:${token}")
                 val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                 val authManager = AuthManager(apiService)
                 authManager.preproject(token, object : AuthManager.PreProjectListener {
@@ -79,9 +80,9 @@ class PreProjectFragment : Fragment() {
                         binding.recyclerviewPreproject.recyclerview.adapter = adapter
                     }
 
-                    override fun onPreProjectFailed() {
+                    override fun onPreProjectFailed(error: String) {
                         binding.recyclerviewPreproject.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(),getString(R.string.check_connection), Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(),error, Toast.LENGTH_LONG).show()
                     }
                 })
             } catch (e: Exception) {

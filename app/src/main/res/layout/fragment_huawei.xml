@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="20dp"
+    android:orientation="vertical"
+    tools:context=".view.HuaweiFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.8"
+            android:text="Huawei"
+            android:paddingVertical="5dp"
+            android:textColor="@color/txtTitle"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/qanelabolt"/>
+
+        <ImageButton
+            android:id="@+id/addProjectHuawei"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:src="@drawable/baseline_add_24" />
+
+    </LinearLayout>
+
+    <include android:id="@+id/recyclerviewHuawei" layout="@layout/recyclerciew"/>
+    <include android:id="@+id/shimmer" layout="@layout/shimmer"/>
+
+</LinearLayout>

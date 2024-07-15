@@ -102,8 +102,9 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_preproject -> showFragment(1)
-            R.id.nav_project -> showFragment(10)
+            R.id.nav_preproject -> preproject()
+            R.id.nav_project -> project()
+            R.id.nav_huawei -> huawei()
             R.id.nav_logout -> cerrarsesion()
         }
         binding.layoutLateral.closeDrawer(GravityCompat.START)
@@ -120,6 +121,12 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun showFragment(fragmentIndex: Int) {
         currentFragmentIndex = fragmentIndex
         displayFragment(fragmentIndex)
+    }
+
+    private fun huawei() {
+        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.contenedor, HuaweiFragment())
+        transaction.commit()
     }
 
     private fun cerrarsesion() {

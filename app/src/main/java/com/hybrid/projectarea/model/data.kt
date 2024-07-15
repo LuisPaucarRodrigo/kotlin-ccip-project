@@ -8,7 +8,7 @@ data class LoginRequest(
 )
 
 data class LoginResponse(
-    @SerializedName("id") val id: String,
+    @SerializedName("id") val id: Int,
     @SerializedName("token") val token: String
 )
 
@@ -19,18 +19,10 @@ data class UsersResponse(
     @SerializedName("email") val email: String
 )
 
-data class FormReportPreProject(
-    val id: String,
-    val description: String,
-    val photo: String,
-    val latitude:String,
-    val longitude:String
-)
-
-data class FormReportProject(
-    val id: String,
-    val description: String,
-    val photo: String,
+data class PhotoRequest(
+    @SerializedName("id") val id: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("photo") val photo: String
 )
 
 data class ElementPreProjectRecyclerView(
@@ -71,4 +63,58 @@ data class Photo(
     val image: String,
     val observation: String,
     val state: String
+)
+
+data class ProjectHuawei(
+    val id: String,
+    val site: String,
+    val elaborated: String,
+    val code: String,
+    val name: String,
+    val address: String,
+    val reference: String,
+    val access: String
+)
+
+data class FormStoreProjectHuawei(
+    val site: String,
+    val elaborated: String,
+    val code: String,
+    val name: String,
+    val address: String,
+    val reference: String,
+    val access: String
+)
+
+
+data class FormDataACHuawei(
+    val power: String,
+    val concessionaire: String,
+    val supply: String,
+    val type: String,
+    val caliber: String,
+    val fuses: String,
+    val calibertg: String,
+    val itm: String,
+    val powere: String,
+    val brand: String,
+    val tankCapacity: String,
+    val typee: String,
+    val tableTransfer: String,
+    val capacity: String,
+    val fijacion: String,
+    val typet: String,
+    val section: String,
+    val itmMajor: String,
+    val rs: String,
+    val rt: String,
+    val st: String,
+    val r: String,
+    val s: String,
+    val t: String
+)
+
+data class NameRectifiers(
+    val id: String,
+    val brand:String,
 )

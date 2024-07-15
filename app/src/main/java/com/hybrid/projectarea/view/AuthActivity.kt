@@ -65,7 +65,7 @@ class AuthActivity : AppCompatActivity() {
                         }
 
                         override fun onLoginFailed(errorMessage: String) {
-                            println(errorMessage)
+
                             Toast.makeText(
                                 this@AuthActivity,
                                 errorMessage,
