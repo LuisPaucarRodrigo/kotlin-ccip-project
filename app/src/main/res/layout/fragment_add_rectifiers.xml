@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:background="@color/bg"
+    tools:context=".view.AddRectifiersFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="start"
+        android:text="Cuadro Rectificador" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Voltaje"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addVoltage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Voltaje"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Corriente"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addCurrent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Corriente"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="#MR"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addMR"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese #MR"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Potencia #MR(W)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addPowerMR"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Potencia #MR(W)"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Espacios Disponibles"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addSpaceAvailable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Espacios Disponibles"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="#MR"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addMR2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese #MR"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Potencia #MR(W)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addPowerMR2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Potencia #MR(W)"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="% Recarga Baterias"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addRechargeBatteries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese % Recarga de Baterias"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="#BB"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addBB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese #BB"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Capacidad(Ah)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addCapacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Capacidad(Ah)"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Factor de Antiguedad"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addAgeFactor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Factor de Antiguedad"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="#BB"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addBB2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese #BB"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Capacidad(Ah)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addCapacity2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Capacidad(Ah)"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Factor de Antiguedad"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addAgeFactor2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Factor de Antiguedad"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Incremento de POT(KW)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addIncrementPOT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Incremento de POT(KW)"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Horas de Autonomia"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addHoursAutonomy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Horas de Autonomia"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Incremento de BB"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addIncrementBB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Incremento de BB"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Capacidad Nuevos BB"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addNewCapacityBB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Capacidad de Nuevos BB"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Factor Nuevos BB"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
+
+                <EditText
+                    android:id="@+id/addNewFactorBB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese Factor para Nuevos BB"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+            <include android:id="@+id/send" layout="@layout/component_send"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

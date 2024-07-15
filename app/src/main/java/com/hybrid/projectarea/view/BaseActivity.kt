@@ -80,6 +80,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_preproject -> preproject()
             R.id.nav_project -> project()
+            R.id.nav_huawei -> huawei()
             R.id.nav_logout -> cerrarsesion()
         }
         binding.layoutLateral.closeDrawer(GravityCompat.START)
@@ -95,6 +96,12 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun preproject() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.contenedor, PreProjectFragment())
+        transaction.commit()
+    }
+
+    private fun huawei() {
+        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.contenedor, HuaweiFragment())
         transaction.commit()
     }
 
