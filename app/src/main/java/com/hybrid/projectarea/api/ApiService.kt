@@ -3,12 +3,16 @@ package com.hybrid.projectarea.api
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.model.FormDataACHuawei
+import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
+import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 
 import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.ProjectFind
+import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.UsersResponse
 
@@ -24,11 +28,11 @@ interface ApiService {
     @POST("login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
-    @POST("users")
-    fun users(@Header("Authorization") token: String): Call<UsersResponse>
+    @GET("users/{id}")
+    fun users(@Header("Authorization") token: String,@Path("id") id:String): Call<UsersResponse>
 
-    @GET("preproject")
-    fun preproject(@Header("Authorization") token: String): Call<List<ElementPreProjectRecyclerView>>
+    @GET("preproject/{id}")
+    fun preproject(@Header("Authorization") token: String, @Path("id") id:String): Call<List<ElementPreProjectRecyclerView>>
 
     @POST("preprojectimage")
     fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Call<Void>
@@ -54,4 +58,15 @@ interface ApiService {
     @POST("logout")
     fun logout(@Header("Authorization") token: String): Call<Void>
 
+    @GET("huaweiproject/index")
+    fun huaweiProject(@Header("Authorization") token: String):Call<List<ProjectHuawei>>
+
+    @POST("huaweiproject/store")
+    fun huaweiProjectStore(@Header("Authorization") token: String, @Body createProject: FormStoreProjectHuawei): Call<Void>
+
+    @POST("storeDatosACHuawei")
+    fun storeDatosACHuawei(@Header("Authorization") token:String, @Body formDataACHuawei: FormDataACHuawei): Call<Void>
+
+    @GET("RectifiersHuawei/{id}")
+    fun rectifiersProjectHuawei(@Header("Authorization") token:String,@Path("id") id:String): Call<List<NameRectifiers>>
 }

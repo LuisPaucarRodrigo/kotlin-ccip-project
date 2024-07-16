@@ -4,11 +4,15 @@ package com.hybrid.projectarea.api
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.model.FormDataACHuawei
+import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
+import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.ProjectFind
+import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.UsersResponse
 import org.json.JSONException
@@ -19,9 +23,7 @@ import retrofit2.Response
 
 class AuthManager(private val apiService: ApiService) {
 
-    fun login(dni: String, password: String, authListener: AuthListener) {
-        val loginRequest = LoginRequest(dni, password)
-
+    fun login(loginRequest: LoginRequest, authListener: AuthListener) {
         val call = apiService.login(loginRequest)
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -49,8 +51,8 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun user(token: String, authListener: Users) {
-        val call = apiService.users(token)
+    fun user(token: String, id:String, authListener: Users) {
+        val call = apiService.users(token,id)
         call.enqueue(object : Callback<UsersResponse> {
             override fun onResponse(call: Call<UsersResponse>, response: Response<UsersResponse>) {
                 if (response.isSuccessful) {
@@ -60,17 +62,23 @@ class AuthManager(private val apiService: ApiService) {
                     }
 
                 } else {
-                    authListener.onUserFailed()
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onUserFailed(errorMessage)
                 }
             }
             override fun onFailure(call: Call<UsersResponse>, t: Throwable) {
-                authListener.onUserFailed()
+                authListener.onUserFailed("${t.message}")
             }
         })
     }
 
-    fun preproject(token: String, authListener: PreProjectListener) {
-        val call = apiService.preproject(token)
+    fun preproject(token: String, userId:String, authListener: PreProjectListener) {
+        val call = apiService.preproject(token,userId)
         call.enqueue(object : Callback<List<ElementPreProjectRecyclerView>> {
             override fun onResponse(call: Call<List<ElementPreProjectRecyclerView>>, response: Response<List<ElementPreProjectRecyclerView>>) {
                 if (response.isSuccessful) {
@@ -82,17 +90,16 @@ class AuthManager(private val apiService: ApiService) {
 //                        authListener.onPreProjectFailed()
 //                    }
                 } else {
-                    authListener.onPreProjectFailed()
+                    authListener.onPreProjectFailed("")
                 }
             }
             override fun onFailure(call: Call<List<ElementPreProjectRecyclerView>>, t: Throwable) {
-                authListener.onPreProjectFailed()
+                authListener.onPreProjectFailed("${t.message}")
             }
         })
     }
 
-    fun preProjectPhoto(token: String,id: String,description: String, image: String, authListener: PreProjectAddPhoto) {
-        val photoRequest = PhotoRequest(id,description, image)
+    fun preProjectPhoto(token: String,photoRequest: PhotoRequest, authListener: PreProjectAddPhoto) {
         val call = apiService.addphotoreport(token,photoRequest)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -267,6 +274,97 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
+    fun funGetProjectHuawei(token:String, authListener: inGetProjectHuawei){
+        val call = apiService.huaweiProject(token)
+        call.enqueue(object :Callback<List<ProjectHuawei>>{
+            override fun onResponse(call: Call<List<ProjectHuawei>>, response: Response<List<ProjectHuawei>>) {
+                if (response.isSuccessful){
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onProjectHuaweiSuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido"
+                    }
+                    authListener.onProjectHuaweiFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<List<ProjectHuawei>>, t: Throwable) {
+                authListener.onProjectHuaweiFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funStorePtojectHuawei(token: String,formStoreProjectHuawei: FormStoreProjectHuawei,authListener: inStoreProjectHuawei){
+        val call = apiService.huaweiProjectStore(token,formStoreProjectHuawei)
+        call.enqueue(object : Callback<Void>{
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful){
+                    authListener.onStoreProjectHuaweiSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido"
+                    }
+                    authListener.onStoreProjectHuaweiFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreProjectHuaweiFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funFormDataACHuawei(token:String,formDataACHuawei:FormDataACHuawei,authListener: inFormDataACHuawei){
+        val call = apiService.storeDatosACHuawei(token,formDataACHuawei)
+        call.enqueue(object : Callback<Void>{
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful){
+
+                    authListener.onStoreFormDataACHuaweiSuccess()
+                } else {
+                    authListener.onStoreFormDataACHuaweiFailed()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreFormDataACHuaweiFailed()
+            }
+
+        })
+    }
+
+    fun funGetRectifiersProjectHuawei(token:String, id:String, authListener: inGetRectifiersProjectHuawei){
+        val call = apiService.rectifiersProjectHuawei(token,id)
+        call.enqueue(object :Callback<List<NameRectifiers>>{
+            override fun onResponse(call: Call<List<NameRectifiers>>, response: Response<List<NameRectifiers>>) {
+                if (response.isSuccessful){
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onRectifiersProjectHuaweiSuccess(it)
+                    }
+                } else {
+                    authListener.onRectifiersProjectHuaweiFailed()
+                }
+            }
+
+            override fun onFailure(call: Call<List<NameRectifiers>>, t: Throwable) {
+                authListener.onRectifiersProjectHuaweiFailed()
+            }
+
+        })
+    }
+
 
 
     interface AuthListener {
@@ -276,12 +374,12 @@ class AuthManager(private val apiService: ApiService) {
 
     interface Users {
         fun onUserSuccess(response: UsersResponse)
-        fun onUserFailed()
+        fun onUserFailed(errorMessage: String)
     }
 
     interface PreProjectListener {
         fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>)
-        fun onPreProjectFailed()
+        fun onPreProjectFailed(error:String)
     }
 
     interface inCodePhotoPreProject {
@@ -322,5 +420,24 @@ class AuthManager(private val apiService: ApiService) {
     interface Logout {
         fun onLogoutSuccess()
         fun onLogoutFailed()
+    }
+
+    interface inGetProjectHuawei {
+        fun onProjectHuaweiSuccess(response:List<ProjectHuawei>)
+        fun onProjectHuaweiFailed(errorMessage: String)
+    }
+
+    interface inStoreProjectHuawei {
+        fun onStoreProjectHuaweiSuccess()
+        fun onStoreProjectHuaweiFailed(errorMessage: String)
+    }
+
+    interface inFormDataACHuawei {
+        fun onStoreFormDataACHuaweiSuccess()
+        fun onStoreFormDataACHuaweiFailed()
+    }
+    interface inGetRectifiersProjectHuawei {
+        fun onRectifiersProjectHuaweiSuccess(response:List<NameRectifiers>)
+        fun onRectifiersProjectHuaweiFailed()
     }
 }
