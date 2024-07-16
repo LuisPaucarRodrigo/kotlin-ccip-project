@@ -351,12 +351,18 @@ class AuthManager(private val apiService: ApiService) {
                         authListener.onRectifiersProjectHuaweiSuccess(it)
                     }
                 } else {
-                    authListener.onRectifiersProjectHuaweiFailed()
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido"
+                    }
+                    authListener.onRectifiersProjectHuaweiFailed(errorMessage)
                 }
             }
 
             override fun onFailure(call: Call<List<NameRectifiers>>, t: Throwable) {
-                authListener.onRectifiersProjectHuaweiFailed()
+                authListener.onRectifiersProjectHuaweiFailed("${t.message}")
             }
 
         })
@@ -435,6 +441,6 @@ class AuthManager(private val apiService: ApiService) {
     }
     interface inGetRectifiersProjectHuawei {
         fun onRectifiersProjectHuaweiSuccess(response:List<NameRectifiers>)
-        fun onRectifiersProjectHuaweiFailed()
+        fun onRectifiersProjectHuaweiFailed(errorMessage: String)
     }
 }

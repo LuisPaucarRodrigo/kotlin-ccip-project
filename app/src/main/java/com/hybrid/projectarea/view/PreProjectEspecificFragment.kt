@@ -122,7 +122,7 @@ class PreProjectEspecificFragment : Fragment() {
                         }
                     )
                 } catch (e: Exception) {
-                    // Manejar errores
+
                 }
             }
         }else{
