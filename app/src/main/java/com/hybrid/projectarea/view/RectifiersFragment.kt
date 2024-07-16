@@ -47,7 +47,7 @@ class RectifiersFragment : Fragment() {
         val arrayList = ArrayList<NameRectifiers>()
         binding.recyclerviewRectifiers.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch {
-            val token = TokenAuth.getToken(requireContext())
+            val token = TokenAuth.getToken(requireContext(),"token")
             val apiService = withContext(Dispatchers.IO){
                 RetrofitClient.getClient(token).create(ApiService::class.java)
             }
