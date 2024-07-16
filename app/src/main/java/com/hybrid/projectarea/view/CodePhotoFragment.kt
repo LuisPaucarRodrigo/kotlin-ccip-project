@@ -50,7 +50,7 @@ class CodePhotoFragment : Fragment() {
         binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val token = TokenAuth.getToken(requireContext())
+                val token = TokenAuth.getToken(requireContext(),"token")
                 val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                 val authManager = AuthManager(apiService)
                 authManager.codephotopreproject(token,requireArguments().getString("id").toString(),object : AuthManager.inCodePhotoPreProject{

@@ -3,26 +3,28 @@ package com.hybrid.projectarea.model
 import com.google.gson.annotations.SerializedName
 
 data class LoginRequest(
-    @SerializedName("dni") val dni: String,
-    @SerializedName("password") val password: String
+    val dni: String,
+    val password: String
 )
 
 data class LoginResponse(
-    @SerializedName("id") val id: Int,
-    @SerializedName("token") val token: String
+    val id: String,
+    val token: String
 )
 
 data class UsersResponse(
-    @SerializedName("id") val id: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("dni") val dni: String,
-    @SerializedName("email") val email: String
+    val id: String,
+    val name: String,
+    val dni: String,
+    val email: String
 )
 
 data class PhotoRequest(
-    @SerializedName("id") val id: String,
-    @SerializedName("description") val description: String,
-    @SerializedName("photo") val photo: String
+    val id: String,
+    val description: String,
+    val photo: String,
+    val latitude: String? = null,
+    val longitude: String? = null,
 )
 
 data class ElementPreProjectRecyclerView(
@@ -62,7 +64,7 @@ data class CodePhotoDescription(
 data class Photo(
     val image: String,
     val observation: String,
-    val state: String
+    val state: String,
 )
 
 data class ProjectHuawei(

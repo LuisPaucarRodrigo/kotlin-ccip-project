@@ -89,7 +89,7 @@ class ProjectShowFragment : Fragment() {
         if(description.isNotBlank() && photoString != null){
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    val token = TokenAuth.getToken(requireContext())
+                    val token = TokenAuth.getToken(requireContext(),"token")
                     val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                     val authManager = AuthManager(apiService)
                     authManager.projectPhoto(token,requireArguments().getString("id").toString(),description,
@@ -130,7 +130,7 @@ class ProjectShowFragment : Fragment() {
     private fun apiRequestProject() {
         lifecycleScope.launch {
             try {
-                val token = TokenAuth.getToken(requireContext())
+                val token = TokenAuth.getToken(requireContext(),"token")
                 val apiService = withContext(Dispatchers.IO) {
                     RetrofitClient.getClient(token).create(ApiService::class.java)
                 }

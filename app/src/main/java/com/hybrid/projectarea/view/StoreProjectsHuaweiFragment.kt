@@ -52,7 +52,7 @@ class StoreProjectsHuaweiFragment : Fragment() {
     private fun sendFormData(formData: FormStoreProjectHuawei) {
         println(formData)
         lifecycleScope.launch {
-            val token = TokenAuth.getToken(requireContext())
+            val token = TokenAuth.getToken(requireContext(),"token")
             val apiService = withContext(Dispatchers.IO){
                 RetrofitClient.getClient(token).create(ApiService::class.java)
             }

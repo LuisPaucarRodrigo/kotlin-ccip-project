@@ -24,7 +24,7 @@ object ImageOverlay {
         val datetime = dateTime
         val gps = "Lat: $latitude, Lon: $longitude"
 
-        val xImage = (canvas.width - scaledLogo.width - 300f)
+        val xImage = (canvas.width - scaledLogo.width - 400f)
         val xDate = (canvas.width - paint.measureText(datetime))
         val xGps = (canvas.width - paint.measureText(gps))
 

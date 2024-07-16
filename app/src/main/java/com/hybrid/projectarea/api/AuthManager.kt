@@ -23,9 +23,7 @@ import retrofit2.Response
 
 class AuthManager(private val apiService: ApiService) {
 
-    fun login(dni: String, password: String, authListener: AuthListener) {
-        val loginRequest = LoginRequest(dni, password)
-
+    fun login(loginRequest: LoginRequest, authListener: AuthListener) {
         val call = apiService.login(loginRequest)
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -53,8 +51,8 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun user(token: String, authListener: Users) {
-        val call = apiService.users(token)
+    fun user(token: String, id:String, authListener: Users) {
+        val call = apiService.users(token,id)
         call.enqueue(object : Callback<UsersResponse> {
             override fun onResponse(call: Call<UsersResponse>, response: Response<UsersResponse>) {
                 if (response.isSuccessful) {
@@ -64,17 +62,23 @@ class AuthManager(private val apiService: ApiService) {
                     }
 
                 } else {
-                    authListener.onUserFailed()
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onUserFailed(errorMessage)
                 }
             }
             override fun onFailure(call: Call<UsersResponse>, t: Throwable) {
-                authListener.onUserFailed()
+                authListener.onUserFailed("${t.message}")
             }
         })
     }
 
-    fun preproject(token: String, authListener: PreProjectListener) {
-        val call = apiService.preproject(token)
+    fun preproject(token: String, userId:String, authListener: PreProjectListener) {
+        val call = apiService.preproject(token,userId)
         call.enqueue(object : Callback<List<ElementPreProjectRecyclerView>> {
             override fun onResponse(call: Call<List<ElementPreProjectRecyclerView>>, response: Response<List<ElementPreProjectRecyclerView>>) {
                 if (response.isSuccessful) {
@@ -95,8 +99,7 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun preProjectPhoto(token: String,id: String,description: String, image: String, authListener: PreProjectAddPhoto) {
-        val photoRequest = PhotoRequest(id,description, image)
+    fun preProjectPhoto(token: String,photoRequest: PhotoRequest, authListener: PreProjectAddPhoto) {
         val call = apiService.addphotoreport(token,photoRequest)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -377,7 +380,7 @@ class AuthManager(private val apiService: ApiService) {
 
     interface Users {
         fun onUserSuccess(response: UsersResponse)
-        fun onUserFailed()
+        fun onUserFailed(errorMessage: String)
     }
 
     interface PreProjectListener {

@@ -28,11 +28,11 @@ interface ApiService {
     @POST("login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
-    @POST("users")
-    fun users(@Header("Authorization") token: String): Call<UsersResponse>
+    @GET("users/{id}")
+    fun users(@Header("Authorization") token: String,@Path("id") id:String): Call<UsersResponse>
 
-    @GET("preproject")
-    fun preproject(@Header("Authorization") token: String): Call<List<ElementPreProjectRecyclerView>>
+    @GET("preproject/{id}")
+    fun preproject(@Header("Authorization") token: String, @Path("id") id:String): Call<List<ElementPreProjectRecyclerView>>
 
     @POST("preprojectimage")
     fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Call<Void>

@@ -43,7 +43,7 @@ class DateAcFragment : Fragment() {
 
     private fun sendDateAC(formData: FormDataACHuawei) {
         lifecycleScope.launch {
-            val token = TokenAuth.getToken(requireContext())
+            val token = TokenAuth.getToken(requireContext(),"token")
             val apiService = withContext(Dispatchers.IO){
                 RetrofitClient.getClient(token).create(ApiService::class.java)
             }

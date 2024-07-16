@@ -7,15 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.ImageDecoder
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.provider.MediaStore
 import android.util.Base64
 import androidx.fragment.app.Fragment
@@ -30,14 +25,11 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentPreProjectEspecificBinding
-import com.hybrid.projectarea.databinding.OptionsPhotoCameraBinding
-import com.hybrid.projectarea.databinding.SuccessfulRequestBinding
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
@@ -58,6 +50,7 @@ import com.google.android.gms.tasks.Task
 
 import android.location.LocationManager
 import com.hybrid.projectarea.model.Alert
+import com.hybrid.projectarea.model.PhotoRequest
 
 class PreProjectEspecificFragment : Fragment() {
 
@@ -66,6 +59,15 @@ class PreProjectEspecificFragment : Fragment() {
     private var photoString:String? = null
     private var intent:Intent? = null
     private lateinit var file: File
+    private var latitude:Double? = null
+    private var longitude:Double? = null
+    private lateinit var preprojectCodeId: String
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        preprojectCodeId = requireArguments().getString("id").toString()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,7 +83,7 @@ class PreProjectEspecificFragment : Fragment() {
         binding.imagesCode.setOnClickListener {
             val conceptFragment = RegisterPhotoFragment()
             val args = Bundle()
-            args.putString("id",requireArguments().getString("id").toString())
+            args.putString("id",preprojectCodeId)
             conceptFragment.arguments = args
 
             val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
@@ -105,11 +107,11 @@ class PreProjectEspecificFragment : Fragment() {
         if(description.isNotBlank() && photoString != null){
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    val token = TokenAuth.getToken(requireContext())
+                    val token = TokenAuth.getToken(requireContext(),"token")
                     val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                     val authManager = AuthManager(apiService)
-                    authManager.preProjectPhoto(token,requireArguments().getString("id").toString(),description,
-                        photoString.toString(), object : AuthManager.PreProjectAddPhoto {
+                    val formImageProject = PhotoRequest(preprojectCodeId,description,photoString.toString(),latitude.toString(),longitude.toString())
+                    authManager.preProjectPhoto(token,formImageProject, object : AuthManager.PreProjectAddPhoto {
                             override fun onPreProjectAddPhotoSuccess() {
                                 Alert.alertSuccess(requireContext(),layoutInflater)
                                 dataCleaning()
@@ -134,7 +136,7 @@ class PreProjectEspecificFragment : Fragment() {
     private fun apiRequestPreProject() {
         lifecycleScope.launch {
             try {
-                val token = TokenAuth.getToken(requireContext())
+                val token = TokenAuth.getToken(requireContext(),"token")
                 val apiService = withContext(Dispatchers.IO) {
                     RetrofitClient.getClient(token).create(ApiService::class.java)
                 }
@@ -159,81 +161,33 @@ class PreProjectEspecificFragment : Fragment() {
     }
 
     private fun selectionCameraAndPhoto() {
-        val builder = AlertDialog.Builder(this.requireActivity())
-        val alertDialogBinding = OptionsPhotoCameraBinding.inflate(layoutInflater)
-        val dialogView = alertDialogBinding.root
-        builder.setView(dialogView)
-
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.show()
-
-        alertDialogBinding.btnGallery.setOnClickListener {
-            dialog.dismiss()
-            val checkpermission =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    Manifest.permission.READ_MEDIA_IMAGES
-                }else{
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+        intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE).also {
+            requireContext().let { it1 ->
+                it.resolveActivity(it1.packageManager).also { _ ->
+                    createPhotoFile()
+                    val photoUri: Uri =
+                        FileProvider.getUriForFile(
+                            requireView().context,
+                            requireView().context.packageName + ".fileprovider", file
+                        )
+                    it.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 }
-            if (ContextCompat.checkSelfPermission(dialogView.context,checkpermission) == PackageManager.PERMISSION_GRANTED){
-                pickPhotoFromGallery()
-            }else{
-                requestPermissionLauncher.launch(checkpermission)
             }
         }
-
-        alertDialogBinding.btnCamera.setOnClickListener {
-            dialog.dismiss()
-            intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE).also {
-                dialogView.context?.let { it1 ->
-                    it.resolveActivity(it1.packageManager).also { _ ->
-                        createPhotoFile()
-                        val photoUri: Uri =
-                            FileProvider.getUriForFile(
-                                requireView().context,
-                                requireView().context.packageName + ".fileprovider", file
-                            )
-                        it.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                    }
-                }
+        if(allPermissionGranted()){
+            checkGpsStatus().addOnSuccessListener {
+                startForResult.launch(intent)
             }
-            if(PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(dialogView.context,Manifest.permission.CAMERA) &&
-                PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(dialogView.context,Manifest.permission.ACCESS_COARSE_LOCATION)){
-                checkGpsStatus().addOnSuccessListener {
-                    startForResult.launch(intent)
-                }
-                checkGpsStatus().addOnFailureListener {
-                    requestGPSEnable()
-                }
-            }else{
-                requestPermissionLauncherCameraLocation.launch(
-                    arrayOf(
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
+            checkGpsStatus().addOnFailureListener {
+                requestGPSEnable()
+            }
+        }else{
+            requestPermissionLauncherCameraLocation.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.ACCESS_FINE_LOCATION
                 )
-            }
-        }
-    }
-
-    private fun pickPhotoFromGallery() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        startForActivityGallery.launch(intent)
-    }
-
-    private val startForActivityGallery = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ){result ->
-        if (result.resultCode == Activity.RESULT_OK){
-            val uri = result.data?.data
-            val source = ImageDecoder.createSource(requireActivity().contentResolver, uri!!)
-            val bitmap = ImageDecoder.decodeBitmap(source)
-
-            photoString = encodeImage(bitmap)
-
-            binding.photo.photoPreview.setImageBitmap(bitmap)
+            )
         }
     }
 
@@ -249,46 +203,17 @@ class PreProjectEspecificFragment : Fragment() {
             val currentDateTime = DateTimeLocationManager.getCurrentDateTime()
             DateTimeLocationManager.getCurrentLocation(requireContext()) { location ->
                 if (location != null) {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
+                    latitude = location.latitude
+                    longitude = location.longitude
                     val mutableBitmap = getBitmap().copy(Bitmap.Config.ARGB_8888, true)
                     val logoBitmap = ContextCompat.getDrawable(requireContext(),R.drawable.logo_ccip_white)?.toBitmap()
-                    val modifiedImage = ImageOverlay.overlayTextOnImage(mutableBitmap,logoBitmap!! ,currentDateTime, latitude, longitude)
+                    val modifiedImage = ImageOverlay.overlayTextOnImage(mutableBitmap,logoBitmap!! ,currentDateTime, latitude!!, longitude!!)
                     photoString = encodeImage(modifiedImage)
                     binding.photo.photoPreview.setImageBitmap(modifiedImage)
                 } else {
                     requestGPSEnable()
                 }
             }
-
-
-
-        }
-    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        when (requestCode) {
-//            REQUEST_CHECK_SETTINGS -> {
-//                when (resultCode) {
-//                    Activity.RESULT_OK -> {
-//                        // GPS is enabled, proceed with your task
-//                    }
-//                    Activity.RESULT_CANCELED -> {
-//                        // The user did not enable the GPS, handle the situation
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ){isGranted ->
-        if (isGranted){
-            pickPhotoFromGallery()
-        }else{
-            Snackbar.make(binding.root, getString(R.string.enable_galery_permission), Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -301,21 +226,11 @@ class PreProjectEspecificFragment : Fragment() {
 
     private fun getBitmap(): Bitmap = BitmapFactory.decodeFile(file.toString())
 
-//    private val requestPermissionLaunchercamera = registerForActivityResult(
-//        ActivityResultContracts.RequestPermission()
-//    ){isGranted ->
-//        if (isGranted){
-//            startForResult.launch(intent)
-//        }else{
-//            Snackbar.make(binding.root, getString(R.string.enable_camera_permission), Snackbar.LENGTH_LONG).show()
-//        }
-//    }
-
     private val requestPermissionLauncherCameraLocation = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         val cameraPermissionGranted = permissions[Manifest.permission.CAMERA] ?: false
-        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
 
         if (cameraPermissionGranted && coarseLocationGranted) {
             checkGpsStatus().addOnSuccessListener {
@@ -367,5 +282,13 @@ class PreProjectEspecificFragment : Fragment() {
         binding.addDescription.text.clear()
         binding.photo.photoPreview.setImageResource(0)
         photoString = null
+    }
+
+    private fun allPermissionGranted () = request_permissions.all{ permission ->
+        ContextCompat.checkSelfPermission(requireContext(),permission) == PackageManager.PERMISSION_GRANTED
+    }
+
+    companion object{
+        private val request_permissions = arrayOf(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION)
     }
 }

@@ -24,7 +24,7 @@
         android:text="@string/enter_dni"/>
 
     <EditText
-        android:id="@+id/DniUsers"
+        android:id="@+id/dniUsers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
@@ -42,7 +42,7 @@
         android:text="@string/enter_password"/>
 
     <EditText
-        android:id="@+id/PasswordUser"
+        android:id="@+id/passwordUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
