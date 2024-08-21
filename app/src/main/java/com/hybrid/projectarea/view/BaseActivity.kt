@@ -1,6 +1,6 @@
 package com.hybrid.projectarea.view
 
-import android.content.Intent
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,8 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -21,9 +23,16 @@ import com.hybrid.projectarea.databinding.ActivityBaseBinding
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.UsersResponse
+import com.hybrid.projectarea.view.auth.AuthFragment
+import com.hybrid.projectarea.view.checklist.DayCheckListFragment
+import com.hybrid.projectarea.view.expenses.ExpensesFragment
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
+import com.hybrid.projectarea.view.preproject.PreProjectFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+val Context.dataStore by preferencesDataStore(name = "datastore")
 
 class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,6 +42,20 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         binding = ActivityBaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        lifecycleScope.launch {
+            val token = TokenAuth.getToken(this@BaseActivity,"token")
+            if (token !== "") {
+                openFragment(PreProjectFragment())
+            } else {
+                openFragment(AuthFragment())
+            }
+        }
+    }
+
+    fun requestUser(){
+        binding.mitoolbar.root.isVisible = true
+        binding.navView.isVisible = true
 
         binding.navView.setNavigationItemSelectedListener(this)
         setSupportActionBar(binding.mitoolbar.root)
@@ -58,19 +81,17 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                     override fun onUserFailed(errorMessage: String) {
-                        Toast.makeText(this@BaseActivity, errorMessage, Toast.LENGTH_LONG)
+                        Toast.makeText(this@BaseActivity, "yyyyy"+errorMessage, Toast.LENGTH_LONG)
                             .show()
                     }
                 })
             } catch (e: Exception) {
-                println("Error: ${e.message}")
                 withContext(Dispatchers.Main){
                     Toast.makeText(this@BaseActivity, "Error: ${e.message}", Toast.LENGTH_LONG)
                         .show()
                 }
             }
         }
-        openFragment(PreProjectFragment())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -85,7 +106,10 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_preproject -> openFragment(PreProjectFragment())
-//            R.id.nav_project -> openFragment(ProjectFragment())
+            R.id.nav_expenses -> openFragment(ExpensesFragment())
+            R.id.nav_checkList -> openFragment(DayCheckListFragment())
+            R.id.nav_processManuals -> openFragment(ProcessManualsFragment())
+            //            R.id.nav_project -> openFragment(ProjectFragment())
 //            R.id.nav_huawei -> openFragment(HuaweiFragment())
             R.id.nav_logout -> cerrarsesion()
         }
@@ -124,9 +148,10 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         lifecycleScope.launch {
                             deleteTokenFromDataStore()
                         }
-                        val authActivity = Intent(this@BaseActivity, AuthActivity::class.java)
-                        startActivity(authActivity)
-                        finish()
+                        binding.mitoolbar.root.isVisible = false
+                        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+                        transaction.replace(R.id.contenedor, AuthFragment())
+                            .commit()
                     }
 
                     override fun onLogoutFailed () {

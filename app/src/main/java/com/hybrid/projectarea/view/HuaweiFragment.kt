@@ -17,6 +17,7 @@ import com.hybrid.projectarea.databinding.FragmentHuaweiBinding
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.projecthuawei.AdapterProjectHuawei
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

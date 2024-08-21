@@ -62,21 +62,21 @@ class RectifiersFragment : Fragment() {
                         val element = NameRectifiers(item.id,item.brand)
                         arrayList.add(element)
                     }
-                    val conceptFragment = ImagesRectifiersFragment()
-                    val adapter = AdapterRectifiers(arrayList, object : AdapterRectifiers.OnItemClickListener {
-                        override fun onItemClick(position: Int) {
-                            val item = arrayList[position]
-                            val args = Bundle()
-                            args.putString("idRectifiers",item.id)
-                            conceptFragment.arguments = args
-
-                            val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-                            transition.replace(R.id.contenedor, conceptFragment)
-                                .addToBackStack(null)
-                                .commit()
-                        }
-                    })
-                    binding.recyclerviewRectifiers.recyclerview.adapter = adapter
+//                    val conceptFragment = ImagesRectifiersFragment()
+//                    val adapter = AdapterRectifiers(arrayList, object : AdapterRectifiers.OnItemClickListener {
+//                        override fun onItemClick(position: Int) {
+//                            val item = arrayList[position]
+//                            val args = Bundle()
+//                            args.putString("idRectifiers",item.id)
+//                            conceptFragment.arguments = args
+//
+//                            val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+//                            transition.replace(R.id.contenedor, conceptFragment)
+//                                .addToBackStack(null)
+//                                .commit()
+//                        }
+//                    })
+//                    binding.recyclerviewRectifiers.recyclerview.adapter = adapter
                 }
 
                 override fun onRectifiersProjectHuaweiFailed(errorMessage: String) {

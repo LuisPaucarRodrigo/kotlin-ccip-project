@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    tools:context=".view.checklist.DayCheckListFragment">
+
+    <include android:id="@+id/scrollChecklist" layout="@layout/scroolbar_checklist_horizontal"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/qanelabolt"
+                android:paddingVertical="5dp"
+                android:text="Estado del Vehiculo"
+                android:textColor="@color/txtTitle"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Personal 2 Opcional"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/personal2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:inputType="text"
+                    android:text="" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Zona"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/zone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Power Meter"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/powerMeter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Pinza Amperimetrica"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/ammeterClamp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Alicate de Corte"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/cuttingPliers"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Alicate de Punta"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/nosePliers"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Alicate Universal"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/universalPliers"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Cinta Metrica 5m"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/tape"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Cuter"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/cutter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Desarmador Perillero"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/knobDriver"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Juego de Desarmadores 1000V"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/screwdriverSet"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Juegos 7 llaves Allen"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/allenkeysSet"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Juego Desarmadores Thor"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/thorScrewboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Linterna P/Casco"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/helmetFlashlight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Llave Francesa de 6"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/freanchKey"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Pirometro"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/pyrometer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Laptop"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/laptop"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Cable Consola"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/consoleCables"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Adaptador de Red"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/networkAdapter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Observaciones"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/observations"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:inputType="text"
+                    android:text="" />
+
+            </LinearLayout>
+            <include
+                android:id="@+id/send"
+                layout="@layout/component_send" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

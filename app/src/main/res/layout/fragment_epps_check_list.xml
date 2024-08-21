@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    tools:context=".view.checklist.EppsCheckListFragment">
+
+    <include android:id="@+id/scrollChecklist" layout="@layout/scroolbar_checklist_horizontal"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Casco"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/helmet"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Barbiquejo"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/chinStrap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Tapasol/Cortavientos"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/windbreaker"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Chaleco"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/vest"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Zapatos de Seguridad"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/safetyShoes"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Polo Manga Larga"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/tshirtLs"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Camisa Manga Larga"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/shirtLs"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Pantalon Jean con Cinta Reflectiva"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/jeans"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Mameluco"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/coveralls"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Casaca"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/jacket"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Lentes Oscuros"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/darkGlasses"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Lentes Claros"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/clearGlasses"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Sobrelentes"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/overglasses"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Mascarilla Antipolvo"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/dustMask"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Tapones Auditivos"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/earplugs"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Bloqueador Solar"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/sunscreen"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Guantes de Aceite/Latex"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/latexOilGloves"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Guantes de Aceite/Nitrilo"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/nitrileOilGloves"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Guantes de Badana"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/splitLeatherGloves"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Guantes de Precision"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/precisionGloves"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Guantes de Anticorte"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/cutResistantGloves"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Doble Linea de Vida"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/doubleLanyard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Arnes"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/harness"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Linea de Posicionamiento"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/positioningLanyard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Mosquetones"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/carabiners"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Carrito de Acenso"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/ascenders"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Fotocheck CCIP"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/ccip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Fotocheck Claro"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/claro"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:fontFamily="@font/qanelalight"
+                    android:gravity="center"
+                    android:text="Vericom"
+                    android:textColor="@color/azulccip"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/vericom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5" />
+
+            </LinearLayout>
+            <include
+                android:id="@+id/send"
+                layout="@layout/component_send" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
