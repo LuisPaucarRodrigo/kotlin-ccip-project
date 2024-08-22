@@ -20,6 +20,7 @@ import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CodePhotoFragment : Fragment() {
 
@@ -90,7 +91,13 @@ class CodePhotoFragment : Fragment() {
                     }
                 })
             }catch (e: Exception){
-                Toast.makeText(requireContext(),"Error:$e",Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

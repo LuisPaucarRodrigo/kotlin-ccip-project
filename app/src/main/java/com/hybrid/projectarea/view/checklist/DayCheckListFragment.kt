@@ -22,6 +22,7 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.checklistDay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DayCheckListFragment : Fragment() {
     private var _binding: FragmentDayCheckListBinding? = null
@@ -128,7 +129,14 @@ class DayCheckListFragment : Fragment() {
 
                     })
             } catch (e: Exception) {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado. Por favor inténtalo de nuevo.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                binding.send.buttonSend.isEnabled = true
             }
         }
     }

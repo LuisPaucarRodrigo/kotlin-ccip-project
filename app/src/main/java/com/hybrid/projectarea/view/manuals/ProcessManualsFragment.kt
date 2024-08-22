@@ -131,14 +131,21 @@ class ProcessManualsFragment : Fragment() {
                         }
                     })
             } catch (e: Exception) {
-                // Manejar errores
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado. Por favor inténtalo de nuevo.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
 
     private fun downloadArchive(path: String) {
-        try {
-            lifecycleScope.launch(Dispatchers.IO) {
+        Toast.makeText(requireContext(),"Descargando archivo. Un momento por favor.",Toast.LENGTH_LONG).show()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
                 val token = TokenAuth.getToken(requireContext(), "token")
                 val apiService =
                     RetrofitClient.getClient(token).create(ApiService::class.java)
@@ -149,7 +156,7 @@ class ProcessManualsFragment : Fragment() {
                     path,
                     object : AuthManager.inGetDownloadManuls {
                         override fun onDownloadManualsSuccess(response: ResponseBody) {
-                            val fileName = "pdfejemplo.pdf"
+                            val fileName = path.removePrefix("LocalDrive/")
                             lifecycleScope.launch(Dispatchers.IO) {
                                 val fileUri =
                                     savePdfToDownloads(requireContext(), response, fileName)
@@ -159,9 +166,7 @@ class ProcessManualsFragment : Fragment() {
                                     }
                                 }
                             }
-
                         }
-
                         override fun onDownloadManualsFailed(errorMessage: String) {
                             Toast.makeText(
                                 requireContext(),
@@ -171,13 +176,23 @@ class ProcessManualsFragment : Fragment() {
                                 .show()
                         }
                     })
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado. Por favor inténtalo de nuevo.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-        } catch (e: Exception) {
-            // Manejar errores
         }
     }
 
-    suspend fun savePdfToDownloads(context: Context, response: ResponseBody, fileName: String): Uri? {
+    suspend fun savePdfToDownloads(
+        context: Context,
+        response: ResponseBody,
+        fileName: String
+    ): Uri? {
         return withContext(Dispatchers.IO) {
             try {
                 val resolver = context.contentResolver
@@ -209,7 +224,6 @@ class ProcessManualsFragment : Fragment() {
             }
         }
     }
-
 
 
     private fun openPdf(context: Context, uri: Uri) {

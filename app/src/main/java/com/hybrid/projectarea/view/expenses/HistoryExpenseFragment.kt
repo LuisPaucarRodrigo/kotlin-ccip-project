@@ -20,6 +20,7 @@ import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HistoryExpenseFragment : Fragment() {
     private var _binding: FragmentHistoryExpenseBinding? = null
@@ -92,7 +93,13 @@ class HistoryExpenseFragment : Fragment() {
                     }
                 })
             } catch (e: Exception) {
-                // Manejar errores
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

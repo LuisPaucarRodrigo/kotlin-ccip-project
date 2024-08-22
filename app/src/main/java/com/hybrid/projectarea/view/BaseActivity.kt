@@ -81,13 +81,13 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                     override fun onUserFailed(errorMessage: String) {
-                        Toast.makeText(this@BaseActivity, "yyyyy"+errorMessage, Toast.LENGTH_LONG)
+                        Toast.makeText(this@BaseActivity, errorMessage, Toast.LENGTH_LONG)
                             .show()
                     }
                 })
             } catch (e: Exception) {
                 withContext(Dispatchers.Main){
-                    Toast.makeText(this@BaseActivity, "Error: ${e.message}", Toast.LENGTH_LONG)
+                    Toast.makeText(this@BaseActivity, "Se produjo un error inesperado", Toast.LENGTH_LONG)
                         .show()
                 }
             }
@@ -109,6 +109,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_expenses -> openFragment(ExpensesFragment())
             R.id.nav_checkList -> openFragment(DayCheckListFragment())
             R.id.nav_processManuals -> openFragment(ProcessManualsFragment())
+            R.id.nav_camera -> openFragment(CameraFragment())
             //            R.id.nav_project -> openFragment(ProjectFragment())
 //            R.id.nav_huawei -> openFragment(HuaweiFragment())
             R.id.nav_logout -> cerrarsesion()

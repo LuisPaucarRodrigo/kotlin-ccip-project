@@ -20,6 +20,7 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.view.BaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PreProjectFragment : Fragment() {
 
@@ -103,7 +104,13 @@ class PreProjectFragment : Fragment() {
                     }
                 })
             } catch (e: Exception) {
-                // Manejar errores
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

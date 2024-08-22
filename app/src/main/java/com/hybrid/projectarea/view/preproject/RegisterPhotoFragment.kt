@@ -24,6 +24,7 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class RegisterPhotoFragment : Fragment() {
@@ -92,7 +93,13 @@ class RegisterPhotoFragment : Fragment() {
                     }
                 })
             }catch (e: Exception){
-                Snackbar.make(binding.root,"Error lifecycle: $e",Snackbar.LENGTH_LONG).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

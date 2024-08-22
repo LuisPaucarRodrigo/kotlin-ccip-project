@@ -1,15 +1,17 @@
-package com.hybrid.projectarea.view.preproject
+package com.hybrid.projectarea.view
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Base64
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,9 +29,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
@@ -37,181 +37,59 @@ import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
-import com.hybrid.projectarea.api.AuthManager
-import com.hybrid.projectarea.databinding.FragmentPreProjectEspecificBinding
-import com.hybrid.projectarea.model.CodePhotoDescription
+import com.hybrid.projectarea.databinding.FragmentCameraBinding
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
-import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.RequestPermissions
-import com.hybrid.projectarea.model.RetrofitClient
-import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.utils.Alert
-import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
-import com.hybrid.projectarea.utils.startCamera
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.hybrid.projectarea.view.preproject.PreProjectFragment
 import java.io.File
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 typealias LumaListener = (luma: Double) -> Unit
 
-class PreProjectEspecificFragment : Fragment() {
-
-    private var _binding: FragmentPreProjectEspecificBinding? = null
+class CameraFragment : Fragment() {
+    private var _binding:FragmentCameraBinding? = null
     private val binding get() = _binding!!
-    private var photoString: String? = null
 
-    //    private var intent: Intent? = null
     private lateinit var file: File
     private var latitude: Double? = null
     private var longitude: Double? = null
-    private lateinit var preprojectCodeId: String
 
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        preprojectCodeId = requireArguments().getString("id").toString()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPreProjectEspecificBinding.inflate(inflater, container, false)
+        // Inflate the layout for this fragment
+        _binding = FragmentCameraBinding.inflate(inflater,container,false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        apiRequestPreProject()
-
-        binding.imagesCode.setOnClickListener {
-            val conceptFragment = RegisterPhotoFragment()
-            val args = Bundle()
-            args.putString("id", preprojectCodeId)
-            conceptFragment.arguments = args
-
-            val transition: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transition.replace(R.id.contenedor, conceptFragment)
-                .addToBackStack(null)
-                .commit()
-        }
-
-        binding.photo.addPhoto.setOnClickListener {
-            selectionCamera()
-        }
-
-        binding.send.buttonSend.setOnClickListener {
-            HideKeyboard.hideKeyboard(binding.root)
-            binding.send.buttonSend.isEnabled = false
-            send(binding.addDescription.text.toString())
-        }
+        selectionCamera()
 
         binding.captureButton.setOnClickListener {
             takePhoto()
         }
         binding.closeCamera.setOnClickListener {
-            binding.formPreproject.isVisible = true
-            binding.cameraPreproject.isVisible = false
-            (activity as? AppCompatActivity)?.supportActionBar?.show()
             stopCamera()
+            openFragment(PreProjectFragment())
         }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
-    }
-
-    private fun send(description: String) {
-        if (description.isNotBlank() && photoString != null) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val token = TokenAuth.getToken(requireContext(), "token")
-                    val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                    val authManager = AuthManager(apiService)
-                    val formImageProject = PhotoRequest(
-                        preprojectCodeId,
-                        description,
-                        photoString.toString(),
-                        latitude.toString(),
-                        longitude.toString()
-                    )
-                    authManager.preProjectPhoto(
-                        token,
-                        formImageProject,
-                        object : AuthManager.PreProjectAddPhoto {
-                            override fun onPreProjectAddPhotoSuccess() {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-
-                            override fun onPreProjectAddPhotoFailed(errorMessage: String) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-                    )
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
-                        binding.send.buttonSend.isEnabled = true
-                    }
-                }
-            }
-        } else {
-            Snackbar.make(binding.root, "Complete los campos", Snackbar.LENGTH_LONG).show()
-            binding.send.buttonSend.isEnabled = true
-        }
-    }
-
-    private fun apiRequestPreProject() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                val authManager = AuthManager(apiService)
-                authManager.codephotospecific(
-                    token,
-                    requireArguments().getString("id").toString(),
-                    object : AuthManager.inCodePhotoDescription {
-                        override fun onCodePhotoDescriptionPreProjectSuccess(response: CodePhotoDescription) {
-                            binding.codePreproject.text = response.codePreproject
-                            binding.codePhoto.text = response.code
-                            binding.codeStatus.text = response.status
-                            binding.codeDescription.text = response.description
-                        }
-
-                        override fun onCodePhotoDesrriptionPreProjectFailed() {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.check_connection),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    })
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Se produjo un error inesperado.", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
     }
 
     private fun selectionCamera() {
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
             checkGpsStatus().addOnSuccessListener {
-                binding.formPreproject.isVisible = false
-                binding.cameraPreproject.isVisible = true
                 (activity as? AppCompatActivity)?.supportActionBar?.hide()
                 startCamera()
             }
@@ -285,12 +163,7 @@ class PreProjectEspecificFragment : Fragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    binding.cameraPreproject.isVisible = false
-                    binding.formPreproject.isVisible = true
-                    (activity as? AppCompatActivity)?.supportActionBar?.show()
-                    stopCamera()
                     image()
-
                 }
             }
         )
@@ -323,32 +196,6 @@ class PreProjectEspecificFragment : Fragment() {
         file = File.createTempFile("IMG_${System.currentTimeMillis()}_", ".png", dir)
     }
 
-    private fun image() {
-        val currentDateTime = DateTimeLocationManager.getCurrentDateTime()
-        DateTimeLocationManager.getCurrentLocation(requireContext()) { location ->
-            if (location != null) {
-                latitude = location.latitude
-                longitude = location.longitude
-                val mutableBitmap = rotateAndCreateBitmap(file).copy(Bitmap.Config.ARGB_8888, true)
-                val logoBitmap =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.logo_ccip_white)
-                        ?.toBitmap()
-                val modifiedImage = ImageOverlay.overlayTextOnImage(
-                    mutableBitmap,
-                    logoBitmap!!,
-                    currentDateTime,
-                    latitude!!,
-                    longitude!!,
-                    binding.codePreproject.text.toString()
-                )
-                photoString = encodeImage(modifiedImage)
-                binding.photo.photoPreview.setImageBitmap(modifiedImage)
-            } else {
-                requestGPSEnable()
-            }
-        }
-    }
-
     private val requestPermissionLauncherCameraLocation = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -357,8 +204,6 @@ class PreProjectEspecificFragment : Fragment() {
 
         if (cameraPermissionGranted && coarseLocationGranted) {
             checkGpsStatus().addOnSuccessListener {
-                binding.formPreproject.isVisible = false
-                binding.cameraPreproject.isVisible = true
                 startCamera()
             }
             checkGpsStatus().addOnFailureListener {
@@ -412,10 +257,58 @@ class PreProjectEspecificFragment : Fragment() {
         }
     }
 
-    private fun dataCleaning() {
-        binding.addDescription.text.clear()
-        binding.photo.photoPreview.setImageResource(0)
-        photoString = null
+    private fun image() {
+        val currentDateTime = DateTimeLocationManager.getCurrentDateTime()
+        DateTimeLocationManager.getCurrentLocation(requireContext()) { location ->
+            if (location != null) {
+                latitude = location.latitude
+                longitude = location.longitude
+                val mutableBitmap = rotateAndCreateBitmap(file).copy(Bitmap.Config.ARGB_8888, true)
+                val logoBitmap =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.logo_ccip_white)
+                        ?.toBitmap()
+                val modifiedImage = ImageOverlay.overlayTextOnImage(
+                    mutableBitmap,
+                    logoBitmap!!,
+                    currentDateTime,
+                    latitude!!,
+                    longitude!!
+                )
+                saveImageToMediaStore(modifiedImage, "ModifiedImage_${System.currentTimeMillis()}.jpg")
+            } else {
+                requestGPSEnable()
+            }
+        }
+    }
+
+    private fun saveImageToMediaStore(bitmap: Bitmap, fileName: String) {
+        try {
+            val resolver = requireContext().contentResolver
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+            }
+
+            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            uri?.let {
+                val outputStream = resolver.openOutputStream(it)
+                outputStream?.use { stream ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                }
+            }
+            Toast.makeText(requireContext(),"Imagen guardada correctamente",Toast.LENGTH_LONG).show()
+        } catch (e: IOException){
+            Toast.makeText(requireContext(),"Error al guardar la imagen",Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+    private fun openFragment(fragment: Fragment) {
+        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.contenedor, fragment)
+        transaction.commit()
     }
 
     companion object {

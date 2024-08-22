@@ -21,6 +21,7 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.checklistEpps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EppsCheckListFragment : Fragment() {
     private var _binding: FragmentEppsCheckListBinding? = null
@@ -133,7 +134,14 @@ class EppsCheckListFragment : Fragment() {
 
                     })
             } catch (e: Exception) {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado. Por favor inténtalo de nuevo.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                binding.send.buttonSend.isEnabled = true
             }
         }
     }

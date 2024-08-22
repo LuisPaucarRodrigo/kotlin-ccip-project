@@ -40,6 +40,7 @@ import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
@@ -243,7 +244,14 @@ class ToolsCheckListFragment : Fragment() {
                     }
                 )
             } catch (e: Exception) {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado. Por favor inténtalo de nuevo.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                binding.send.buttonSend.isEnabled = true
             }
         }
     }
