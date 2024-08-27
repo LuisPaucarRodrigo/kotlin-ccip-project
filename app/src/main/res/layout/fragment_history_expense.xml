@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    tools:context=".view.expenses.HistoryExpenseFragment">
+
+    <include
+        android:id="@+id/options"
+        layout="@layout/scroolbar_expenses" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/qanelabolt"
+        android:paddingVertical="5dp"
+        android:text="Historial"
+        android:textColor="@color/txtTitle"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <include android:id="@+id/recyclerviewHistoryExpense" layout="@layout/recyclerciew"/>
+    <include android:id="@+id/shimmer" layout="@layout/shimmer"/>
+</LinearLayout>

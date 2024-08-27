@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -61,25 +62,25 @@ class RectifiersFragment : Fragment() {
                         val element = NameRectifiers(item.id,item.brand)
                         arrayList.add(element)
                     }
-                    val conceptFragment = ImagesRectifiersFragment()
-                    val adapter = AdapterRectifiers(arrayList, object : AdapterRectifiers.OnItemClickListener {
-                        override fun onItemClick(position: Int) {
-                            val item = arrayList[position]
-                            val args = Bundle()
-                            args.putString("idRectifiers",item.id)
-                            conceptFragment.arguments = args
-
-                            val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-                            transition.replace(R.id.contenedor, conceptFragment)
-                                .addToBackStack(null)
-                                .commit()
-                        }
-                    })
-                    binding.recyclerviewRectifiers.recyclerview.adapter = adapter
+//                    val conceptFragment = ImagesRectifiersFragment()
+//                    val adapter = AdapterRectifiers(arrayList, object : AdapterRectifiers.OnItemClickListener {
+//                        override fun onItemClick(position: Int) {
+//                            val item = arrayList[position]
+//                            val args = Bundle()
+//                            args.putString("idRectifiers",item.id)
+//                            conceptFragment.arguments = args
+//
+//                            val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+//                            transition.replace(R.id.contenedor, conceptFragment)
+//                                .addToBackStack(null)
+//                                .commit()
+//                        }
+//                    })
+//                    binding.recyclerviewRectifiers.recyclerview.adapter = adapter
                 }
 
-                override fun onRectifiersProjectHuaweiFailed() {
-                    TODO("Not yet implemented")
+                override fun onRectifiersProjectHuaweiFailed(errorMessage: String) {
+                    Toast.makeText(requireContext(),errorMessage,Toast.LENGTH_LONG).show()
                 }
 
             })

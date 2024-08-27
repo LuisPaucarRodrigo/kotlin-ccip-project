@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/checkListDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Diario"
+                android:textColor="@color/azulccip" />
+
+            <Button
+                android:id="@+id/checkListEpps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Epps"
+                android:textColor="@color/azulccip" />
+
+            <Button
+                android:id="@+id/checkListMobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Movil"
+                android:textColor="@color/azulccip" />
+
+            <Button
+                android:id="@+id/checkListTools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Herramientas"
+                android:textColor="@color/azulccip" />
+
+            <Button
+                android:id="@+id/checkListHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Historial"
+                android:textColor="@color/azulccip" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

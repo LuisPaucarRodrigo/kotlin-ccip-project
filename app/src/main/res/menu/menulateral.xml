@@ -2,31 +2,50 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
         android:id="@+id/group_nav_main"
-        android:checkableBehavior="single"
-        >
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_preproject"
-            android:title="@string/preprojects"
             android:icon="@drawable/icon_home"
             android:iconTint="@color/menuLateralTools"
-            />
-<!--        <item-->
-<!--            android:id="@+id/nav_project"-->
-<!--            android:title="@string/projects"-->
-<!--            android:icon="@drawable/icon_home"-->
-<!--            android:iconTint="@color/menuLateralTools"-->
-<!--            />-->
-<!--        <item-->
-<!--            android:id="@+id/nav_huawei"-->
-<!--            android:title="Huawei"-->
-<!--            android:icon="@drawable/icon_home"-->
-<!--            android:iconTint="@color/menuLateralTools"-->
-<!--            />-->
+            android:title="@string/preprojects" />
+        <item
+            android:id="@+id/nav_expenses"
+            android:icon="@drawable/baseline_monetization_on_24"
+            android:iconTint="@color/menuLateralTools"
+            android:title="Gastos" />
+        <item
+            android:id="@+id/nav_checkList"
+            android:icon="@drawable/baseline_fact_check_24"
+            android:iconTint="@color/menuLateralTools"
+            android:title="CheckList" />
+        <item
+            android:id="@+id/nav_processManuals"
+            android:icon="@drawable/baseline_sim_card_download_24"
+            android:iconTint="@color/menuLateralTools"
+            android:title="Manuales" />
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/baseline_camera_alt_24"
+            android:iconTint="@color/menuLateralTools"
+            android:title="Camara" />
+
+
+        <!--        <item-->
+        <!--            android:id="@+id/nav_project"-->
+        <!--            android:title="@string/projects"-->
+        <!--            android:icon="@drawable/icon_home"-->
+        <!--            android:iconTint="@color/menuLateralTools"-->
+        <!--            />-->
+        <!--        <item-->
+        <!--            android:id="@+id/nav_huawei"-->
+        <!--            android:title="Huawei"-->
+        <!--            android:icon="@drawable/icon_home"-->
+        <!--            android:iconTint="@color/menuLateralTools"-->
+        <!--            />-->
         <item
             android:id="@+id/nav_logout"
-            android:title="@string/logout"
-            android:iconTint="@color/menuLateralTools"
             android:icon="@android:drawable/ic_lock_power_off"
-            />
+            android:iconTint="@color/menuLateralTools"
+            android:title="@string/logout" />
     </group>
 </menu>

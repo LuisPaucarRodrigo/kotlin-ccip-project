@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/bg"
     android:paddingHorizontal="20dp"
-    tools:context=".view.RegisterPhotoFragment">
+    tools:context=".view.preproject.RegisterPhotoFragment">
 
     <TextView
         android:layout_width="match_parent"

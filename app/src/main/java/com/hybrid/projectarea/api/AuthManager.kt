@@ -1,10 +1,16 @@
 package com.hybrid.projectarea.api
 
 
+import com.hybrid.projectarea.model.ChecklistHistory
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.CodePhotoPreProject
+import com.hybrid.projectarea.model.Download
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.model.ExpenseForm
+import com.hybrid.projectarea.model.ExpenseHistory
+import com.hybrid.projectarea.model.FolderArchiveResponse
 import com.hybrid.projectarea.model.FormDataACHuawei
+import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
@@ -15,6 +21,11 @@ import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.UsersResponse
+import com.hybrid.projectarea.model.checkListMobile
+import com.hybrid.projectarea.model.checkListTools
+import com.hybrid.projectarea.model.checklistDay
+import com.hybrid.projectarea.model.checklistEpps
+import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -45,14 +56,15 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onLoginFailed(errorMessage)
                 }
             }
+
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 authListener.onLoginFailed("Error de red: ${t.message}")
             }
         })
     }
 
-    fun user(token: String, id:String, authListener: Users) {
-        val call = apiService.users(token,id)
+    fun user(token: String, id: String, authListener: Users) {
+        val call = apiService.users(token, id)
         call.enqueue(object : Callback<UsersResponse> {
             override fun onResponse(call: Call<UsersResponse>, response: Response<UsersResponse>) {
                 if (response.isSuccessful) {
@@ -71,16 +83,20 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onUserFailed(errorMessage)
                 }
             }
+
             override fun onFailure(call: Call<UsersResponse>, t: Throwable) {
                 authListener.onUserFailed("${t.message}")
             }
         })
     }
 
-    fun preproject(token: String, userId:String, authListener: PreProjectListener) {
-        val call = apiService.preproject(token,userId)
+    fun preproject(token: String, userId: String, authListener: PreProjectListener) {
+        val call = apiService.preproject(token, userId)
         call.enqueue(object : Callback<List<ElementPreProjectRecyclerView>> {
-            override fun onResponse(call: Call<List<ElementPreProjectRecyclerView>>, response: Response<List<ElementPreProjectRecyclerView>>) {
+            override fun onResponse(
+                call: Call<List<ElementPreProjectRecyclerView>>,
+                response: Response<List<ElementPreProjectRecyclerView>>
+            ) {
                 if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let {
@@ -93,19 +109,24 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onPreProjectFailed("")
                 }
             }
+
             override fun onFailure(call: Call<List<ElementPreProjectRecyclerView>>, t: Throwable) {
                 authListener.onPreProjectFailed("${t.message}")
             }
         })
     }
 
-    fun preProjectPhoto(token: String,photoRequest: PhotoRequest, authListener: PreProjectAddPhoto) {
-        val call = apiService.addphotoreport(token,photoRequest)
+    fun preProjectPhoto(
+        token: String,
+        photoRequest: PhotoRequest,
+        authListener: PreProjectAddPhoto
+    ) {
+        val call = apiService.addphotoreport(token, photoRequest)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful ) {
+                if (response.isSuccessful) {
                     authListener.onPreProjectAddPhotoSuccess()
-                }else{
+                } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
                         JSONObject(errorBody).getString("error")
@@ -115,16 +136,20 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onPreProjectAddPhotoFailed(errorMessage)
                 }
             }
+
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 authListener.onPreProjectAddPhotoFailed("Error de red: ${t.message}")
             }
         })
     }
 
-    fun codephotopreproject(token: String,id: String, authListener: inCodePhotoPreProject) {
-        val call = apiService.codephotopreproject(token,id)
+    fun codephotopreproject(token: String, id: String, authListener: inCodePhotoPreProject) {
+        val call = apiService.codephotopreproject(token, id)
         call.enqueue(object : Callback<List<CodePhotoPreProject>> {
-            override fun onResponse(call: Call<List<CodePhotoPreProject>>, response: Response<List<CodePhotoPreProject>>) {
+            override fun onResponse(
+                call: Call<List<CodePhotoPreProject>>,
+                response: Response<List<CodePhotoPreProject>>
+            ) {
                 if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let {
@@ -137,16 +162,20 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onCodePhotoPreProjectFailed()
                 }
             }
+
             override fun onFailure(call: Call<List<CodePhotoPreProject>>, t: Throwable) {
                 authListener.onCodePhotoPreProjectFailed()
             }
         })
     }
 
-    fun codephotospecific(token: String,id: String, authListener: inCodePhotoDescription) {
-        val call = apiService.codephotoespecific(token,id)
+    fun codephotospecific(token: String, id: String, authListener: inCodePhotoDescription) {
+        val call = apiService.codephotoespecific(token, id)
         call.enqueue(object : Callback<CodePhotoDescription> {
-            override fun onResponse(call: Call<CodePhotoDescription>, response: Response<CodePhotoDescription>) {
+            override fun onResponse(
+                call: Call<CodePhotoDescription>,
+                response: Response<CodePhotoDescription>
+            ) {
                 if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let {
@@ -159,17 +188,18 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onCodePhotoDesrriptionPreProjectFailed()
                 }
             }
+
             override fun onFailure(call: Call<CodePhotoDescription>, t: Throwable) {
                 authListener.onCodePhotoDesrriptionPreProjectFailed()
             }
         })
     }
 
-    fun funRegisterPhoto(token: String, id: String,authListener: inRegisterPhoto) {
-        val call = apiService.requestRegisterPhoto(token,id)
+    fun funRegisterPhoto(token: String, id: String, authListener: inRegisterPhoto) {
+        val call = apiService.requestRegisterPhoto(token, id)
         call.enqueue(object : Callback<List<Photo>> {
             override fun onResponse(call: Call<List<Photo>>, response: Response<List<Photo>>) {
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let { request ->
                         authListener.onRegisterPhotoSuccess(request)
@@ -188,7 +218,10 @@ class AuthManager(private val apiService: ApiService) {
     fun project(token: String, authListener: ProjectListener) {
         val call = apiService.project(token)
         call.enqueue(object : Callback<List<ProjectRecycler>> {
-            override fun onResponse(call: Call<List<ProjectRecycler>>, response: Response<List<ProjectRecycler>>) {
+            override fun onResponse(
+                call: Call<List<ProjectRecycler>>,
+                response: Response<List<ProjectRecycler>>
+            ) {
                 if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let { request ->
@@ -207,14 +240,15 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onProjectFailed(errorMessage)
                 }
             }
+
             override fun onFailure(call: Call<List<ProjectRecycler>>, t: Throwable) {
                 authListener.onProjectFailed("Error de red: ${t.message}")
             }
         })
     }
 
-    fun projectshow(token: String,id: String, authListener: ProjectShow) {
-        val call = apiService.projectshow(token,id)
+    fun projectshow(token: String, id: String, authListener: ProjectShow) {
+        val call = apiService.projectshow(token, id)
         call.enqueue(object : Callback<ProjectFind> {
             override fun onResponse(call: Call<ProjectFind>, response: Response<ProjectFind>) {
                 if (response.isSuccessful) {
@@ -229,20 +263,27 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onProjectSpecificFailed()
                 }
             }
+
             override fun onFailure(call: Call<ProjectFind>, t: Throwable) {
                 authListener.onProjectSpecificFailed()
             }
         })
     }
 
-    fun projectPhoto(token: String,id: String,description: String, image: String, authListener: ProjectStorePhoto) {
-        val photoRequest = PhotoRequest(id,description, image)
-        val call = apiService.storephoto(token,photoRequest)
+    fun projectPhoto(
+        token: String,
+        id: String,
+        description: String,
+        image: String,
+        authListener: ProjectStorePhoto
+    ) {
+        val photoRequest = PhotoRequest(id, description, image)
+        val call = apiService.storephoto(token, photoRequest)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful ) {
+                if (response.isSuccessful) {
                     authListener.onProjectAddPhotoSuccess()
-                }else{
+                } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
                         JSONObject(errorBody).getString("error")
@@ -252,6 +293,7 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onProjectAddPhotoFailed(errorMessage)
                 }
             }
+
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 authListener.onProjectAddPhotoFailed("Error de red: ${t.message}")
             }
@@ -268,17 +310,21 @@ class AuthManager(private val apiService: ApiService) {
                     authListener.onLogoutFailed()
                 }
             }
+
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 authListener.onLogoutFailed()
             }
         })
     }
 
-    fun funGetProjectHuawei(token:String, authListener: inGetProjectHuawei){
+    fun funGetProjectHuawei(token: String, authListener: inGetProjectHuawei) {
         val call = apiService.huaweiProject(token)
-        call.enqueue(object :Callback<List<ProjectHuawei>>{
-            override fun onResponse(call: Call<List<ProjectHuawei>>, response: Response<List<ProjectHuawei>>) {
-                if (response.isSuccessful){
+        call.enqueue(object : Callback<List<ProjectHuawei>> {
+            override fun onResponse(
+                call: Call<List<ProjectHuawei>>,
+                response: Response<List<ProjectHuawei>>
+            ) {
+                if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let {
                         authListener.onProjectHuaweiSuccess(it)
@@ -301,11 +347,15 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun funStorePtojectHuawei(token: String,formStoreProjectHuawei: FormStoreProjectHuawei,authListener: inStoreProjectHuawei){
-        val call = apiService.huaweiProjectStore(token,formStoreProjectHuawei)
-        call.enqueue(object : Callback<Void>{
+    fun funStorePtojectHuawei(
+        token: String,
+        formStoreProjectHuawei: FormStoreProjectHuawei,
+        authListener: inStoreProjectHuawei
+    ) {
+        val call = apiService.huaweiProjectStore(token, formStoreProjectHuawei)
+        call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     authListener.onStoreProjectHuaweiSuccess()
                 } else {
                     val errorBody = response.errorBody()?.string()
@@ -325,12 +375,15 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun funFormDataACHuawei(token:String,formDataACHuawei:FormDataACHuawei,authListener: inFormDataACHuawei){
-        val call = apiService.storeDatosACHuawei(token,formDataACHuawei)
-        call.enqueue(object : Callback<Void>{
+    fun funFormDataACHuawei(
+        token: String,
+        formDataACHuawei: FormDataACHuawei,
+        authListener: inFormDataACHuawei
+    ) {
+        val call = apiService.storeDatosACHuawei(token, formDataACHuawei)
+        call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful){
-
+                if (response.isSuccessful) {
                     authListener.onStoreFormDataACHuaweiSuccess()
                 } else {
                     authListener.onStoreFormDataACHuaweiFailed()
@@ -340,31 +393,294 @@ class AuthManager(private val apiService: ApiService) {
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 authListener.onStoreFormDataACHuaweiFailed()
             }
-
         })
     }
 
-    fun funGetRectifiersProjectHuawei(token:String, id:String, authListener: inGetRectifiersProjectHuawei){
-        val call = apiService.rectifiersProjectHuawei(token,id)
-        call.enqueue(object :Callback<List<NameRectifiers>>{
-            override fun onResponse(call: Call<List<NameRectifiers>>, response: Response<List<NameRectifiers>>) {
-                if (response.isSuccessful){
+    fun funGetRectifiersProjectHuawei(
+        token: String,
+        id: String,
+        authListener: inGetRectifiersProjectHuawei
+    ) {
+        val call = apiService.rectifiersProjectHuawei(token, id)
+        call.enqueue(object : Callback<List<NameRectifiers>> {
+            override fun onResponse(
+                call: Call<List<NameRectifiers>>,
+                response: Response<List<NameRectifiers>>
+            ) {
+                if (response.isSuccessful) {
                     val authToken = response.body()
                     authToken?.let {
                         authListener.onRectifiersProjectHuaweiSuccess(it)
                     }
                 } else {
-                    authListener.onRectifiersProjectHuaweiFailed()
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido"
+                    }
+                    authListener.onRectifiersProjectHuaweiFailed(errorMessage)
                 }
             }
 
             override fun onFailure(call: Call<List<NameRectifiers>>, t: Throwable) {
-                authListener.onRectifiersProjectHuaweiFailed()
+                authListener.onRectifiersProjectHuaweiFailed("${t.message}")
+            }
+        })
+    }
+
+    fun funGetProcessManuals(
+        token: String,
+        formProcessManuals: FormProcessManuals,
+        authListener: inGetProcessManuals
+    ) {
+        val call = apiService.getProcessManuals(token, formProcessManuals)
+        call.enqueue(object : Callback<FolderArchiveResponse> {
+            override fun onResponse(
+                call: Call<FolderArchiveResponse>,
+                response: Response<FolderArchiveResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onProcessManualsSuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido$e"
+                    }
+                    authListener.onProcessManualsFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<FolderArchiveResponse>, t: Throwable) {
+                authListener.onProcessManualsFailed("${t.message}")
+            }
+        })
+    }
+
+    fun funGetDownloadManuals(token: String, path: String, authListener: inGetDownloadManuls) {
+        val call = apiService.getDownloadPdf(token, Download(path))
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onDownloadManualsSuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido$e"
+                    }
+                    authListener.onDownloadManualsFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                authListener.onDownloadManualsFailed("${t.message}")
             }
 
         })
     }
 
+    fun funPostCheckListTools(
+        token: String,
+        checkListTools: checkListTools,
+        authListener: incheckListTools
+    ) {
+        val call = apiService.postStoreCheckListTools(token, checkListTools)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+
+                    authListener.onStoreCheckListToolsSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido: $e"
+                    }
+                    authListener.onStoreCheckListToolsFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreCheckListToolsFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funCheckListMobile(
+        token: String,
+        checkListMovil: checkListMobile,
+        authListener: inCheckListMovil
+    ) {
+        val call = apiService.postStoreCheckListMobile(token, checkListMovil)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    authListener.onStoreCheckListMobileSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido: $e"
+                    }
+                    authListener.onStoreCheckListMobileFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreCheckListMobileFailed("${t.message}")
+
+            }
+        })
+    }
+
+    fun funCheckListEpps(
+        token: String,
+        checkListEpps: checklistEpps,
+        authListener: inCheckListEpps
+    ) {
+        val call = apiService.postStoreCheckListEpps(token, checkListEpps)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    authListener.onStoreCheckListEppsSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido: $e"
+                    }
+                    authListener.onStoreCheckListEppsFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreCheckListEppsFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funCheckListDay(token: String, checkListDay: checklistDay, authListener: inCheckListDay) {
+        val call = apiService.postStoreCheckListDay(token, checkListDay)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    authListener.onStoreCheckListDaySuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido: $e"
+                    }
+                    authListener.onStoreCheckListDayFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreCheckListDayFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funCheckListHistory(token: String, authListener: inCheckListHistory) {
+        val call = apiService.checklistHistory(token)
+        call.enqueue(object : Callback<List<ChecklistHistory>> {
+            override fun onResponse(
+                call: Call<List<ChecklistHistory>>,
+                response: Response<List<ChecklistHistory>>
+            ) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onStoreCheckListHistorySuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido$e"
+                    }
+                    authListener.onStoreCheckListHistoryFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<List<ChecklistHistory>>, t: Throwable) {
+                authListener.onStoreCheckListHistoryFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funExpenseForm(token: String, expenseForm: ExpenseForm, authListener: inExpenseForm) {
+        val call = apiService.expenseStore(token, expenseForm)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    authListener.onExpenseFormSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido: $e"
+                    }
+                    authListener.onExpenseFormFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onExpenseFormFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funExpenseHistory(token: String, authListener: inExpenseHistory) {
+        val call = apiService.expenseHistory(token)
+        call.enqueue(object : Callback<List<ExpenseHistory>> {
+            override fun onResponse(
+                call: Call<List<ExpenseHistory>>,
+                response: Response<List<ExpenseHistory>>
+            ) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onExpenseHistorySuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido$e"
+                    }
+                    authListener.onExpenseHistoryFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<List<ExpenseHistory>>, t: Throwable) {
+                authListener.onExpenseHistoryFailed("${t.message}")
+            }
+
+        })
+    }
 
 
     interface AuthListener {
@@ -379,7 +695,7 @@ class AuthManager(private val apiService: ApiService) {
 
     interface PreProjectListener {
         fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>)
-        fun onPreProjectFailed(error:String)
+        fun onPreProjectFailed(error: String)
     }
 
     interface inCodePhotoPreProject {
@@ -423,7 +739,7 @@ class AuthManager(private val apiService: ApiService) {
     }
 
     interface inGetProjectHuawei {
-        fun onProjectHuaweiSuccess(response:List<ProjectHuawei>)
+        fun onProjectHuaweiSuccess(response: List<ProjectHuawei>)
         fun onProjectHuaweiFailed(errorMessage: String)
     }
 
@@ -436,8 +752,54 @@ class AuthManager(private val apiService: ApiService) {
         fun onStoreFormDataACHuaweiSuccess()
         fun onStoreFormDataACHuaweiFailed()
     }
+
     interface inGetRectifiersProjectHuawei {
-        fun onRectifiersProjectHuaweiSuccess(response:List<NameRectifiers>)
-        fun onRectifiersProjectHuaweiFailed()
+        fun onRectifiersProjectHuaweiSuccess(response: List<NameRectifiers>)
+        fun onRectifiersProjectHuaweiFailed(errorMessage: String)
+    }
+
+    interface inGetProcessManuals {
+        fun onProcessManualsSuccess(response: FolderArchiveResponse)
+        fun onProcessManualsFailed(errorMessage: String)
+    }
+
+    interface inGetDownloadManuls {
+        fun onDownloadManualsSuccess(response: ResponseBody)
+        fun onDownloadManualsFailed(errorMessage: String)
+    }
+
+    interface incheckListTools {
+        fun onStoreCheckListToolsSuccess()
+        fun onStoreCheckListToolsFailed(errorMessage: String)
+    }
+
+    interface inCheckListMovil {
+        fun onStoreCheckListMobileSuccess()
+        fun onStoreCheckListMobileFailed(errorMessage: String)
+    }
+
+    interface inCheckListEpps {
+        fun onStoreCheckListEppsSuccess()
+        fun onStoreCheckListEppsFailed(errorMessage: String)
+    }
+
+    interface inCheckListDay {
+        fun onStoreCheckListDaySuccess()
+        fun onStoreCheckListDayFailed(errorMessage: String)
+    }
+
+    interface inCheckListHistory {
+        fun onStoreCheckListHistorySuccess(response: List<ChecklistHistory>)
+        fun onStoreCheckListHistoryFailed(errorMessage: String)
+    }
+
+    interface inExpenseForm {
+        fun onExpenseFormSuccess()
+        fun onExpenseFormFailed(errorMessage: String)
+    }
+
+    interface inExpenseHistory {
+        fun onExpenseHistorySuccess(response: List<ExpenseHistory>)
+        fun onExpenseHistoryFailed(errorMessage: String)
     }
 }

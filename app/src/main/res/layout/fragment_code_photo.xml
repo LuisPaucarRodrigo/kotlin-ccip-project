@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:paddingHorizontal="20dp"
-    tools:context=".view.CodePhotoFragment">
+    tools:context=".view.preproject.CodePhotoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
