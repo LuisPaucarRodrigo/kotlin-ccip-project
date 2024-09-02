@@ -5,6 +5,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Environment
@@ -13,6 +15,9 @@ import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
+import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -23,12 +28,10 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -41,19 +44,15 @@ import com.hybrid.projectarea.databinding.FragmentCameraBinding
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
 import com.hybrid.projectarea.model.RequestPermissions
-import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.view.preproject.PreProjectFragment
 import java.io.File
 import java.io.IOException
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-typealias LumaListener = (luma: Double) -> Unit
-
 class CameraFragment : Fragment() {
-    private var _binding:FragmentCameraBinding? = null
+    private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var file: File
@@ -68,7 +67,7 @@ class CameraFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentCameraBinding.inflate(inflater,container,false)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -129,20 +128,49 @@ class CameraFragment : Fragment() {
             imageCapture = ImageCapture.Builder()
                 .build()
 
-            val imageAnalyzer = ImageAnalysis.Builder()
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        Log.d(TAG, "Average luminosity: $luma")
-                    })
+            val orientationEventListener = object : OrientationEventListener(requireContext()) {
+                override fun onOrientationChanged(orientation : Int) {
+                    // Monitors orientation values to determine the target rotation value
+                    val rotation : Int = when (orientation) {
+                        in 45..134 -> Surface.ROTATION_270
+                        in 135..224 -> Surface.ROTATION_180
+                        in 225..314 -> Surface.ROTATION_90
+                        else -> Surface.ROTATION_0
+                    }
+
+                    imageCapture?.targetRotation = rotation
                 }
+            }
+            orientationEventListener.enable()
+
+            val imageAnalyzer = ImageAnalysis.Builder()
+                .setTargetRotation(binding.previewView.display.rotation)
+                .build()
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
+                val cameraControl = camera.cameraControl
+                val cameraInfo = camera.cameraInfo
+
+                // Configurar el gesto de zoom con los dedos (pinch-to-zoom)
+                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                        val delta = detector.scaleFactor
+                        cameraControl.setZoomRatio(currentZoomRatio * delta)
+                        return true
+                    }
+                })
+
+                binding.previewView.setOnTouchListener { _, event ->
+                    scaleGestureDetector.onTouchEvent(event)
+                    return@setOnTouchListener true
+                }
+
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
@@ -153,7 +181,6 @@ class CameraFragment : Fragment() {
         createPhotoFile()
         val imageCapture = imageCapture ?: return
         val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
-
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(requireContext()),
@@ -167,28 +194,6 @@ class CameraFragment : Fragment() {
                 }
             }
         )
-    }
-
-    private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
-
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
-
-        override fun analyze(image: ImageProxy) {
-
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
-
-            listener(luma)
-
-            image.close()
-        }
     }
 
     private fun createPhotoFile() {
@@ -263,18 +268,31 @@ class CameraFragment : Fragment() {
             if (location != null) {
                 latitude = location.latitude
                 longitude = location.longitude
-                val mutableBitmap = rotateAndCreateBitmap(file).copy(Bitmap.Config.ARGB_8888, true)
-                val logoBitmap =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.logo_ccip_white)
-                        ?.toBitmap()
-                val modifiedImage = ImageOverlay.overlayTextOnImage(
-                    mutableBitmap,
-                    logoBitmap!!,
-                    currentDateTime,
-                    latitude!!,
-                    longitude!!
-                )
-                saveImageToMediaStore(modifiedImage, "ModifiedImage_${System.currentTimeMillis()}.jpg")
+                val bitmap = rotateAndCreateBitmap(file)
+                if (bitmap != null) {
+                    val mutableBitmap =
+                        bitmap.copy(Bitmap.Config.ARGB_8888, true)
+                    val logoBitmap =
+                        ContextCompat.getDrawable(requireContext(), R.drawable.logo_ccip_white)
+                            ?.toBitmap()
+                    val modifiedImage = ImageOverlay.overlayTextOnImage(
+                        mutableBitmap,
+                        logoBitmap!!,
+                        currentDateTime,
+                        latitude!!,
+                        longitude!!
+                    )
+                    saveImageToMediaStore(
+                        modifiedImage,
+                        "ModifiedImage_${System.currentTimeMillis()}.jpg"
+                    )
+                } else {
+                    Log.e(
+                        "MyApp",
+                        "No se pudo crear el Bitmap desde el archivo: ${file.absolutePath}"
+                    )
+                }
+
             } else {
                 requestGPSEnable()
             }
@@ -298,15 +316,17 @@ class CameraFragment : Fragment() {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                 }
             }
-            Toast.makeText(requireContext(),"Imagen guardada correctamente",Toast.LENGTH_LONG).show()
-        } catch (e: IOException){
-            Toast.makeText(requireContext(),"Error al guardar la imagen",Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Imagen guardada correctamente", Toast.LENGTH_LONG)
+                .show()
+        } catch (e: IOException) {
+            Toast.makeText(requireContext(), "Error al guardar la imagen", Toast.LENGTH_LONG).show()
         }
 
     }
 
     private fun openFragment(fragment: Fragment) {
-        val transaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+        val transaction: FragmentTransaction =
+            requireActivity().supportFragmentManager.beginTransaction()
         transaction.replace(R.id.contenedor, fragment)
         transaction.commit()
     }

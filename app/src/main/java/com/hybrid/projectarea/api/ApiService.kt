@@ -17,6 +17,7 @@ import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 
 import com.hybrid.projectarea.model.PhotoRequest
+import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectRecycler
@@ -50,7 +51,7 @@ interface ApiService {
     fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Call<Void>
 
     @GET("preproject/code/{id}")
-    fun codephotopreproject(@Header("Authorization") token: String,@Path("id") id: String): Call<List<CodePhotoPreProject>>
+    fun codephotopreproject(@Header("Authorization") token: String,@Path("id") id: String): Call<List<PreprojectTitle>>
 
     @GET("codephotospecific/{id}")
     fun codephotoespecific(@Header("Authorization") token: String,@Path("id") id: String): Call<CodePhotoDescription>

@@ -11,31 +11,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
+        android:paddingVertical="8dp"
         android:id="@+id/elementcodephoto">
 
         <TextView
             android:id="@+id/code"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="13sp"
-            android:textStyle="bold"
-            android:text="Escenario" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="13sp"
-            android:textStyle="bold"
-            android:text="Estatus"/>
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/rejected"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_weight="0.2"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

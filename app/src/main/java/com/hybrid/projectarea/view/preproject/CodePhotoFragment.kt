@@ -16,6 +16,7 @@ import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentCodePhotoBinding
 import com.hybrid.projectarea.model.CodePhotoPreProject
+import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ class CodePhotoFragment : Fragment() {
     }
 
     private fun requestCode() {
-        val arrayList = ArrayList<CodePhotoPreProject>()
+        val arrayList = ArrayList<PreprojectTitle>()
         binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -55,39 +56,22 @@ class CodePhotoFragment : Fragment() {
                 val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                 val authManager = AuthManager(apiService)
                 authManager.codephotopreproject(token,requireArguments().getString("id").toString(),object : AuthManager.inCodePhotoPreProject{
-                    override fun onCodePhotoPreProjectSuccess(response: List<CodePhotoPreProject>) {
+                    override fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>) {
                         binding.shimmer.beforeViewElement.isVisible = false
                         binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
                         binding.recyclerviewCodePhoto.swipe.isRefreshing = false
                         response.forEach{ item ->
-                            val element = CodePhotoPreProject(item.id?:"",item.code,item.status)
+                            val element = PreprojectTitle(item.id?:"",item.type,item.preproject_codes)
                             arrayList.add(element)
                         }
-                        val conceptFragment = PreProjectEspecificFragment()
-                        val adapter = AdapterCodePhotoPreProject(arrayList,object : AdapterCodePhotoPreProject.OnItemClickListener{
-                            override fun onItemClick(position: Int) {
-                                val item = arrayList[position]
-                                if (item.status == "Aprobado"){
-                                    Snackbar.make(binding.root,"El ${item.code} ya esta Aprobado",Snackbar.LENGTH_LONG).show()
-                                } else {
-                                    val args = Bundle()
-                                    args.putString("id",item.id)
 
-                                    conceptFragment.arguments = args
-
-                                    val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-                                    transition.replace(R.id.contenedor, conceptFragment)
-                                        .addToBackStack(null)
-                                    transition.commit()
-                                }
-                            }
-                        })
+                        val adapter = AdapterPrepropjectTitle(arrayList)
                         binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
                     }
 
-                    override fun onCodePhotoPreProjectFailed() {
+                    override fun onCodePhotoPreProjectFailed(errorMessage: String) {
                         binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(),getString(R.string.check_connection), Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(),errorMessage, Toast.LENGTH_LONG).show()
                     }
                 })
             }catch (e: Exception){
