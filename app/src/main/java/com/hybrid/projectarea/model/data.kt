@@ -1,5 +1,6 @@
 package com.hybrid.projectarea.model
 
+import androidx.camera.core.processing.SurfaceProcessorNode.In
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
@@ -29,7 +30,7 @@ data class PhotoRequest(
 )
 
 data class ElementPreProjectRecyclerView(
-    val id: String,
+    @SerializedName("preproject_id") val id: String,
     val code: String,
     val description: String,
     val date: String,
@@ -48,10 +49,22 @@ data class ProjectFind(
     val description: String,
 )
 
+data class PreprojectTitle(
+    val id: String,
+    val type: String,
+    val preproject_codes: List<CodePhotoPreProject>
+)
+
 data class CodePhotoPreProject(
     val id: String,
-    val code: String,
-    val status: String
+    val code: Code,
+    val status: String?,
+    val replaceable_status: String,
+    val rejected_quantity: Int
+)
+
+data class Code(
+    val code: String
 )
 
 data class CodePhotoDescription(

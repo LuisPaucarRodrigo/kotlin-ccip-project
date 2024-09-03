@@ -37,15 +37,11 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-<!--        <activity-->
-<!--            android:name=".view.BaseActivity"-->
-<!--            android:exported="false"-->
-<!--            android:screenOrientation="portrait"-->
-<!--            android:theme="@style/Theme.ProjectArea" />-->
         <activity
             android:name=".view.BaseActivity"
             android:exported="true"
-            android:theme="@style/Theme.ProjectArea">
+            android:theme="@style/Theme.ProjectArea"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

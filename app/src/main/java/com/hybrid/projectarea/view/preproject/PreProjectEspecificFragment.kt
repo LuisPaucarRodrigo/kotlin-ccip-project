@@ -11,6 +11,8 @@ import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.OrientationEventListener
+import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -251,13 +253,21 @@ class PreProjectEspecificFragment : Fragment() {
             imageCapture = ImageCapture.Builder()
                 .build()
 
+            val orientationEventListener = object : OrientationEventListener(requireContext()) {
+                override fun onOrientationChanged(orientation : Int) {
+                    val rotation : Int = when (orientation) {
+                        in 45..134 -> Surface.ROTATION_270
+                        in 135..224 -> Surface.ROTATION_180
+                        in 225..314 -> Surface.ROTATION_90
+                        else -> Surface.ROTATION_0
+                    }
+
+                    imageCapture?.targetRotation = rotation
+                }
+            }
+            orientationEventListener.enable()
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        Log.d(TAG, "Average luminosity: $luma")
-                    })
-                }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
@@ -294,28 +304,6 @@ class PreProjectEspecificFragment : Fragment() {
                 }
             }
         )
-    }
-
-    private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
-
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
-
-        override fun analyze(image: ImageProxy) {
-
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
-
-            listener(luma)
-
-            image.close()
-        }
     }
 
     private fun createPhotoFile() {

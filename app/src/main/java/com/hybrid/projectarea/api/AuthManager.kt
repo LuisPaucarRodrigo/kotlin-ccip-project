@@ -17,6 +17,7 @@ import com.hybrid.projectarea.model.LoginResponse
 import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 import com.hybrid.projectarea.model.PhotoRequest
+import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectRecycler
@@ -145,10 +146,10 @@ class AuthManager(private val apiService: ApiService) {
 
     fun codephotopreproject(token: String, id: String, authListener: inCodePhotoPreProject) {
         val call = apiService.codephotopreproject(token, id)
-        call.enqueue(object : Callback<List<CodePhotoPreProject>> {
+        call.enqueue(object : Callback<List<PreprojectTitle>> {
             override fun onResponse(
-                call: Call<List<CodePhotoPreProject>>,
-                response: Response<List<CodePhotoPreProject>>
+                call: Call<List<PreprojectTitle>>,
+                response: Response<List<PreprojectTitle>>
             ) {
                 if (response.isSuccessful) {
                     val authToken = response.body()
@@ -159,12 +160,18 @@ class AuthManager(private val apiService: ApiService) {
 //                        authListener.onPreProjectFailed()
 //                    }
                 } else {
-                    authListener.onCodePhotoPreProjectFailed()
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onCodePhotoPreProjectFailed(errorMessage)
                 }
             }
 
-            override fun onFailure(call: Call<List<CodePhotoPreProject>>, t: Throwable) {
-                authListener.onCodePhotoPreProjectFailed()
+            override fun onFailure(call: Call<List<PreprojectTitle>>, t: Throwable) {
+                authListener.onCodePhotoPreProjectFailed("${t.message}")
             }
         })
     }
@@ -699,8 +706,8 @@ class AuthManager(private val apiService: ApiService) {
     }
 
     interface inCodePhotoPreProject {
-        fun onCodePhotoPreProjectSuccess(response: List<CodePhotoPreProject>)
-        fun onCodePhotoPreProjectFailed()
+        fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>)
+        fun onCodePhotoPreProjectFailed(errorMessage: String)
     }
 
     interface inCodePhotoDescription {
