@@ -85,7 +85,7 @@ class PreProjectFragment : Fragment() {
                                 override fun onItemClick(position: Int) {
                                     val item = arrayList[position]
                                     val args = Bundle()
-                                    args.putString("id", item.id)
+                                    args.putString("preproject_id", item.id)
                                     conceptFragment.arguments = args
 
                                     val transition: FragmentTransaction =

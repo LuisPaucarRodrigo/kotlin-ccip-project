@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.view
+package com.hybrid.projectarea.view.projecthuawei
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -50,7 +50,6 @@ class StoreProjectsHuaweiFragment : Fragment() {
     }
 
     private fun sendFormData(formData: FormStoreProjectHuawei) {
-        println(formData)
         lifecycleScope.launch {
             val token = TokenAuth.getToken(requireContext(),"token")
             val apiService = withContext(Dispatchers.IO){
@@ -59,6 +58,7 @@ class StoreProjectsHuaweiFragment : Fragment() {
             val authManager = AuthManager(apiService)
             authManager.funStorePtojectHuawei(token,formData,object: AuthManager.inStoreProjectHuawei{
                 override fun onStoreProjectHuaweiSuccess() {
+                    dataCleaning()
                     Alert.alertSuccess(requireContext(),layoutInflater)
                 }
 
@@ -74,34 +74,18 @@ class StoreProjectsHuaweiFragment : Fragment() {
     private fun getFormData(): FormStoreProjectHuawei {
         return FormStoreProjectHuawei(
             site = binding.addSite.text.toString(),
-            elaborated = binding.addElaborated.text.toString(),
-            code = binding.addCode.text.toString(),
-            name = binding.addName.text.toString(),
-            address = binding.addAddress.text.toString(),
-            reference = binding.addReference.text.toString(),
-            access = binding.addAccess.text.toString()
+            diu = binding.addDiu.text.toString(),
         )
     }
 
     private fun areAllFieldsFilled(formData: FormStoreProjectHuawei): Boolean {
         return with(formData) {
-            site.isNotEmpty() && elaborated.isNotEmpty() && code.isNotEmpty() && name.isNotEmpty() &&
-                    address.isNotEmpty() && reference.isNotEmpty() && access.isNotEmpty()
+            site.isNotEmpty() && diu.isNotEmpty()
         }
     }
 
-    private fun alertSuccess() {
-        val builder = AlertDialog.Builder(requireContext())
-        val alertDialogBinding = SuccessfulRequestBinding.inflate(layoutInflater)
-        val dialogView = alertDialogBinding.root
-        builder.setView(dialogView)
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.show()
-        Handler(Looper.getMainLooper()).postDelayed({
-            dialog.dismiss()
-        },1500)
+    private fun dataCleaning() {
+        binding.addSite.text.clear()
+        binding.addDiu.text.clear()
     }
-
-
 }

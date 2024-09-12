@@ -87,9 +87,9 @@ class RegisterPhotoFragment : Fragment() {
 
                     }
 
-                    override fun onRegisterPhotoFailed() {
+                    override fun onRegisterPhotoFailed(errorMessage: String) {
                         binding.recyclerviewRegisterPhoto.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(),getString(R.string.check_connection), Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(),errorMessage, Toast.LENGTH_LONG).show()
                     }
                 })
             }catch (e: Exception){

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
     android:background="@color/bg"
-    tools:context=".view.StoreProjectsHuaweiFragment">
+    tools:context=".view.projecthuawei.StoreProjectsHuaweiFragment">
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +27,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="DIU: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt" />
 
+                <EditText
+                    android:id="@+id/addDiu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/txt"
+                    android:textSize="17sp"
+                    android:hint="Ingrese DIU"
+                    android:paddingVertical="16dp"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,153 +73,6 @@
                     android:paddingVertical="16dp"
                     android:inputType="textMultiLine" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Elaborado:"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt" />
-
-                <EditText
-                    android:id="@+id/addElaborated"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/txt"
-                    android:textSize="17sp"
-                    android:hint="Elaborado por ..."
-                    android:paddingVertical="16dp"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Codigo:"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt" />
-
-                <EditText
-                    android:id="@+id/addCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/txt"
-                    android:textSize="17sp"
-                    android:hint="Ingrese Codigo"
-                    android:paddingVertical="16dp"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Nombre: "
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt" />
-
-                <EditText
-                    android:id="@+id/addName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/txt"
-                    android:textSize="17sp"
-                    android:hint="Ingrese Nombre"
-                    android:paddingVertical="16dp"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Direccion: "
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt" />
-
-                <EditText
-                    android:id="@+id/addAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/txt"
-                    android:textSize="17sp"
-                    android:hint="Ingrese Direccion"
-                    android:paddingVertical="16dp"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Referencia: "
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt" />
-
-                <EditText
-                    android:id="@+id/addReference"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/txt"
-                    android:textSize="17sp"
-                    android:hint="Ingrese Referencia"
-                    android:paddingVertical="16dp"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Acceso: "
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt" />
-
-                <EditText
-                    android:id="@+id/addAccess"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/txt"
-                    android:textSize="17sp"
-                    android:hint="Ingrese Acceso"
-                    android:paddingVertical="16dp"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-
-            <include android:id="@+id/photo" layout="@layout/component_photo"/>
-
             <include android:id="@+id/send" layout="@layout/component_send"/>
         </LinearLayout>
 

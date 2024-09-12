@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.view
+package com.hybrid.projectarea.view.projecthuawei
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +18,7 @@ import com.hybrid.projectarea.databinding.FragmentHuaweiBinding
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.view.projecthuawei.AdapterProjectHuawei
+import com.hybrid.projectarea.view.RectifiersFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,13 +26,13 @@ import kotlinx.coroutines.withContext
 class HuaweiFragment : Fragment() {
     private var _binding:FragmentHuaweiBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
         _binding = FragmentHuaweiBinding.inflate(inflater,container,false)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Huawei"
         return binding.root
     }
 
@@ -64,16 +65,16 @@ class HuaweiFragment : Fragment() {
                     binding.recyclerviewHuawei.afterViewElement.isVisible = true
                     binding.recyclerviewHuawei.swipe.isRefreshing = false
                     response.forEach { item ->
-                        val element = ProjectHuawei(item.id,item.site,item.elaborated,item.code,item.name,item.address,item.reference,item.access)
+                        val element = ProjectHuawei(item.id,item.assigned_diu,item.huawei_site,item.code)
                         arrayList.add(element)
                     }
 
-                    val conceptFragment = RectifiersFragment()
+                    val conceptFragment = ProjectHuaweiTitleCodeFragment()
                     val adapter = AdapterProjectHuawei(arrayList, object : AdapterProjectHuawei.OnItemClickListener {
                         override fun onItemClick(position: Int) {
                             val item = arrayList[position]
                             val args = Bundle()
-                            args.putString("id",item.id)
+                            args.putString("projectHuawei_id",item.id)
                             conceptFragment.arguments = args
 
                             val transition: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
@@ -90,8 +91,5 @@ class HuaweiFragment : Fragment() {
                 }
             })
         }
-
     }
-
-
 }

@@ -8,10 +8,10 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +23,6 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -53,22 +52,18 @@ import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
-import com.hybrid.projectarea.utils.startCamera
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-typealias LumaListener = (luma: Double) -> Unit
 
 class PreProjectEspecificFragment : Fragment() {
 
     private var _binding: FragmentPreProjectEspecificBinding? = null
     private val binding get() = _binding!!
-    private var photoString: String? = null
+    private var photoString: String = ""
 
     //    private var intent: Intent? = null
     private lateinit var file: File
@@ -81,7 +76,7 @@ class PreProjectEspecificFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preprojectCodeId = requireArguments().getString("id").toString()
+        preprojectCodeId = requireArguments().getString("code_id").toString()
     }
 
     override fun onCreateView(
@@ -116,8 +111,14 @@ class PreProjectEspecificFragment : Fragment() {
 
         binding.send.buttonSend.setOnClickListener {
             HideKeyboard.hideKeyboard(binding.root)
-            binding.send.buttonSend.isEnabled = false
-            send(binding.addDescription.text.toString())
+            val formData = collectFormData()
+            if (areAllFieldsFilled(formData)){
+                binding.send.buttonSend.isEnabled = false
+                send(formData)
+            }else{
+                Toast.makeText(context, "Por favor, llena todos los campos", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
         binding.captureButton.setOnClickListener {
@@ -132,47 +133,35 @@ class PreProjectEspecificFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    private fun send(description: String) {
-        if (description.isNotBlank() && photoString != null) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val token = TokenAuth.getToken(requireContext(), "token")
-                    val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                    val authManager = AuthManager(apiService)
-                    val formImageProject = PhotoRequest(
-                        preprojectCodeId,
-                        description,
-                        photoString.toString(),
-                        latitude.toString(),
-                        longitude.toString()
-                    )
-                    authManager.preProjectPhoto(
-                        token,
-                        formImageProject,
-                        object : AuthManager.PreProjectAddPhoto {
-                            override fun onPreProjectAddPhotoSuccess() {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-
-                            override fun onPreProjectAddPhotoFailed(errorMessage: String) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
+    private fun send(formData: PhotoRequest) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val token = TokenAuth.getToken(requireContext(), "token")
+                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val authManager = AuthManager(apiService)
+                authManager.preProjectPhoto(
+                    token,
+                    formData,
+                    object : AuthManager.PreProjectAddPhoto {
+                        override fun onPreProjectAddPhotoSuccess() {
+                            Alert.alertSuccess(requireContext(), layoutInflater)
+                            dataCleaning()
+                            binding.send.buttonSend.isEnabled = true
                         }
-                    )
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
-                        binding.send.buttonSend.isEnabled = true
+
+                        override fun onPreProjectAddPhotoFailed(errorMessage: String) {
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                .show()
+                            binding.send.buttonSend.isEnabled = true
+                        }
                     }
+                )
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
+                    binding.send.buttonSend.isEnabled = true
                 }
             }
-        } else {
-            Snackbar.make(binding.root, "Complete los campos", Snackbar.LENGTH_LONG).show()
-            binding.send.buttonSend.isEnabled = true
         }
     }
 
@@ -184,7 +173,7 @@ class PreProjectEspecificFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.codephotospecific(
                     token,
-                    requireArguments().getString("id").toString(),
+                    preprojectCodeId,
                     object : AuthManager.inCodePhotoDescription {
                         override fun onCodePhotoDescriptionPreProjectSuccess(response: CodePhotoDescription) {
                             binding.codePreproject.text = response.codePreproject
@@ -210,6 +199,7 @@ class PreProjectEspecificFragment : Fragment() {
     }
 
     private fun selectionCamera() {
+        HideKeyboard.hideKeyboard(binding.root)
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
             checkGpsStatus().addOnSuccessListener {
                 binding.formPreproject.isVisible = false
@@ -272,9 +262,27 @@ class PreProjectEspecificFragment : Fragment() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
+
+                // Pinch-to-zoom setup
+                val cameraControl = camera.cameraControl
+                val cameraInfo = camera.cameraInfo
+
+                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                        val delta = detector.scaleFactor
+                        cameraControl.setZoomRatio(currentZoomRatio * delta)
+                        return true
+                    }
+                })
+
+                binding.previewView.setOnTouchListener { _, event ->
+                    scaleGestureDetector.onTouchEvent(event)
+                    true
+                }
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
@@ -329,7 +337,7 @@ class PreProjectEspecificFragment : Fragment() {
                     longitude!!,
                     binding.codePreproject.text.toString()
                 )
-                photoString = encodeImage(modifiedImage)
+                photoString = encodeImage(modifiedImage)!!
                 binding.photo.photoPreview.setImageBitmap(modifiedImage)
             } else {
                 requestGPSEnable()
@@ -400,10 +408,26 @@ class PreProjectEspecificFragment : Fragment() {
         }
     }
 
+    private fun collectFormData(): PhotoRequest {
+        return PhotoRequest(
+            id = preprojectCodeId,
+            description = binding.addDescription.text.toString(),
+            photo = photoString,
+            latitude = latitude.toString(),
+            longitude = longitude.toString(),
+        )
+    }
+
+    private fun areAllFieldsFilled(formData: PhotoRequest): Boolean {
+        return formData.id.isNotEmpty() && formData.description.isNotEmpty() &&
+                formData.photo.isNotEmpty() && formData.longitude!!.isNotEmpty() &&
+                formData.latitude!!.isNotEmpty()
+    }
+
     private fun dataCleaning() {
         binding.addDescription.text.clear()
         binding.photo.photoPreview.setImageResource(0)
-        photoString = null
+        photoString = ""
     }
 
     companion object {

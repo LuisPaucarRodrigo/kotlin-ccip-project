@@ -20,7 +20,9 @@ import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
+import com.hybrid.projectarea.model.ProjectHuaweiTitle
 import com.hybrid.projectarea.model.ProjectRecycler
+import com.hybrid.projectarea.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.model.UsersResponse
 import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.model.checkListTools
@@ -212,12 +214,18 @@ class AuthManager(private val apiService: ApiService) {
                         authListener.onRegisterPhotoSuccess(request)
                     }
                 } else {
-                    authListener.onRegisterPhotoFailed()
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onRegisterPhotoFailed(errorMessage)
                 }
             }
 
             override fun onFailure(call: Call<List<Photo>>, t: Throwable) {
-                authListener.onRegisterPhotoFailed()
+                authListener.onRegisterPhotoFailed("${t.message}")
             }
         })
     }
@@ -689,6 +697,114 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
+    fun funProjectHuaweiTitleCode(token: String, id: String, authListener: inProjectHuaweiTitleCode) {
+        val call = apiService.pointProjectHuaweiTitleCode(token, id)
+        call.enqueue(object :Callback<List<ProjectHuaweiTitle>> {
+            override fun onResponse(
+                call: Call<List<ProjectHuaweiTitle>>,
+                response: Response<List<ProjectHuaweiTitle>>
+            ) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onProjectHuaweiTitleCodeSuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onProjectHuaweiTitleCodeFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<List<ProjectHuaweiTitle>>, t: Throwable) {
+                authListener.onProjectHuaweiTitleCodeFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funShowProjectHuaweiCode(token: String, id: String, authListener: inShowProjectHuaweiCode) {
+        val call = apiService.pointShowProjectHuaweiCode(token, id)
+        call.enqueue(object :Callback<ShowProjectHuaweiCode>{
+            override fun onResponse(
+                call: Call<ShowProjectHuaweiCode>,
+                response: Response<ShowProjectHuaweiCode>
+            ) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onShowprojectHuaweiCodeSuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onShowprojectHuaweiCodeFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ShowProjectHuaweiCode>, t: Throwable) {
+                authListener.onShowprojectHuaweiCodeFailed("${t.message}")
+            }
+
+        })
+    }
+
+    fun funStoreImageProjectHuawei(token: String,photoRequest: PhotoRequest , authListener: inStoreImageProjectHuawei) {
+        val call = apiService.storeImagesProjectHuawei(token, photoRequest)
+        call.enqueue(object :Callback<Void>{
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    authListener.onStoreImageProjectHuaweiSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido: $e"
+                    }
+                    authListener.onStoreImageProjectHuaweiFailed(errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                authListener.onStoreImageProjectHuaweiFailed("${t.message}")
+            }
+        })
+    }
+
+    fun funHistoryImageProjectHuawei(token: String,code_id: String , authListener: inRegisterPhoto) {
+        val call = apiService.pointHistoryImageProjectHuawei(token, code_id)
+        call.enqueue(object :Callback<List<Photo>>{
+            override fun onResponse(call: Call<List<Photo>>, response: Response<List<Photo>>) {
+                if (response.isSuccessful) {
+                    val authToken = response.body()
+                    authToken?.let {
+                        authListener.onRegisterPhotoSuccess(it)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrio un error desconocido$e"
+                    }
+                    authListener.onRegisterPhotoFailed(errorMessage)
+                }
+            }
+            override fun onFailure(call: Call<List<Photo>>, t: Throwable) {
+                authListener.onRegisterPhotoFailed("${t.message}")
+
+            }
+        })
+    }
 
     interface AuthListener {
         fun onLoginSuccess(response: LoginResponse)
@@ -722,7 +838,7 @@ class AuthManager(private val apiService: ApiService) {
 
     interface inRegisterPhoto {
         fun onRegisterPhotoSuccess(response: List<Photo>)
-        fun onRegisterPhotoFailed()
+        fun onRegisterPhotoFailed(errorMessage: String)
     }
 
     interface ProjectListener {
@@ -808,5 +924,20 @@ class AuthManager(private val apiService: ApiService) {
     interface inExpenseHistory {
         fun onExpenseHistorySuccess(response: List<ExpenseHistory>)
         fun onExpenseHistoryFailed(errorMessage: String)
+    }
+
+    interface inProjectHuaweiTitleCode {
+        fun onProjectHuaweiTitleCodeSuccess(response: List<ProjectHuaweiTitle>)
+        fun onProjectHuaweiTitleCodeFailed(errorMessage: String)
+    }
+
+    interface inShowProjectHuaweiCode {
+        fun onShowprojectHuaweiCodeSuccess(response: ShowProjectHuaweiCode)
+        fun onShowprojectHuaweiCodeFailed(errorMessage: String)
+    }
+
+    interface inStoreImageProjectHuawei {
+        fun onStoreImageProjectHuaweiSuccess()
+        fun onStoreImageProjectHuaweiFailed(errorMessage: String)
     }
 }

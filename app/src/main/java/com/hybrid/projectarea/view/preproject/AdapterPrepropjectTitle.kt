@@ -37,7 +37,7 @@ class AdapterPrepropjectTitle (private var listaElementos:ArrayList<PreprojectTi
                     val conceptFragment = PreProjectEspecificFragment()
 
                     val args = Bundle().apply {
-                        putString("id", item.id)
+                        putString("code_id", item.id)
                     }
                     conceptFragment.arguments = args
 

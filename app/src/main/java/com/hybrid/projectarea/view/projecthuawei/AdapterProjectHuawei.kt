@@ -11,13 +11,9 @@ import com.hybrid.projectarea.model.ProjectHuawei
 class AdapterProjectHuawei (private var listaElementos:ArrayList<ProjectHuawei>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterProjectHuawei.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
+        val diu = itemView.findViewById<TextView>(R.id.diu)!!
         val site = itemView.findViewById<TextView>(R.id.site)!!
-        val elaborated = itemView.findViewById<TextView>(R.id.elaborated)!!
         val code = itemView.findViewById<TextView>(R.id.code)!!
-        val name = itemView.findViewById<TextView>(R.id.name)!!
-        val address = itemView.findViewById<TextView>(R.id.address)!!
-        val reference = itemView.findViewById<TextView>(R.id.reference)!!
-        val access = itemView.findViewById<TextView>(R.id.access)!!
         init {
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -34,13 +30,9 @@ class AdapterProjectHuawei (private var listaElementos:ArrayList<ProjectHuawei>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.site.text= listaElementos[position].site
-        holder.elaborated.text= listaElementos[position].elaborated
+        holder.diu.text= listaElementos[position].assigned_diu
+        holder.site.text= listaElementos[position].huawei_site.name
         holder.code.text= listaElementos[position].code
-        holder.name.text= listaElementos[position].name
-        holder.address.text= listaElementos[position].address
-        holder.reference.text= listaElementos[position].reference
-        holder.access.text= listaElementos[position].access
     }
 
     override fun getItemCount(): Int {

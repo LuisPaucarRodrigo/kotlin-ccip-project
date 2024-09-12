@@ -2,6 +2,7 @@ package com.hybrid.projectarea.model
 
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 
 object RequestPermissions {
@@ -13,5 +14,4 @@ object RequestPermissions {
         }
         return true
     }
-
 }

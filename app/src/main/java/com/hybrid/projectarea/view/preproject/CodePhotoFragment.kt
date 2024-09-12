@@ -27,7 +27,11 @@ class CodePhotoFragment : Fragment() {
 
     private var _binding:FragmentCodePhotoBinding? = null
     private val binding get() = _binding!!
-
+    private var preproject_id = ""
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        preproject_id = requireArguments().getString("preproject_id").toString()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +59,7 @@ class CodePhotoFragment : Fragment() {
                 val token = TokenAuth.getToken(requireContext(),"token")
                 val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                 val authManager = AuthManager(apiService)
-                authManager.codephotopreproject(token,requireArguments().getString("id").toString(),object : AuthManager.inCodePhotoPreProject{
+                authManager.codephotopreproject(token,preproject_id,object : AuthManager.inCodePhotoPreProject{
                     override fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>) {
                         binding.shimmer.beforeViewElement.isVisible = false
                         binding.recyclerviewCodePhoto.afterViewElement.isVisible = true

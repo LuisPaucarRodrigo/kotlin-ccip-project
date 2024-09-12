@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
@@ -298,6 +299,7 @@ class MobileUnitChecklistFragment : Fragment() {
     }
 
     private fun selectionCameraAndPhoto() {
+        HideKeyboard.hideKeyboard(binding.root)
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
             binding.formPreproject.isVisible = false
             binding.cameraPreproject.isVisible = true
@@ -367,9 +369,27 @@ class MobileUnitChecklistFragment : Fragment() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
+
+                // Pinch-to-zoom setup
+                val cameraControl = camera.cameraControl
+                val cameraInfo = camera.cameraInfo
+
+                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                        val delta = detector.scaleFactor
+                        cameraControl.setZoomRatio(currentZoomRatio * delta)
+                        return true
+                    }
+                })
+
+                binding.previewView.setOnTouchListener { _, event ->
+                    scaleGestureDetector.onTouchEvent(event)
+                    true
+                }
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)

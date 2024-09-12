@@ -28,6 +28,7 @@ import com.hybrid.projectarea.view.checklist.DayCheckListFragment
 import com.hybrid.projectarea.view.expenses.ExpensesFragment
 import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import com.hybrid.projectarea.view.preproject.PreProjectFragment
+import com.hybrid.projectarea.view.projecthuawei.HuaweiFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -111,7 +112,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_processManuals -> openFragment(ProcessManualsFragment())
             R.id.nav_camera -> openFragment(CameraFragment())
             //            R.id.nav_project -> openFragment(ProjectFragment())
-//            R.id.nav_huawei -> openFragment(HuaweiFragment())
+            R.id.nav_huawei -> openFragment(HuaweiFragment())
             R.id.nav_logout -> cerrarsesion()
         }
         binding.layoutLateral.closeDrawer(GravityCompat.START)
@@ -161,7 +162,9 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 )
             } catch (e: Exception) {
-                // Manejar errores
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@BaseActivity, "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -172,5 +175,4 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             preferences.remove(stringPreferencesKey("user_id"))
         }
     }
-
 }

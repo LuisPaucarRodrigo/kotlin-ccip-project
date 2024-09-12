@@ -20,7 +20,9 @@ import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
+import com.hybrid.projectarea.model.ProjectHuaweiTitle
 import com.hybrid.projectarea.model.ProjectRecycler
+import com.hybrid.projectarea.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.model.UsersResponse
 import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.model.checkListTools
@@ -76,6 +78,18 @@ interface ApiService {
 
     @POST("huaweiproject/store")
     fun huaweiProjectStore(@Header("Authorization") token: String, @Body createProject: FormStoreProjectHuawei): Call<Void>
+
+    @GET("huaweiproject/{huawei_project_id}/stages/get")
+    fun pointProjectHuaweiTitleCode(@Header("Authorization") token: String,@Path("huawei_project_id") id: String):Call<List<ProjectHuaweiTitle>>
+
+    @GET("huaweiproject/{code}/code/get")
+    fun pointShowProjectHuaweiCode(@Header("Authorization") token: String,@Path("code") id: String):Call<ShowProjectHuaweiCode>
+
+    @POST("huaweiproject/stages/codes/store_image")
+    fun storeImagesProjectHuawei(@Header("Authorization") token: String, @Body photoRequest: PhotoRequest): Call<Void>
+
+    @GET("huaweiproject/{code}/images/get")
+    fun pointHistoryImageProjectHuawei(@Header("Authorization") token: String,@Path("code") id: String):Call<List<Photo>>
 
     @POST("storeDatosACHuawei")
     fun storeDatosACHuawei(@Header("Authorization") token:String, @Body formDataACHuawei: FormDataACHuawei): Call<Void>
