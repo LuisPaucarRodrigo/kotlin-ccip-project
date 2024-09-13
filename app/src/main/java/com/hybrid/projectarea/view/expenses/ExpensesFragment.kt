@@ -52,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.security.Permissions
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -201,10 +202,18 @@ class ExpensesFragment : Fragment() {
         bottomSheetDialog.show()
 
         bottomSheetView.btnGallery.setOnClickListener {
-            if (RequestPermissions.hasPermissions(requireContext(),request_permissions_gallery)) {
+            val apiPermissions = when {
+                Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU -> {
+                    request_permissions_gallery
+                }
+                else -> {
+                    request_permissions_gallery_api33
+                }
+            }
+            if (RequestPermissions.hasPermissions(requireContext(),apiPermissions)) {
                 pickPhotoFromGallery()
             } else {
-                requestPermissionLauncherCameraLocation.launch(request_permissions_gallery)
+                requestPermissionLauncherCameraLocation.launch(apiPermissions)
             }
             bottomSheetDialog.dismiss()
         }
@@ -347,7 +356,10 @@ class ExpensesFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         val cameraPermissionGranted = permissions[Manifest.permission.CAMERA] ?: false
-        val galleryPermissionGranted = permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
+        val galleryPermissionGranted = when {
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU -> permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
+            else -> permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+        }
 
         if (cameraPermissionGranted) {
             binding.formPreproject.isVisible = false
@@ -427,6 +439,10 @@ class ExpensesFragment : Fragment() {
 
         private val request_permissions_gallery = arrayOf(
             Manifest.permission.READ_MEDIA_IMAGES
+        )
+
+        private val request_permissions_gallery_api33 = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
     }
 }
