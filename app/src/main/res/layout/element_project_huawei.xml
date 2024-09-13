@@ -12,13 +12,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="8dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:weightSum="2">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/txtElement"
+                android:textSize="12sp"
+                android:text="DIU : " />
+
+            <TextView
+                android:id="@+id/diu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/txtElement"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="2.5dp"
+            android:weightSum="2">
 
             <TextView
                 android:layout_width="match_parent"
@@ -37,38 +57,11 @@
                 android:layout_weight="1"
                 android:textAlignment="textEnd" />
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:text="Elaborado : " />
-
-            <TextView
-                android:id="@+id/elaborated"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:weightSum="2">
 
             <TextView
                 android:layout_width="match_parent"
@@ -80,102 +73,6 @@
 
             <TextView
                 android:id="@+id/code"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:text="Nombre : " />
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:text="Direccion : " />
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:text="Referencia : " />
-
-            <TextView
-                android:id="@+id/reference"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="2.5dp"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/txtElement"
-                android:textSize="12sp"
-                android:text="Acceso : " />
-
-            <TextView
-                android:id="@+id/access"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/txtElement"

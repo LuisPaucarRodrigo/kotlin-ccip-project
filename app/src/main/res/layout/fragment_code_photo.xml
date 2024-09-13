@@ -6,19 +6,19 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:paddingHorizontal="20dp"
-    tools:context=".view.CodePhotoFragment">
+    tools:context=".view.preproject.CodePhotoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:weightSum="2"
         android:padding="8dp">
 
         <TextView
             android:id="@+id/code"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="13sp"
@@ -29,7 +29,7 @@
             android:id="@+id/status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="13sp"
