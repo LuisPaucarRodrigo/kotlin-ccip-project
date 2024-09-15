@@ -25,6 +25,8 @@ import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.GetProcessManuals
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.preproject.PreProjectFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -125,6 +127,10 @@ class ProcessManualsFragment : Fragment() {
                             binding.recyclerviewManuals.recyclerview.adapter = adapter
                         }
 
+                        override fun onProcessManualsNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@ProcessManualsFragment)
+                        }
+
                         override fun onProcessManualsFailed(errorMessage: String) {
                             binding.recyclerviewManuals.swipe.isRefreshing = false
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
@@ -167,6 +173,11 @@ class ProcessManualsFragment : Fragment() {
                                 }
                             }
                         }
+
+                        override fun onDownloadManualsNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@ProcessManualsFragment)
+                        }
+
                         override fun onDownloadManualsFailed(errorMessage: String) {
                             Toast.makeText(
                                 requireContext(),

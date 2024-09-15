@@ -19,6 +19,7 @@ import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -64,13 +65,12 @@ class CodePhotoFragment : Fragment() {
                         binding.shimmer.beforeViewElement.isVisible = false
                         binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
                         binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                        response.forEach{ item ->
-                            val element = PreprojectTitle(item.id?:"",item.type,item.preproject_codes)
-                            arrayList.add(element)
-                        }
-
-                        val adapter = AdapterPrepropjectTitle(arrayList)
+                        val adapter = AdapterPrepropjectTitle(response)
                         binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
+                    }
+
+                    override fun onCodePhotoPreProjectNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@CodePhotoFragment)
                     }
 
                     override fun onCodePhotoPreProjectFailed(errorMessage: String) {

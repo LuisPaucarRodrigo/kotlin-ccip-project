@@ -48,6 +48,8 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.utils.showDatePickerDialog
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -170,6 +172,10 @@ class ExpensesFragment : Fragment() {
                             Alert.alertSuccess(requireContext(), layoutInflater)
                             dataCleaning()
                             binding.send.buttonSend.isEnabled = true
+                        }
+
+                        override fun onExpenseFormNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@ExpensesFragment)
                         }
 
                         override fun onExpenseFormFailed(errorMessage: String) {

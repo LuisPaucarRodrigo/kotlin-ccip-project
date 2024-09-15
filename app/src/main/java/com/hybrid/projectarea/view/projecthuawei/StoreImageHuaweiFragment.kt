@@ -53,6 +53,8 @@ import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import com.hybrid.projectarea.view.preproject.RegisterPhotoFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -148,6 +150,10 @@ class StoreImageHuaweiFragment : Fragment() {
                         binding.send.buttonSend.isEnabled = true
                     }
 
+                    override fun onStoreImageProjectHuaweiNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@StoreImageHuaweiFragment)
+                    }
+
                     override fun onStoreImageProjectHuaweiFailed(errorMessage: String) {
                         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                             binding.send.buttonSend.isEnabled = true
@@ -194,6 +200,10 @@ class StoreImageHuaweiFragment : Fragment() {
                             binding.codePhoto.text = response.code
                             binding.codeStatus.text = if (response.code_status == 1) "En Proceso" else "Pendiente"
                             binding.codeDescription.text = response.description
+                        }
+
+                        override fun onShowprojectHuaweiCodeNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@StoreImageHuaweiFragment)
                         }
 
                         override fun onShowprojectHuaweiCodeFailed(errorMessage: String) {

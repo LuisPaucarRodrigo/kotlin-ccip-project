@@ -1,8 +1,6 @@
 package com.hybrid.projectarea.model
 
-import androidx.camera.core.processing.SurfaceProcessorNode.In
 import com.google.gson.annotations.SerializedName
-import java.util.Date
 
 data class LoginRequest(
     val dni: String,
@@ -74,6 +72,11 @@ data class CodePhotoDescription(
     val code: String,
     val description: String,
     val status: String,
+    val images: List<Images>
+)
+
+data class Images(
+    val url: String
 )
 
 data class Photo(
@@ -97,38 +100,6 @@ data class HuaweiSite(
 data class FormStoreProjectHuawei(
     val site: String,
     val diu: String,
-)
-
-data class FormDataACHuawei(
-    val power: String,
-    val concessionaire: String,
-    val supply: String,
-    val type: String,
-    val caliber: String,
-    val fuses: String,
-    val calibertg: String,
-    val itm: String,
-    val powere: String,
-    val brand: String,
-    val tankCapacity: String,
-    val typee: String,
-    val tableTransfer: String,
-    val capacity: String,
-    val fijacion: String,
-    val typet: String,
-    val section: String,
-    val itmMajor: String,
-    val rs: String,
-    val rt: String,
-    val st: String,
-    val r: String,
-    val s: String,
-    val t: String
-)
-
-data class NameRectifiers(
-    val id: String,
-    val brand:String,
 )
 
 data class FormProcessManuals(

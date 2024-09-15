@@ -1,20 +1,16 @@
 package com.hybrid.projectarea.api
 
-
 import com.hybrid.projectarea.model.ChecklistHistory
 import com.hybrid.projectarea.model.CodePhotoDescription
-import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.Download
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.model.ExpenseHistory
 import com.hybrid.projectarea.model.FolderArchiveResponse
-import com.hybrid.projectarea.model.FormDataACHuawei
 import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
-import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.PreprojectTitle
@@ -76,6 +72,8 @@ class AuthManager(private val apiService: ApiService) {
                         authListener.onUserSuccess(it)
                     }
 
+                } else if(response.code() == 401) {
+                    authListener.onUserNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -105,11 +103,16 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onPreProjectSuccess(it)
                     }
-//                        ?: run {
-//                        authListener.onPreProjectFailed()
-//                    }
+                } else if(response.code() == 401) {
+                    authListener.onPreProjectNoAuthenticated()
                 } else {
-                    authListener.onPreProjectFailed("")
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        JSONObject(errorBody).getString("error")
+                    } catch (e: JSONException) {
+                        "Ocurrió un error desconocido"
+                    }
+                    authListener.onPreProjectFailed(errorMessage)
                 }
             }
 
@@ -129,6 +132,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onPreProjectAddPhotoSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onPreProjectAddPhotoNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -161,6 +166,8 @@ class AuthManager(private val apiService: ApiService) {
 //                        ?: run {
 //                        authListener.onPreProjectFailed()
 //                    }
+                } else if(response.code() == 401) {
+                    authListener.onCodePhotoPreProjectNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -193,6 +200,8 @@ class AuthManager(private val apiService: ApiService) {
 //                        ?: run {
 //                        authListener.onPreProjectFailed()
 //                    }
+                } else if(response.code() == 401) {
+                    authListener.onCodePhotoDescriptionPreProjectNoAuthenticated()
                 } else {
                     authListener.onCodePhotoDesrriptionPreProjectFailed()
                 }
@@ -213,6 +222,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let { request ->
                         authListener.onRegisterPhotoSuccess(request)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onRegisterPhotoNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -245,6 +256,7 @@ class AuthManager(private val apiService: ApiService) {
 //                        ?: run {
 //                        authListener.onPreProjectFailed()
 //                    }
+
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -315,12 +327,14 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun logout(token: String, authListener: Logout) {
+    fun funlogout(token: String, authListener: Logout) {
         val call = apiService.logout(token)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onLogoutSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onLogoutNoAuthenticated()
                 } else {
                     authListener.onLogoutFailed()
                 }
@@ -344,6 +358,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onProjectHuaweiSuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onProjectHuaweiNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -372,6 +388,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onStoreProjectHuaweiSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onStoreProjectHuaweiNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -387,60 +405,6 @@ class AuthManager(private val apiService: ApiService) {
                 authListener.onStoreProjectHuaweiFailed("${t.message}")
             }
 
-        })
-    }
-
-    fun funFormDataACHuawei(
-        token: String,
-        formDataACHuawei: FormDataACHuawei,
-        authListener: inFormDataACHuawei
-    ) {
-        val call = apiService.storeDatosACHuawei(token, formDataACHuawei)
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    authListener.onStoreFormDataACHuaweiSuccess()
-                } else {
-                    authListener.onStoreFormDataACHuaweiFailed()
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                authListener.onStoreFormDataACHuaweiFailed()
-            }
-        })
-    }
-
-    fun funGetRectifiersProjectHuawei(
-        token: String,
-        id: String,
-        authListener: inGetRectifiersProjectHuawei
-    ) {
-        val call = apiService.rectifiersProjectHuawei(token, id)
-        call.enqueue(object : Callback<List<NameRectifiers>> {
-            override fun onResponse(
-                call: Call<List<NameRectifiers>>,
-                response: Response<List<NameRectifiers>>
-            ) {
-                if (response.isSuccessful) {
-                    val authToken = response.body()
-                    authToken?.let {
-                        authListener.onRectifiersProjectHuaweiSuccess(it)
-                    }
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrio un error desconocido"
-                    }
-                    authListener.onRectifiersProjectHuaweiFailed(errorMessage)
-                }
-            }
-
-            override fun onFailure(call: Call<List<NameRectifiers>>, t: Throwable) {
-                authListener.onRectifiersProjectHuaweiFailed("${t.message}")
-            }
         })
     }
 
@@ -460,6 +424,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onProcessManualsSuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onProcessManualsNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -486,6 +452,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onDownloadManualsSuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onDownloadManualsNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -513,8 +481,9 @@ class AuthManager(private val apiService: ApiService) {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-
                     authListener.onStoreCheckListToolsSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onStoreCheckListToolsNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -543,6 +512,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onStoreCheckListMobileSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onStoreCheckListMobileNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -571,6 +542,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onStoreCheckListEppsSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onStoreCheckListEppsNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -595,6 +568,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onStoreCheckListDaySuccess()
+                } else if(response.code() == 401) {
+                    authListener.onStoreCheckListDayNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -625,6 +600,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onStoreCheckListHistorySuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onStoreCheckListHistoryNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -649,6 +626,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onExpenseFormSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onExpenseFormNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -679,6 +658,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onExpenseHistorySuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onExpenseHistoryNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -709,6 +690,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onProjectHuaweiTitleCodeSuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onProjectHuaweiTitleCodeNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -739,6 +722,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onShowprojectHuaweiCodeSuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onShowprojectHuaweiCodeNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -763,6 +748,8 @@ class AuthManager(private val apiService: ApiService) {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     authListener.onStoreImageProjectHuaweiSuccess()
+                } else if(response.code() == 401) {
+                    authListener.onStoreImageProjectHuaweiNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -789,6 +776,8 @@ class AuthManager(private val apiService: ApiService) {
                     authToken?.let {
                         authListener.onRegisterPhotoSuccess(it)
                     }
+                } else if(response.code() == 401) {
+                    authListener.onRegisterPhotoNoAuthenticated()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMessage = try {
@@ -813,31 +802,37 @@ class AuthManager(private val apiService: ApiService) {
 
     interface Users {
         fun onUserSuccess(response: UsersResponse)
+        fun onUserNoAuthenticated()
         fun onUserFailed(errorMessage: String)
     }
 
     interface PreProjectListener {
         fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>)
+        fun onPreProjectNoAuthenticated()
         fun onPreProjectFailed(error: String)
     }
 
     interface inCodePhotoPreProject {
         fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>)
+        fun onCodePhotoPreProjectNoAuthenticated()
         fun onCodePhotoPreProjectFailed(errorMessage: String)
     }
 
     interface inCodePhotoDescription {
         fun onCodePhotoDescriptionPreProjectSuccess(response: CodePhotoDescription)
+        fun onCodePhotoDescriptionPreProjectNoAuthenticated()
         fun onCodePhotoDesrriptionPreProjectFailed()
     }
 
     interface PreProjectAddPhoto {
         fun onPreProjectAddPhotoSuccess()
+        fun onPreProjectAddPhotoNoAuthenticated()
         fun onPreProjectAddPhotoFailed(errorMessage: String)
     }
 
     interface inRegisterPhoto {
         fun onRegisterPhotoSuccess(response: List<Photo>)
+        fun onRegisterPhotoNoAuthenticated()
         fun onRegisterPhotoFailed(errorMessage: String)
     }
 
@@ -858,86 +853,91 @@ class AuthManager(private val apiService: ApiService) {
 
     interface Logout {
         fun onLogoutSuccess()
+        fun onLogoutNoAuthenticated()
         fun onLogoutFailed()
     }
 
     interface inGetProjectHuawei {
         fun onProjectHuaweiSuccess(response: List<ProjectHuawei>)
+        fun onProjectHuaweiNoAuthenticated()
         fun onProjectHuaweiFailed(errorMessage: String)
     }
 
     interface inStoreProjectHuawei {
         fun onStoreProjectHuaweiSuccess()
+        fun onStoreProjectHuaweiNoAuthenticated()
         fun onStoreProjectHuaweiFailed(errorMessage: String)
-    }
-
-    interface inFormDataACHuawei {
-        fun onStoreFormDataACHuaweiSuccess()
-        fun onStoreFormDataACHuaweiFailed()
-    }
-
-    interface inGetRectifiersProjectHuawei {
-        fun onRectifiersProjectHuaweiSuccess(response: List<NameRectifiers>)
-        fun onRectifiersProjectHuaweiFailed(errorMessage: String)
     }
 
     interface inGetProcessManuals {
         fun onProcessManualsSuccess(response: FolderArchiveResponse)
+        fun onProcessManualsNoAuthenticated()
         fun onProcessManualsFailed(errorMessage: String)
     }
 
     interface inGetDownloadManuls {
         fun onDownloadManualsSuccess(response: ResponseBody)
+        fun onDownloadManualsNoAuthenticated()
         fun onDownloadManualsFailed(errorMessage: String)
     }
 
     interface incheckListTools {
         fun onStoreCheckListToolsSuccess()
+        fun onStoreCheckListToolsNoAuthenticated()
         fun onStoreCheckListToolsFailed(errorMessage: String)
     }
 
     interface inCheckListMovil {
         fun onStoreCheckListMobileSuccess()
+        fun onStoreCheckListMobileNoAuthenticated()
         fun onStoreCheckListMobileFailed(errorMessage: String)
     }
 
     interface inCheckListEpps {
         fun onStoreCheckListEppsSuccess()
+        fun onStoreCheckListEppsNoAuthenticated()
         fun onStoreCheckListEppsFailed(errorMessage: String)
     }
 
     interface inCheckListDay {
         fun onStoreCheckListDaySuccess()
+        fun onStoreCheckListDayNoAuthenticated()
         fun onStoreCheckListDayFailed(errorMessage: String)
     }
 
     interface inCheckListHistory {
         fun onStoreCheckListHistorySuccess(response: List<ChecklistHistory>)
+        fun onStoreCheckListHistoryNoAuthenticated()
         fun onStoreCheckListHistoryFailed(errorMessage: String)
     }
 
     interface inExpenseForm {
         fun onExpenseFormSuccess()
+        fun onExpenseFormNoAuthenticated()
         fun onExpenseFormFailed(errorMessage: String)
     }
 
     interface inExpenseHistory {
         fun onExpenseHistorySuccess(response: List<ExpenseHistory>)
+        fun onExpenseHistoryNoAuthenticated()
         fun onExpenseHistoryFailed(errorMessage: String)
     }
 
     interface inProjectHuaweiTitleCode {
         fun onProjectHuaweiTitleCodeSuccess(response: List<ProjectHuaweiTitle>)
+        fun onProjectHuaweiTitleCodeNoAuthenticated()
         fun onProjectHuaweiTitleCodeFailed(errorMessage: String)
     }
 
     interface inShowProjectHuaweiCode {
         fun onShowprojectHuaweiCodeSuccess(response: ShowProjectHuaweiCode)
+        fun onShowprojectHuaweiCodeNoAuthenticated()
         fun onShowprojectHuaweiCodeFailed(errorMessage: String)
     }
 
     interface inStoreImageProjectHuawei {
         fun onStoreImageProjectHuaweiSuccess()
+        fun onStoreImageProjectHuaweiNoAuthenticated()
         fun onStoreImageProjectHuaweiFailed(errorMessage: String)
     }
 }

@@ -2,18 +2,15 @@ package com.hybrid.projectarea.api
 
 import com.hybrid.projectarea.model.ChecklistHistory
 import com.hybrid.projectarea.model.CodePhotoDescription
-import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.Download
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.model.ExpenseHistory
 import com.hybrid.projectarea.model.FolderArchiveResponse
-import com.hybrid.projectarea.model.FormDataACHuawei
 import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
-import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 
 import com.hybrid.projectarea.model.PhotoRequest
@@ -90,12 +87,6 @@ interface ApiService {
 
     @GET("huaweiproject/{code}/images/get")
     fun pointHistoryImageProjectHuawei(@Header("Authorization") token: String,@Path("code") id: String):Call<List<Photo>>
-
-    @POST("storeDatosACHuawei")
-    fun storeDatosACHuawei(@Header("Authorization") token:String, @Body formDataACHuawei: FormDataACHuawei): Call<Void>
-
-    @GET("RectifiersHuawei/{id}")
-    fun rectifiersProjectHuawei(@Header("Authorization") token:String,@Path("id") id:String): Call<List<NameRectifiers>>
 
     @POST("processmanuals/index")
     fun getProcessManuals(@Header("Authorization") token: String, @Body formDataACHuawei: FormProcessManuals): Call<FolderArchiveResponse>

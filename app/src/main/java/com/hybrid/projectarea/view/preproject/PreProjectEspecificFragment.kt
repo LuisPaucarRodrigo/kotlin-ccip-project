@@ -1,9 +1,12 @@
 package com.hybrid.projectarea.view.preproject
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Environment
@@ -15,6 +18,7 @@ import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -31,6 +35,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
@@ -41,9 +47,11 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentPreProjectEspecificBinding
+import com.hybrid.projectarea.databinding.PhotoCodeBinding
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
+import com.hybrid.projectarea.model.Images
 import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
@@ -52,6 +60,7 @@ import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -149,6 +158,10 @@ class PreProjectEspecificFragment : Fragment() {
                             binding.send.buttonSend.isEnabled = true
                         }
 
+                        override fun onPreProjectAddPhotoNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@PreProjectEspecificFragment)
+                        }
+
                         override fun onPreProjectAddPhotoFailed(errorMessage: String) {
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
                                 .show()
@@ -166,6 +179,8 @@ class PreProjectEspecificFragment : Fragment() {
     }
 
     private fun apiRequestPreProject() {
+        val arrayList = ArrayList<Images>()
+        binding.recyclerImages.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
@@ -180,6 +195,20 @@ class PreProjectEspecificFragment : Fragment() {
                             binding.codePhoto.text = response.code
                             binding.codeStatus.text = response.status
                             binding.codeDescription.text = response.description
+                            val adapter = AdapterReferenceImage(
+                                response.images,
+                                object : AdapterReferenceImage.OnItemClickListener {
+                                    override fun onItemClick(position: Int) {
+                                        val item = response.images[position]
+                                        showImageDialog(item.url)
+                                    }
+                                }
+                            )
+                            binding.recyclerImages.adapter = adapter
+                        }
+
+                        override fun onCodePhotoDescriptionPreProjectNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@PreProjectEspecificFragment)
                         }
 
                         override fun onCodePhotoDesrriptionPreProjectFailed() {
@@ -196,6 +225,26 @@ class PreProjectEspecificFragment : Fragment() {
                 }
             }
         }
+    }
+
+    // Función para mostrar la imagen ampliada en un Dialog
+    private fun showImageDialog(imageUrl: String) {
+        val builder = AlertDialog.Builder(requireActivity())
+        val alertDialogBinding = PhotoCodeBinding.inflate(layoutInflater)
+        val dialogView = alertDialogBinding.root
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+
+        // Cargar la imagen ampliada
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .placeholder(R.drawable.baseline_downloading_24)
+            .error(R.drawable.baseline_error_24)
+            .into(alertDialogBinding.photo)
+
     }
 
     private fun selectionCamera() {

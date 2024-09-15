@@ -1,20 +1,25 @@
 package com.hybrid.projectarea.view.preproject
 
+import android.app.Dialog
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.model.Images
 
-class AdapterPreProjectElement (private var listaElementos:List<ElementPreProjectRecyclerView>,private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterPreProjectElement.ViewHolder>() {
+class AdapterReferenceImage(private var listaElementos: List<Images>,private val listener: OnItemClickListener):
+    RecyclerView.Adapter<AdapterReferenceImage.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
-        val code = itemView.findViewById<TextView>(R.id.code)!!
-        val description = itemView.findViewById<TextView>(R.id.description)!!
-        val observation = itemView.findViewById<TextView>(R.id.observation)!!
-        val datevisit = itemView.findViewById<TextView>(R.id.datevisit)!!
+        val image = itemView.findViewById<ImageView>(R.id.image)
         init {
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -26,15 +31,16 @@ class AdapterPreProjectElement (private var listaElementos:List<ElementPreProjec
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.elementpreprojectrecycler, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.element_reference_image, parent, false)
         return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.code.text= listaElementos[position].code
-        holder.description.text= listaElementos[position].description
-        holder.observation.text= listaElementos[position].observation
-        holder.datevisit.text= listaElementos[position].date
+        Glide.with(holder.itemView.context)
+            .load(listaElementos[position].url)
+            .placeholder(R.drawable.baseline_downloading_24)
+            .error(R.drawable.baseline_error_24)
+            .into(holder.image)
     }
 
     override fun getItemCount(): Int {

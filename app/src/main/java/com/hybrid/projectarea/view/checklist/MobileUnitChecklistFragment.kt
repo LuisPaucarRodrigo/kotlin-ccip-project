@@ -39,6 +39,7 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -280,6 +281,10 @@ class MobileUnitChecklistFragment : Fragment() {
                             Alert.alertSuccess(requireContext(), layoutInflater)
                             dataCleaning()
                             binding.send.buttonSend.isEnabled = true
+                        }
+
+                        override fun onStoreCheckListMobileNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@MobileUnitChecklistFragment)
                         }
 
                         override fun onStoreCheckListMobileFailed(errorMessage: String) {

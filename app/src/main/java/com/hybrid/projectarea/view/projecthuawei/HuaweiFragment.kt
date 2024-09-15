@@ -18,7 +18,8 @@ import com.hybrid.projectarea.databinding.FragmentHuaweiBinding
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.view.RectifiersFragment
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,6 +85,10 @@ class HuaweiFragment : Fragment() {
                         }
                     })
                     binding.recyclerviewHuawei.recyclerview.adapter = adapter
+                }
+
+                override fun onProjectHuaweiNoAuthenticated() {
+                    DeleteTokenAndCloseSession(this@HuaweiFragment)
                 }
 
                 override fun onProjectHuaweiFailed(errorMessage: String) {

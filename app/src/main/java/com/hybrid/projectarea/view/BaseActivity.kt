@@ -54,6 +54,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    fun hideToolbar(){
+        binding.mitoolbar.root.isVisible = false
+        binding.navView.isVisible = true
+    }
+
     fun requestUser(){
         binding.mitoolbar.root.isVisible = true
         binding.navView.isVisible = true
@@ -79,6 +84,16 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         nameheader.text = "Nombre: ${ response.name }"
                         nameheaderdni.text = "Dni: ${ response.dni }"
                         nameheaderemail.text = "Email: ${ response.email }"
+                    }
+
+                    override fun onUserNoAuthenticated() {
+                        lifecycleScope.launch {
+                            deleteTokenFromDataStore()
+                        }
+                        binding.mitoolbar.root.isVisible = false
+                        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+                        transaction.replace(R.id.contenedor, AuthFragment())
+                            .commit()
                     }
 
                     override fun onUserFailed(errorMessage: String) {
@@ -145,7 +160,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
                 val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                 val authManager = AuthManager(apiService)
-                authManager.logout(token, object : AuthManager.Logout {
+                authManager.funlogout(token, object : AuthManager.Logout {
                     override fun onLogoutSuccess() {
                         lifecycleScope.launch {
                             deleteTokenFromDataStore()
@@ -154,6 +169,10 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
                         transaction.replace(R.id.contenedor, AuthFragment())
                             .commit()
+                    }
+
+                    override fun onLogoutNoAuthenticated() {
+                        TODO("Not yet implemented")
                     }
 
                     override fun onLogoutFailed () {

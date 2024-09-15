@@ -18,6 +18,7 @@ import com.hybrid.projectarea.databinding.FragmentChecklistHistoryBinding
 import com.hybrid.projectarea.model.ChecklistHistory
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -95,6 +96,10 @@ class ChecklistHistoryFragment : Fragment() {
                         }
                         val adapter = AdapterChecklistHistory(arrayList)
                         binding.recyclerviewChecklistHistory.recyclerview.adapter = adapter
+                    }
+
+                    override fun onStoreCheckListHistoryNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@ChecklistHistoryFragment)
                     }
 
                     override fun onStoreCheckListHistoryFailed(errorMessage: String) {

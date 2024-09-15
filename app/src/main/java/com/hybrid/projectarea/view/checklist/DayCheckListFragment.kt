@@ -20,6 +20,8 @@ import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.checklistDay
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -119,6 +121,10 @@ class DayCheckListFragment : Fragment() {
                             Alert.alertSuccess(requireContext(), layoutInflater)
                             dataCleaning()
                             binding.send.buttonSend.isEnabled = true
+                        }
+
+                        override fun onStoreCheckListDayNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@DayCheckListFragment)
                         }
 
                         override fun onStoreCheckListDayFailed(errorMessage: String) {

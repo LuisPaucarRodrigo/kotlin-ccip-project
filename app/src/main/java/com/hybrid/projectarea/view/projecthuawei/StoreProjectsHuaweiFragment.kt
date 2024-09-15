@@ -1,25 +1,20 @@
 package com.hybrid.projectarea.view.projecthuawei
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentStoreProjectsHuaweiBinding
-import com.hybrid.projectarea.databinding.SuccessfulRequestBinding
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,6 +55,10 @@ class StoreProjectsHuaweiFragment : Fragment() {
                 override fun onStoreProjectHuaweiSuccess() {
                     dataCleaning()
                     Alert.alertSuccess(requireContext(),layoutInflater)
+                }
+
+                override fun onStoreProjectHuaweiNoAuthenticated() {
+                    DeleteTokenAndCloseSession(this@StoreProjectsHuaweiFragment)
                 }
 
                 override fun onStoreProjectHuaweiFailed(errorMessage: String) {

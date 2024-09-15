@@ -17,6 +17,8 @@ import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.ProjectHuaweiTitle
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import com.hybrid.projectarea.view.preproject.AdapterPrepropjectTitle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,6 +72,10 @@ class ProjectHuaweiTitleCodeFragment : Fragment() {
 
                         val adapter = AdapterProjectHuaweiTitle(arrayList)
                         binding.recyclerviewProjectHuaweiTitleCode.recyclerview.adapter = adapter
+                    }
+
+                    override fun onProjectHuaweiTitleCodeNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@ProjectHuaweiTitleCodeFragment)
                     }
 
                     override fun onProjectHuaweiTitleCodeFailed(errorMessage: String) {

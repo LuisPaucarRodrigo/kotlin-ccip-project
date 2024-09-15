@@ -19,6 +19,8 @@ import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.checklistEpps
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -124,6 +126,10 @@ class EppsCheckListFragment : Fragment() {
                             Alert.alertSuccess(requireContext(), layoutInflater)
                             dataCleaning()
                             binding.send.buttonSend.isEnabled = true
+                        }
+
+                        override fun onStoreCheckListEppsNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@EppsCheckListFragment)
                         }
 
                         override fun onStoreCheckListEppsFailed(errorMessage: String) {

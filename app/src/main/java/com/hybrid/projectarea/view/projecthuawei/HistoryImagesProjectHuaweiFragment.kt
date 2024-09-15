@@ -12,17 +12,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentHistoryImagesProjectHuaweiBinding
-import com.hybrid.projectarea.databinding.FragmentRegisterPhotoBinding
 import com.hybrid.projectarea.databinding.PhotoCodeBinding
 import com.hybrid.projectarea.model.Photo
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import com.hybrid.projectarea.view.preproject.AdapterRegisterPhoto
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,13 +85,19 @@ class HistoryImagesProjectHuaweiFragment : Fragment() {
                                 val dialog = builder.create()
                                 dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                                 dialog.show()
-                                Picasso.get().load(item.image).into(alertDialogBinding.photo.photoPreview)
+                                Glide.with(requireContext())
+                                    .load(item.image)
+                                    .into(alertDialogBinding.photo)
                                 alertDialogBinding.observation.text = item.observation?:""
                             }
                         })
 
                         binding.recyclerviewHistoryImagesProjectHuawei.recyclerview.adapter = adapter
 
+                    }
+
+                    override fun onRegisterPhotoNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@HistoryImagesProjectHuaweiFragment)
                     }
 
                     override fun onRegisterPhotoFailed(errorMessage: String) {

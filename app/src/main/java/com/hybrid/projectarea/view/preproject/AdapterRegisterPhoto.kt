@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.model.Photo
 
-class AdapterRegisterPhoto (private var listaElementos:ArrayList<Photo>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterRegisterPhoto.ViewHolder>() {
+class AdapterRegisterPhoto (private var listaElementos:List<Photo>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterRegisterPhoto.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val state = itemView.findViewById<TextView>(R.id.state)!!
@@ -29,8 +29,7 @@ class AdapterRegisterPhoto (private var listaElementos:ArrayList<Photo>, private
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.state.text= listaElementos[position].state
-        when(listaElementos[position].state) {
+        when(listaElementos[position].state ?: "") {
             "" -> {
                 holder.state.setTextColor(Color.LTGRAY)
                 holder.state.text = "En proceso"
