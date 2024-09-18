@@ -37,7 +37,7 @@ class AdapterReferenceImage(private var listaElementos: List<Images>,private val
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(holder.itemView.context)
-            .load(listaElementos[position].url)
+            .load(listaElementos[position].image)
             .placeholder(R.drawable.baseline_downloading_24)
             .error(R.drawable.baseline_error_24)
             .into(holder.image)

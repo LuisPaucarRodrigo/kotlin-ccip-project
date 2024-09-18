@@ -76,7 +76,7 @@ data class CodePhotoDescription(
 )
 
 data class Images(
-    val url: String
+    val image: String
 )
 
 data class Photo(

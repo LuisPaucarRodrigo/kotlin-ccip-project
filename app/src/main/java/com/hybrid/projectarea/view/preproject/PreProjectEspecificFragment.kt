@@ -200,7 +200,7 @@ class PreProjectEspecificFragment : Fragment() {
                                 object : AdapterReferenceImage.OnItemClickListener {
                                     override fun onItemClick(position: Int) {
                                         val item = response.images[position]
-                                        showImageDialog(item.url)
+                                        showImageDialog(item.image)
                                     }
                                 }
                             )
@@ -290,6 +290,7 @@ class PreProjectEspecificFragment : Fragment() {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
             imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
             val orientationEventListener = object : OrientationEventListener(requireContext()) {
@@ -308,7 +309,9 @@ class PreProjectEspecificFragment : Fragment() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = CameraSelector.Builder()
+                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                .build()
             try {
                 cameraProvider.unbindAll()
                 val camera = cameraProvider.bindToLifecycle(
