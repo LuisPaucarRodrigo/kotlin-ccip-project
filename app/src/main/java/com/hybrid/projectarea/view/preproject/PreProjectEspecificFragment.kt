@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
@@ -18,11 +19,14 @@ import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -67,6 +71,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class PreProjectEspecificFragment : Fragment() {
 
@@ -179,7 +186,6 @@ class PreProjectEspecificFragment : Fragment() {
     }
 
     private fun apiRequestPreProject() {
-        val arrayList = ArrayList<Images>()
         binding.recyclerImages.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -195,16 +201,20 @@ class PreProjectEspecificFragment : Fragment() {
                             binding.codePhoto.text = response.code
                             binding.codeStatus.text = response.status
                             binding.codeDescription.text = response.description
-                            val adapter = AdapterReferenceImage(
-                                response.images,
-                                object : AdapterReferenceImage.OnItemClickListener {
-                                    override fun onItemClick(position: Int) {
-                                        val item = response.images[position]
-                                        showImageDialog(item.image)
+
+                            if (response.images.isNotEmpty()) {
+                                binding.imageReference.isVisible = true
+                                val adapter = AdapterReferenceImage(
+                                    response.images,
+                                    object : AdapterReferenceImage.OnItemClickListener {
+                                        override fun onItemClick(position: Int) {
+                                            val item = response.images[position]
+                                            showImageDialog(item.image)
+                                        }
                                     }
-                                }
-                            )
-                            binding.recyclerImages.adapter = adapter
+                                )
+                                binding.recyclerImages.adapter = adapter
+                            }
                         }
 
                         override fun onCodePhotoDescriptionPreProjectNoAuthenticated() {
@@ -246,7 +256,6 @@ class PreProjectEspecificFragment : Fragment() {
             .into(alertDialogBinding.photo)
 
     }
-
     private fun selectionCamera() {
         HideKeyboard.hideKeyboard(binding.root)
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
@@ -276,20 +285,36 @@ class PreProjectEspecificFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return AspectRatio.RATIO_4_3
+        }
+        return AspectRatio.RATIO_16_9
+    }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+
+        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowMetrics = windowManager.currentWindowMetrics
+        val bounds = windowMetrics.bounds
+        val width = bounds.width()
+        val height = bounds.height()
+        val screenAspectRatio = aspectRatio(width, height)
 
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
             val preview = Preview.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
             imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
@@ -309,9 +334,9 @@ class PreProjectEspecificFragment : Fragment() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
 
-            val cameraSelector = CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build()
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+
             try {
                 cameraProvider.unbindAll()
                 val camera = cameraProvider.bindToLifecycle(
@@ -488,5 +513,7 @@ class PreProjectEspecificFragment : Fragment() {
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 }

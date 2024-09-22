@@ -54,11 +54,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun hideToolbar(){
-        binding.mitoolbar.root.isVisible = false
-        binding.navView.isVisible = true
-    }
-
     fun requestUser(){
         binding.mitoolbar.root.isVisible = true
         binding.navView.isVisible = true
@@ -127,7 +122,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_processManuals -> openFragment(ProcessManualsFragment())
             R.id.nav_camera -> openFragment(CameraFragment())
             //            R.id.nav_project -> openFragment(ProjectFragment())
-            R.id.nav_huawei -> openFragment(HuaweiFragment())
+//            R.id.nav_huawei -> openFragment(HuaweiFragment())
             R.id.nav_logout -> cerrarsesion()
         }
         binding.layoutLateral.closeDrawer(GravityCompat.START)

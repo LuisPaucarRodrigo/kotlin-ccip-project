@@ -90,7 +90,7 @@ class ExpensesFragment : Fragment() {
         binding.zone.adapter = adapterZone
 
         val optionsExpense =
-            arrayOf("Hospedaje", "Movilidad", "Peaje", "Fletes", "Consumibles", "Otros")
+            arrayOf("Hospedaje", "Pasaje Interprovincial", "Peaje","Taxis y Pasajes" ,"Mensajeria", "Consumibles","Bandeos", "Otros")
         val adapterExpense =
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, optionsExpense)
         binding.typeExpense.adapter = adapterExpense

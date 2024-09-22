@@ -81,23 +81,9 @@ class CameraFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         selectionCamera()
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val windowMetrics = windowManager.currentWindowMetrics
-        val bounds = windowMetrics.bounds
-        val width = bounds.width()
-        val height = bounds.height()
-        println("width")
-        println(width)
-        println("height")
-        println(height)
-        println("width")
-        println(width-100)
-        println("height")
-        println(height-100)
         binding.captureButton.setOnClickListener {
             takePhoto()
         }
@@ -109,7 +95,6 @@ class CameraFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun selectionCamera() {
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
             checkGpsStatus().addOnSuccessListener {
@@ -144,9 +129,9 @@ class CameraFragment : Fragment() {
         return AspectRatio.RATIO_16_9
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+
         val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val windowMetrics = windowManager.currentWindowMetrics
         val bounds = windowMetrics.bounds
@@ -252,7 +237,6 @@ class CameraFragment : Fragment() {
         file = File.createTempFile("IMG_${System.currentTimeMillis()}_", ".png", dir)
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private val requestPermissionLauncherCameraLocation = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->

@@ -7,8 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-//    private const val BASE_URL = "https://erm.ccip.conproco.ccip.com.pe/api/"
-    private const val BASE_URL = "http://192.168.25.19:8000/api/"
+    private const val BASE_URL = "https://erm.ccip.conproco.ccip.com.pe/api/"
+//    private const val BASE_URL = "http://192.168.25.19:8000/api/"
 
     private val httpClient by lazy {
         OkHttpClient.Builder()
