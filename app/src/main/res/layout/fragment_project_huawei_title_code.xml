@@ -6,7 +6,7 @@
     android:background="@color/bg"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    tools:context=".view.projecthuawei.ProjectHuaweiTitleCodeFragment">
+    tools:context=".ui.projecthuawei.ProjectHuaweiTitleCodeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

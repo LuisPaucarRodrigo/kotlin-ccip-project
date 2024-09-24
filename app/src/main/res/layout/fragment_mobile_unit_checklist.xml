@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg"
     android:orientation="vertical"
-    tools:context=".view.checklist.MobileUnitChecklistFragment">
+    tools:context=".ui.checklist.MobileUnitChecklistFragment">
 
     <LinearLayout
         android:id="@+id/formPreproject"

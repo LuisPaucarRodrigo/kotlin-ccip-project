@@ -6,7 +6,7 @@
     android:paddingHorizontal="20dp"
     android:orientation="vertical"
     android:background="@color/bg"
-    tools:context=".view.projecthuawei.HuaweiFragment">
+    tools:context=".ui.projecthuawei.HuaweiFragment">
 
     <ImageButton
         android:id="@+id/addProjectHuawei"

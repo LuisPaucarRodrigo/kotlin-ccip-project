@@ -2,7 +2,7 @@ package com.hybrid.projectarea.model
 
 import android.content.Context
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.hybrid.projectarea.view.dataStore
+import com.hybrid.projectarea.ui.dataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 

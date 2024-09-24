@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/DayCheckListFragment">
+
+<!--    <fragment-->
+<!--        android:id="@+id/DayCheckListFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.checklist.DayCheckListFragment"-->
+<!--        tools:layout="@layout/fragment_day_check_list" >-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/EppsCheckListFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.checklist.EppsCheckListFragment"-->
+<!--        tools:layout="@layout/fragment_epps_check_list" >-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/MobileCheckListFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.checklist.MobileUnitChecklistFragment"-->
+<!--        tools:layout="@layout/fragment_mobile_unit_checklist" >-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/ToolsCheckListFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.checklist.ToolsCheckListFragment"-->
+<!--        tools:layout="@layout/fragment_tools_check_list" >-->
+<!--    </fragment>-->
+
+</navigation>

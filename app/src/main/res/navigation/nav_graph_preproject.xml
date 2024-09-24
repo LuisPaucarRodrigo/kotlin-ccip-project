@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/PreProjectFragment">
+
+<!--    <fragment-->
+<!--        android:id="@+id/PreProjectFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.preproject.PreProjectFragment"-->
+<!--        tools:layout="@layout/fragment_pre_project" >-->
+<!--        <action-->
+<!--            android:id="@+id/to_codePhotoFragment"-->
+<!--            app:destination="@id/CodePhotoFragment" />-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/CodePhotoFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.preproject.CodePhotoFragment"-->
+<!--        tools:layout="@layout/fragment_code_photo" >-->
+<!--        <action-->
+<!--            android:id="@+id/to_preProjectEspecificFragment"-->
+<!--            app:destination="@id/PreProjectEspecificFragment" />-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/PreProjectEspecificFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.preproject.PreProjectEspecificFragment"-->
+<!--        tools:layout="@layout/fragment_pre__project_especific" >-->
+<!--        <action-->
+<!--            android:id="@+id/to_registerPhotoFragment"-->
+<!--            app:destination="@id/RegisterPhotoFragment" />-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/RegisterPhotoFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.preproject.RegisterPhotoFragment"-->
+<!--        tools:layout="@layout/fragment_register_photo" >-->
+<!--    </fragment>-->
+
+</navigation>

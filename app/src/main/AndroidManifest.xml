@@ -38,13 +38,12 @@
         </provider>
 
         <activity
-            android:name=".view.BaseActivity"
+            android:name=".ui.BaseActivity"
             android:exported="true"
             android:theme="@style/Theme.ProjectArea"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -3,26 +3,174 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/AuthFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.hybrid.projectarea.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first" >
-
+        android:id="@+id/AuthFragment"
+        android:name="com.hybrid.projectarea.ui.auth.AuthFragment"
+        tools:layout="@layout/fragment_auth" >
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/to_PreProjectFragment"
+            app:destination="@id/PreProjectFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.hybrid.projectarea.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second" >
+        android:id="@+id/PreProjectFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.PreProjectFragment"
+        tools:layout="@layout/fragment_pre_project" >
+        <action
+            android:id="@+id/to_CodePhotoFragment"
+            app:destination="@id/CodePhotoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CodePhotoFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.CodePhotoFragment"
+        tools:layout="@layout/fragment_code_photo" >
+        <action
+            android:id="@+id/to_PreProjectEspecificFragment"
+            app:destination="@id/PreProjectEspecificFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PreProjectEspecificFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.PreProjectEspecificFragment"
+        tools:layout="@layout/fragment_pre__project_especific" >
+        <action
+            android:id="@+id/to_RegisterPhotoFragment"
+            app:destination="@id/RegisterPhotoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/RegisterPhotoFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.RegisterPhotoFragment"
+        tools:layout="@layout/fragment_register_photo" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/ExpensesFragment"
+        android:name="com.hybrid.projectarea.ui.expenses.ExpensesFragment"
+        tools:layout="@layout/fragment_expenses" >
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/to_HistoryExpensesFragment"
+            app:destination="@id/HistoryExpensesFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/HistoryExpensesFragment"
+        android:name="com.hybrid.projectarea.ui.expenses.HistoryExpenseFragment"
+        tools:layout="@layout/fragment_history_expense" >
+        <action
+            android:id="@+id/to_ExpensesFragment"
+            app:destination="@id/ExpensesFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DayCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.DayCheckListFragment"
+        tools:layout="@layout/fragment_day_check_list" >
+        <action
+            android:id="@+id/action_DayCheckListFragment_to_MobileCheckListFragment"
+            app:destination="@id/MobileCheckListFragment" />
+        <action
+            android:id="@+id/action_DayCheckListFragment_to_EppsCheckListFragment"
+            app:destination="@id/EppsCheckListFragment" />
+        <action
+            android:id="@+id/action_DayCheckListFragment_to_ToolsCheckListFragment"
+            app:destination="@id/ToolsCheckListFragment" />
+        <action
+            android:id="@+id/action_DayCheckListFragment_to_HistoryCheckListFragment"
+            app:destination="@id/HistoryCheckListFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/EppsCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.EppsCheckListFragment"
+        tools:layout="@layout/fragment_epps_check_list" >
+        <action
+            android:id="@+id/action_EppsCheckListFragment_to_MobileCheckListFragment"
+            app:destination="@id/MobileCheckListFragment" />
+        <action
+            android:id="@+id/action_EppsCheckListFragment_to_DayCheckListFragment"
+            app:destination="@id/DayCheckListFragment" />
+        <action
+            android:id="@+id/action_EppsCheckListFragment_to_ToolsCheckListFragment"
+            app:destination="@id/ToolsCheckListFragment" />
+        <action
+            android:id="@+id/action_EppsCheckListFragment_to_HistoryCheckListFragment"
+            app:destination="@id/HistoryCheckListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/MobileCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.MobileUnitChecklistFragment"
+        tools:layout="@layout/fragment_mobile_unit_checklist" >
+        <action
+            android:id="@+id/action_MobileCheckListFragment_to_DayCheckListFragment"
+            app:destination="@id/DayCheckListFragment" />
+        <action
+            android:id="@+id/action_MobileCheckListFragment_to_EppsCheckListFragment"
+            app:destination="@id/EppsCheckListFragment" />
+        <action
+            android:id="@+id/action_MobileCheckListFragment_to_ToolsCheckListFragment"
+            app:destination="@id/ToolsCheckListFragment" />
+        <action
+            android:id="@+id/action_MobileCheckListFragment_to_HistoryCheckListFragment"
+            app:destination="@id/HistoryCheckListFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/ToolsCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.ToolsCheckListFragment"
+        tools:layout="@layout/fragment_tools_check_list" >
+        <action
+            android:id="@+id/action_ToolsCheckListFragment_to_EppsCheckListFragment"
+            app:destination="@id/EppsCheckListFragment" />
+        <action
+            android:id="@+id/action_ToolsCheckListFragment_to_DayCheckListFragment"
+            app:destination="@id/DayCheckListFragment" />
+        <action
+            android:id="@+id/action_ToolsCheckListFragment_to_HistoryCheckListFragment"
+            app:destination="@id/HistoryCheckListFragment" />
+        <action
+            android:id="@+id/action_ToolsCheckListFragment_to_MobileCheckListFragment"
+            app:destination="@id/MobileCheckListFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/HistoryCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.ChecklistHistoryFragment"
+        tools:layout="@layout/fragment_checklist_history" >
+        <action
+            android:id="@+id/action_HistoryCheckListFragment_to_DayCheckListFragment"
+            app:destination="@id/DayCheckListFragment" />
+        <action
+            android:id="@+id/action_HistoryCheckListFragment_to_MobileCheckListFragment"
+            app:destination="@id/MobileCheckListFragment" />
+        <action
+            android:id="@+id/action_HistoryCheckListFragment_to_ToolsCheckListFragment"
+            app:destination="@id/ToolsCheckListFragment" />
+        <action
+            android:id="@+id/action_HistoryCheckListFragment_to_EppsCheckListFragment"
+            app:destination="@id/EppsCheckListFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/ManualsFragment"
+        android:name="com.hybrid.projectarea.ui.manuals.ProcessManualsFragment"
+        tools:layout="@layout/fragment_process_manuals" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/CameraFragment"
+        android:name="com.hybrid.projectarea.ui.CameraFragment"
+        tools:layout="@layout/fragment_camera" >
+    </fragment>
+
 </navigation>

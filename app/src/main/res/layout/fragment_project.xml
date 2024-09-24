@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:paddingHorizontal="20dp"
     android:orientation="vertical"
-    tools:context=".view.project.ProjectFragment">
+    tools:context=".ui.project.ProjectFragment">
 
     <TextView
         android:layout_width="match_parent"

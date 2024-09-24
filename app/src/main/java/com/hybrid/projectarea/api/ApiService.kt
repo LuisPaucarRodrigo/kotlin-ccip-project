@@ -1,9 +1,16 @@
 package com.hybrid.projectarea.api
 
+import com.hybrid.projectarea.domain.model.CodePhotoDescription
+import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.domain.model.Photo
+import com.hybrid.projectarea.domain.model.PhotoRequest
+import com.hybrid.projectarea.domain.model.PreprojectTitle
+import com.hybrid.projectarea.domain.model.ProjectFind
+import com.hybrid.projectarea.domain.model.ProjectRecycler
+import com.hybrid.projectarea.domain.model.UsersResponse
 import com.hybrid.projectarea.model.ChecklistHistory
-import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.Download
-import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
+
 import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.model.ExpenseHistory
 import com.hybrid.projectarea.model.FolderArchiveResponse
@@ -11,16 +18,11 @@ import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
-import com.hybrid.projectarea.model.Photo
 
-import com.hybrid.projectarea.model.PhotoRequest
-import com.hybrid.projectarea.model.PreprojectTitle
-import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectHuaweiTitle
-import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.ShowProjectHuaweiCode
-import com.hybrid.projectarea.model.UsersResponse
+
 import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.model.checkListTools
 import com.hybrid.projectarea.model.checklistDay
@@ -28,6 +30,7 @@ import com.hybrid.projectarea.model.checklistEpps
 import okhttp3.ResponseBody
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -41,22 +44,22 @@ interface ApiService {
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
     @GET("users/{id}")
-    fun users(@Header("Authorization") token: String,@Path("id") id:String): Call<UsersResponse>
+    suspend fun users(@Header("Authorization") token: String,@Path("id") id:String): Response<UsersResponse>
 
     @GET("preproject/{id}")
-    fun preproject(@Header("Authorization") token: String, @Path("id") id:String): Call<List<ElementPreProjectRecyclerView>>
+    suspend fun preproject(@Header("Authorization") token: String, @Path("id") id:String): Response<List<ElementPreProjectRecyclerView>>
 
     @POST("preprojectimage")
-    fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Call<Void>
+    suspend fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Response<Void>
 
     @GET("preproject/code/{id}")
-    fun codephotopreproject(@Header("Authorization") token: String,@Path("id") id: String): Call<List<PreprojectTitle>>
+    suspend fun codephotopreproject(@Header("Authorization") token: String,@Path("id") id: String): Response<List<PreprojectTitle>>
 
     @GET("codephotospecific/{id}")
-    fun codephotoespecific(@Header("Authorization") token: String,@Path("id") id: String): Call<CodePhotoDescription>
+    suspend fun codephotoespecific(@Header("Authorization") token: String,@Path("id") id: String): Response<CodePhotoDescription>
 
     @GET("register/photo/{id}")
-    fun requestRegisterPhoto(@Header("Authorization") token: String,@Path("id") id: String): Call<List<Photo>>
+    suspend fun requestRegisterPhoto(@Header("Authorization") token: String,@Path("id") id: String): Response<List<Photo>>
 
     @GET("project")
     fun project(@Header("Authorization") token: String): Call<List<ProjectRecycler>>

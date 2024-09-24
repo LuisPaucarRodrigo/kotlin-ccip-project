@@ -6,7 +6,7 @@
     android:paddingHorizontal="20dp"
     android:background="@color/bg"
     android:orientation="vertical"
-    tools:context=".view.projecthuawei.HistoryImagesProjectHuaweiFragment">
+    tools:context=".ui.projecthuawei.HistoryImagesProjectHuaweiFragment">
 
     <TextView
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:background="@color/bg"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    tools:context=".view.expenses.HistoryExpenseFragment">
+    tools:context=".ui.expenses.HistoryExpenseFragment">
 
     <include
         android:id="@+id/options"

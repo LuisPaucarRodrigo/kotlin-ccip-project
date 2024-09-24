@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/ExpensesFragment">
+
+<!--    <fragment-->
+<!--        android:id="@+id/ExpensesFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.expenses.ExpensesFragment"-->
+<!--        tools:layout="@layout/fragment_expenses" >-->
+<!--        <action-->
+<!--            android:id="@+id/to_historyExpensesFragment"-->
+<!--            app:destination="@id/HistoryExpensesFragment" />-->
+<!--    </fragment>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/HistoryExpensesFragment"-->
+<!--        android:name="com.hybrid.projectarea.view.expenses.HistoryExpenseFragment"-->
+<!--        tools:layout="@layout/fragment_history_expense" >-->
+<!--    </fragment>-->
+
+</navigation>

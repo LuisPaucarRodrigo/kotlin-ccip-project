@@ -1,9 +1,15 @@
 package com.hybrid.projectarea.api
 
+import com.hybrid.projectarea.domain.model.CodePhotoDescription
+import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.domain.model.Photo
+import com.hybrid.projectarea.domain.model.PhotoRequest
+import com.hybrid.projectarea.domain.model.PreprojectTitle
+import com.hybrid.projectarea.domain.model.ProjectFind
+import com.hybrid.projectarea.domain.model.ProjectRecycler
+import com.hybrid.projectarea.domain.model.UsersResponse
 import com.hybrid.projectarea.model.ChecklistHistory
-import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.Download
-import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.model.ExpenseHistory
 import com.hybrid.projectarea.model.FolderArchiveResponse
@@ -11,15 +17,9 @@ import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
-import com.hybrid.projectarea.model.Photo
-import com.hybrid.projectarea.model.PhotoRequest
-import com.hybrid.projectarea.model.PreprojectTitle
-import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
 import com.hybrid.projectarea.model.ProjectHuaweiTitle
-import com.hybrid.projectarea.model.ProjectRecycler
 import com.hybrid.projectarea.model.ShowProjectHuaweiCode
-import com.hybrid.projectarea.model.UsersResponse
 import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.model.checkListTools
 import com.hybrid.projectarea.model.checklistDay
@@ -62,183 +62,151 @@ class AuthManager(private val apiService: ApiService) {
         })
     }
 
-    fun user(token: String, id: String, authListener: Users) {
-        val call = apiService.users(token, id)
-        call.enqueue(object : Callback<UsersResponse> {
-            override fun onResponse(call: Call<UsersResponse>, response: Response<UsersResponse>) {
-                if (response.isSuccessful) {
-                    val authToken = response.body()
-                    authToken?.let {
-                        authListener.onUserSuccess(it)
-                    }
-
-                } else if(response.code() == 401) {
-                    authListener.onUserNoAuthenticated()
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
-                    }
-                    authListener.onUserFailed(errorMessage)
+    suspend fun user(token: String, id: String, authListener: Users) {
+        try {
+            val response = apiService.users(token, id)
+            if (response.isSuccessful) {
+                val authToken = response.body()
+                authToken?.let {
+                    authListener.onUserSuccess(it)
                 }
+            } else if (response.code() == 401) {
+                authListener.onUserNoAuthenticated()
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    JSONObject(errorBody).getString("error")
+                } catch (e: JSONException) {
+                    "Ocurrió un error desconocido"
+                }
+                authListener.onUserFailed(errorMessage)
             }
-
-            override fun onFailure(call: Call<UsersResponse>, t: Throwable) {
-                authListener.onUserFailed("${t.message}")
-            }
-        })
+        } catch (e: Exception) {
+            authListener.onUserFailed(e.message ?: "Ocurrió un error")
+        }
     }
 
-    fun preproject(token: String, userId: String, authListener: PreProjectListener) {
-        val call = apiService.preproject(token, userId)
-        call.enqueue(object : Callback<List<ElementPreProjectRecyclerView>> {
-            override fun onResponse(
-                call: Call<List<ElementPreProjectRecyclerView>>,
-                response: Response<List<ElementPreProjectRecyclerView>>
-            ) {
-                if (response.isSuccessful) {
-                    val authToken = response.body()
-                    authToken?.let {
-                        authListener.onPreProjectSuccess(it)
-                    }
-                } else if(response.code() == 401) {
-                    authListener.onPreProjectNoAuthenticated()
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
-                    }
-                    authListener.onPreProjectFailed(errorMessage)
+    suspend fun preproject(token: String, userId: String, authListener: PreProjectListener) {
+        try {
+            val response = apiService.preproject(token, userId)
+            if (response.isSuccessful) {
+                val authToken = response.body()
+                authToken?.let {
+                    authListener.onPreProjectSuccess(it)
                 }
+            } else if(response.code() == 401) {
+                authListener.onPreProjectNoAuthenticated()
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    JSONObject(errorBody).getString("error")
+                } catch (e: JSONException) {
+                    "Ocurrió un error desconocido"
+                }
+                authListener.onPreProjectFailed(errorMessage)
             }
-
-            override fun onFailure(call: Call<List<ElementPreProjectRecyclerView>>, t: Throwable) {
-                authListener.onPreProjectFailed("${t.message}")
-            }
-        })
+        } catch (e: Exception) {
+            authListener.onPreProjectFailed(e.message ?: "Ocurrió un error")
+        }
     }
 
-    fun preProjectPhoto(
+    suspend fun preProjectPhoto(
         token: String,
         photoRequest: PhotoRequest,
         authListener: PreProjectAddPhoto
     ) {
-        val call = apiService.addphotoreport(token, photoRequest)
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    authListener.onPreProjectAddPhotoSuccess()
-                } else if(response.code() == 401) {
-                    authListener.onPreProjectAddPhotoNoAuthenticated()
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
-                    }
-                    authListener.onPreProjectAddPhotoFailed(errorMessage)
+        try {
+            val response = apiService.addphotoreport(token, photoRequest)
+            if (response.isSuccessful) {
+                authListener.onPreProjectAddPhotoSuccess()
+            } else if(response.code() == 401) {
+                authListener.onPreProjectAddPhotoNoAuthenticated()
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    JSONObject(errorBody).getString("error")
+                } catch (e: JSONException) {
+                    "Ocurrió un error desconocido"
                 }
+                authListener.onPreProjectAddPhotoFailed(errorMessage)
             }
+        } catch (e: Exception){
+            authListener.onPreProjectAddPhotoFailed("Error de red: $e")
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                authListener.onPreProjectAddPhotoFailed("Error de red: ${t.message}")
-            }
-        })
+        }
     }
 
-    fun codephotopreproject(token: String, id: String, authListener: inCodePhotoPreProject) {
-        val call = apiService.codephotopreproject(token, id)
-        call.enqueue(object : Callback<List<PreprojectTitle>> {
-            override fun onResponse(
-                call: Call<List<PreprojectTitle>>,
-                response: Response<List<PreprojectTitle>>
-            ) {
-                if (response.isSuccessful) {
-                    val authToken = response.body()
-                    authToken?.let {
-                        authListener.onCodePhotoPreProjectSuccess(it)
-                    }
+    suspend fun codephotopreproject(token: String, id: String, authListener: inCodePhotoPreProject) {
+        try {
+            val response = apiService.codephotopreproject(token, id)
+            if (response.isSuccessful) {
+                val authToken = response.body()
+                authToken?.let {
+                    authListener.onCodePhotoPreProjectSuccess(it)
+                }
 //                        ?: run {
 //                        authListener.onPreProjectFailed()
 //                    }
-                } else if(response.code() == 401) {
-                    authListener.onCodePhotoPreProjectNoAuthenticated()
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
-                    }
-                    authListener.onCodePhotoPreProjectFailed(errorMessage)
+            } else if(response.code() == 401) {
+                authListener.onCodePhotoPreProjectNoAuthenticated()
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    JSONObject(errorBody).getString("error")
+                } catch (e: JSONException) {
+                    "Ocurrió un error desconocido"
                 }
+                authListener.onCodePhotoPreProjectFailed(errorMessage)
             }
+        } catch (e: Exception){
+            authListener.onCodePhotoPreProjectFailed(e.message ?: "Ocurrió un error")
 
-            override fun onFailure(call: Call<List<PreprojectTitle>>, t: Throwable) {
-                authListener.onCodePhotoPreProjectFailed("${t.message}")
-            }
-        })
+        }
     }
 
-    fun codephotospecific(token: String, id: String, authListener: inCodePhotoDescription) {
-        val call = apiService.codephotoespecific(token, id)
-        call.enqueue(object : Callback<CodePhotoDescription> {
-            override fun onResponse(
-                call: Call<CodePhotoDescription>,
-                response: Response<CodePhotoDescription>
-            ) {
-                if (response.isSuccessful) {
-                    val authToken = response.body()
-                    authToken?.let {
-                        authListener.onCodePhotoDescriptionPreProjectSuccess(it)
-                    }
+    suspend fun codephotospecific(token: String, id: String, authListener: inCodePhotoDescription) {
+        try{
+            val response = apiService.codephotoespecific(token, id)
+            if (response.isSuccessful) {
+                val authToken = response.body()
+                authToken?.let {
+                    authListener.onCodePhotoDescriptionPreProjectSuccess(it)
+                }
 //                        ?: run {
 //                        authListener.onPreProjectFailed()
 //                    }
-                } else if(response.code() == 401) {
-                    authListener.onCodePhotoDescriptionPreProjectNoAuthenticated()
-                } else {
-                    authListener.onCodePhotoDesrriptionPreProjectFailed()
-                }
-            }
-
-            override fun onFailure(call: Call<CodePhotoDescription>, t: Throwable) {
+            } else if(response.code() == 401) {
+                authListener.onCodePhotoDescriptionPreProjectNoAuthenticated()
+            } else {
                 authListener.onCodePhotoDesrriptionPreProjectFailed()
             }
-        })
+        } catch (e: Exception){
+            authListener.onCodePhotoDesrriptionPreProjectFailed()
+        }
     }
 
-    fun funRegisterPhoto(token: String, id: String, authListener: inRegisterPhoto) {
-        val call = apiService.requestRegisterPhoto(token, id)
-        call.enqueue(object : Callback<List<Photo>> {
-            override fun onResponse(call: Call<List<Photo>>, response: Response<List<Photo>>) {
-                if (response.isSuccessful) {
-                    val authToken = response.body()
-                    authToken?.let { request ->
-                        authListener.onRegisterPhotoSuccess(request)
-                    }
-                } else if(response.code() == 401) {
-                    authListener.onRegisterPhotoNoAuthenticated()
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
-                    }
-                    authListener.onRegisterPhotoFailed(errorMessage)
+    suspend fun funRegisterPhoto(token: String, id: String, authListener: inRegisterPhoto) {
+        try{
+            val response = apiService.requestRegisterPhoto(token, id)
+            if (response.isSuccessful) {
+                val authToken = response.body()
+                authToken?.let { request ->
+                    authListener.onRegisterPhotoSuccess(request)
                 }
+            } else if(response.code() == 401) {
+                authListener.onRegisterPhotoNoAuthenticated()
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorMessage = try {
+                    JSONObject(errorBody).getString("error")
+                } catch (e: JSONException) {
+                    "Ocurrió un error desconocido"
+                }
+                authListener.onRegisterPhotoFailed(errorMessage)
             }
-
-            override fun onFailure(call: Call<List<Photo>>, t: Throwable) {
-                authListener.onRegisterPhotoFailed("${t.message}")
-            }
-        })
+        } catch (e: Exception){
+            authListener.onRegisterPhotoFailed("Error de red: $e")
+        }
     }
 
     fun project(token: String, authListener: ProjectListener) {

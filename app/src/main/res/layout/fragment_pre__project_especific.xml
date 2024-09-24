@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/bg"
-    tools:context=".view.preproject.PreProjectEspecificFragment">
+    tools:context=".ui.preproject.PreProjectEspecificFragment">
 
     <LinearLayout
         android:id="@+id/formPreproject"
@@ -187,6 +187,7 @@
                 <include android:id="@+id/photo" layout="@layout/component_photo"/>
 
                 <include android:id="@+id/send" layout="@layout/component_send"/>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

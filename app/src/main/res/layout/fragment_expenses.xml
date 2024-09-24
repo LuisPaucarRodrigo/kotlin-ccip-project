@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg"
     android:orientation="vertical"
-    tools:context=".view.expenses.ExpensesFragment">
+    tools:context=".ui.expenses.ExpensesFragment">
 
     <LinearLayout
         android:id="@+id/formPreproject"
