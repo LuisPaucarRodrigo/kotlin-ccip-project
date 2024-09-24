@@ -346,12 +346,12 @@ class MobileUnitChecklistFragment : Fragment() {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val windowMetrics = windowManager.currentWindowMetrics
-        val bounds = windowMetrics.bounds
-        val width = bounds.width()
-        val height = bounds.height()
-        val screenAspectRatio = aspectRatio(width, height)
+//        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//        val windowMetrics = windowManager.currentWindowMetrics
+//        val bounds = windowMetrics.bounds
+//        val width = bounds.width()
+//        val height = bounds.height()
+//        val screenAspectRatio = aspectRatio(width, height)
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
@@ -359,14 +359,14 @@ class MobileUnitChecklistFragment : Fragment() {
 
             // Preview
             val preview = Preview.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
+//                .setTargetAspectRatio(screenAspectRatio)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
+//                .setTargetAspectRatio(screenAspectRatio)
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
