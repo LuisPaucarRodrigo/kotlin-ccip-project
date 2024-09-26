@@ -10,6 +10,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
@@ -60,6 +61,7 @@ import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -158,9 +160,11 @@ class PreProjectEspecificFragment : Fragment() {
                     formData,
                     object : AuthManager.PreProjectAddPhoto {
                         override fun onPreProjectAddPhotoSuccess() {
-                            Alert.alertSuccess(requireContext(), layoutInflater)
-                            dataCleaning()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Alert.alertSuccess(requireContext(), layoutInflater)
+                                dataCleaning()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
 
                         override fun onPreProjectAddPhotoNoAuthenticated() {
@@ -168,9 +172,11 @@ class PreProjectEspecificFragment : Fragment() {
                         }
 
                         override fun onPreProjectAddPhotoFailed(errorMessage: String) {
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                    .show()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
                     }
                 )
@@ -195,23 +201,25 @@ class PreProjectEspecificFragment : Fragment() {
                     preprojectCodeId,
                     object : AuthManager.inCodePhotoDescription {
                         override fun onCodePhotoDescriptionPreProjectSuccess(response: CodePhotoDescription) {
-                            binding.codePreproject.text = response.codePreproject
-                            binding.codePhoto.text = response.code
-                            binding.codeStatus.text = response.status
-                            binding.codeDescription.text = response.description
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                binding.codePreproject.text = response.codePreproject
+                                binding.codePhoto.text = response.code
+                                binding.codeStatus.text = response.status
+                                binding.codeDescription.text = response.description
 
-                            if (response.images.isNotEmpty()) {
-                                binding.imageReference.isVisible = true
-                                val adapter = AdapterReferenceImage(
-                                    response.images,
-                                    object : AdapterReferenceImage.OnItemClickListener {
-                                        override fun onItemClick(position: Int) {
-                                            val item = response.images[position]
-                                            showImageDialog(item.image)
+                                if (response.images.isNotEmpty()) {
+                                    binding.imageReference.isVisible = true
+                                    val adapter = AdapterReferenceImage(
+                                        response.images,
+                                        object : AdapterReferenceImage.OnItemClickListener {
+                                            override fun onItemClick(position: Int) {
+                                                val item = response.images[position]
+                                                showImageDialog(item.image)
+                                            }
                                         }
-                                    }
-                                )
-                                binding.recyclerImages.adapter = adapter
+                                    )
+                                    binding.recyclerImages.adapter = adapter
+                                }
                             }
                         }
 
@@ -283,23 +291,9 @@ class PreProjectEspecificFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
-    private fun aspectRatio(width: Int, height: Int): Int {
-        val previewRatio = max(width, height).toDouble() / min(width, height)
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-            return AspectRatio.RATIO_4_3
-        }
-        return AspectRatio.RATIO_16_9
-    }
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val windowMetrics = windowManager.currentWindowMetrics
-        val bounds = windowMetrics.bounds
-        val width = bounds.width()
-        val height = bounds.height()
-        val screenAspectRatio = aspectRatio(width, height)
+        val screenAspectRatio = aspectRatio()
 
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -511,7 +505,6 @@ class PreProjectEspecificFragment : Fragment() {
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+
     }
 }

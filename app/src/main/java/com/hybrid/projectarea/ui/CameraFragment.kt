@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -44,6 +45,7 @@ import com.hybrid.projectarea.databinding.FragmentCameraBinding
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
 import com.hybrid.projectarea.model.RequestPermissions
+import com.hybrid.projectarea.utils.aspectRatio
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import java.io.File
 import java.io.IOException
@@ -113,38 +115,16 @@ class CameraFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
-    private fun aspectRatio(width: Int, height: Int): Int {
-        val previewRatio = max(width, height).toDouble() / min(width, height)
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-            return AspectRatio.RATIO_4_3
-        }
-        return AspectRatio.RATIO_16_9
-    }
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val windowMetrics = windowManager.currentWindowMetrics
-        val bounds = windowMetrics.bounds
-        val width = bounds.width()
-        val height = bounds.height()
-        val screenAspectRatio = aspectRatio(width, height)
+        val screenAspectRatio = aspectRatio()
 
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-//            val aspectRatioStrategy = AspectRatioStrategy(AspectRatio.RATIO_4_3, AspectRatio.RATIO_16_9)
-
-//            val resolutionSelector = ResolutionSelector.Builder()
-//                .setAspectRatioStrategy(aspectRatioStrategy)
-//                .build()
 
             // Preview
             val preview = Preview.Builder()
-//                .setResolutionSelector(resolutionSelector)
-
                 .setTargetAspectRatio(screenAspectRatio)
-//                .setTargetResolution(Size(width-100, height))
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)

@@ -65,20 +65,25 @@ class PreProjectFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.preproject(token, userId, object : AuthManager.PreProjectListener {
                     override fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>) {
-                        binding.shimmer.beforeViewElement.isVisible = false
-                        binding.recyclerviewPreproject.afterViewElement.isVisible = true
-                        binding.recyclerviewPreproject.swipe.isRefreshing = false
-                        val adapter = AdapterPreProjectElement(
-                            response,
-                            object : AdapterPreProjectElement.OnItemClickListener {
-                                override fun onItemClick(position: Int) {
-                                    val item = response[position]
-                                    val args = Bundle()
-                                    args.putString("preproject_id", item.id)
-                                    findNavController().navigate(R.id.to_CodePhotoFragment,args)
-                                }
-                            })
-                        binding.recyclerviewPreproject.recyclerview.adapter = adapter
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.shimmer.beforeViewElement.isVisible = false
+                            binding.recyclerviewPreproject.afterViewElement.isVisible = true
+                            binding.recyclerviewPreproject.swipe.isRefreshing = false
+                            val adapter = AdapterPreProjectElement(
+                                response,
+                                object : AdapterPreProjectElement.OnItemClickListener {
+                                    override fun onItemClick(position: Int) {
+                                        val item = response[position]
+                                        val args = Bundle()
+                                        args.putString("preproject_id", item.id)
+                                        findNavController().navigate(
+                                            R.id.to_CodePhotoFragment,
+                                            args
+                                        )
+                                    }
+                                })
+                            binding.recyclerviewPreproject.recyclerview.adapter = adapter
+                        }
                     }
 
                     override fun onPreProjectNoAuthenticated() {
@@ -86,17 +91,22 @@ class PreProjectFragment : Fragment() {
                     }
 
                     override fun onPreProjectFailed(error: String) {
-                        binding.recyclerviewPreproject.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.recyclerviewPreproject.swipe.isRefreshing = false
+                            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                        }
                     }
                 })
             } catch (e: Exception) {
+                println("dada $e")
                 withContext(Dispatchers.Main) {
+
                     Toast.makeText(
                         requireContext(),
-                        "Se produjo un error inesperado.",
+                        "Se produjo un error inesperado dd: $e",
                         Toast.LENGTH_LONG
                     ).show()
+
                 }
             }
         }

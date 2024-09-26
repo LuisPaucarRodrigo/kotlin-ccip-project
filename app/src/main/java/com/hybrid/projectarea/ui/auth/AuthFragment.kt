@@ -9,13 +9,14 @@ import android.widget.Toast
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentAuthBinding
-import com.hybrid.projectarea.model.LoginRequest
-import com.hybrid.projectarea.model.LoginResponse
+import com.hybrid.projectarea.domain.model.LoginRequest
+import com.hybrid.projectarea.domain.model.LoginResponse
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.ui.BaseActivity
 import com.hybrid.projectarea.ui.dataStore
@@ -63,19 +64,27 @@ class AuthFragment : Fragment() {
                                 }
                             }
                         }
-                        findNavController().navigate(R.id.PreProjectFragment)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            val navController = findNavController()
+                            navController.popBackStack()
+                            navController.navigate(R.id.PreProjectFragment)
+                        }
                     }
                     override fun onLoginFailed(errorMessage: String) {
-                        Toast.makeText(
-                            requireContext(),
-                            errorMessage,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                errorMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 })
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG)
-                    .show()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG)
+                        .show()
+                }
             }
         }
     }

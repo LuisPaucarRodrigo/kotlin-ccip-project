@@ -32,6 +32,7 @@ class HistoryImagesProjectHuaweiFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var projectHuaweiCode_id: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         projectHuaweiCode_id = requireArguments().getString("code_id").toString()
@@ -57,7 +58,6 @@ class HistoryImagesProjectHuaweiFragment : Fragment() {
     }
 
     private fun requestRegisterPhoto() {
-        val arrayList = ArrayList<Photo>()
         binding.recyclerviewHistoryImagesProjectHuawei.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -66,32 +66,35 @@ class HistoryImagesProjectHuaweiFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.funHistoryImageProjectHuawei(token,projectHuaweiCode_id,object : AuthManager.inRegisterPhoto{
                     override fun onRegisterPhotoSuccess(response: List<Photo>) {
-                        binding.shimmer.beforeViewElement.isVisible = false
-                        binding.recyclerviewHistoryImagesProjectHuawei.afterViewElement.isVisible = true
-                        binding.recyclerviewHistoryImagesProjectHuawei.swipe.isRefreshing = false
-                        response.forEach { item ->
-                            val element = Photo(item.image,item.observation?:"",item.state?:"")
-                            arrayList.add(element)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.shimmer.beforeViewElement.isVisible = false
+                            binding.recyclerviewHistoryImagesProjectHuawei.afterViewElement.isVisible =
+                                true
+                            binding.recyclerviewHistoryImagesProjectHuawei.swipe.isRefreshing =
+                                false
+                            val builder = AlertDialog.Builder(requireActivity())
+                            val adapter = AdapterRegisterPhoto(response,
+                                object : AdapterRegisterPhoto.OnItemClickListener {
+                                    override fun onItemClick(position: Int) {
+                                        val item = response[position]
+                                        val alertDialogBinding =
+                                            PhotoCodeBinding.inflate(layoutInflater)
+                                        val dialogView = alertDialogBinding.root
+                                        builder.setView(dialogView)
+
+                                        val dialog = builder.create()
+                                        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                                        dialog.show()
+                                        Glide.with(requireContext())
+                                            .load(item.image)
+                                            .into(alertDialogBinding.photo)
+                                        alertDialogBinding.observation.text = item.observation ?: ""
+                                    }
+                                })
+
+                            binding.recyclerviewHistoryImagesProjectHuawei.recyclerview.adapter =
+                                adapter
                         }
-                        val builder = AlertDialog.Builder(requireActivity())
-                        val adapter = AdapterRegisterPhoto(arrayList,object : AdapterRegisterPhoto.OnItemClickListener {
-                            override fun onItemClick(position: Int) {
-                                val item = arrayList[position]
-                                val alertDialogBinding = PhotoCodeBinding.inflate(layoutInflater)
-                                val dialogView = alertDialogBinding.root
-                                builder.setView(dialogView)
-
-                                val dialog = builder.create()
-                                dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                                dialog.show()
-                                Glide.with(requireContext())
-                                    .load(item.image)
-                                    .into(alertDialogBinding.photo)
-                                alertDialogBinding.observation.text = item.observation?:""
-                            }
-                        })
-
-                        binding.recyclerviewHistoryImagesProjectHuawei.recyclerview.adapter = adapter
 
                     }
 

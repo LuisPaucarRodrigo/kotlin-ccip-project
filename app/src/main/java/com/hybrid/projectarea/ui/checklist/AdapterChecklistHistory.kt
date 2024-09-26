@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.ChecklistHistory
+import com.hybrid.projectarea.domain.model.ChecklistHistory
 
-class AdapterChecklistHistory (private var listaElementos:ArrayList<ChecklistHistory>): RecyclerView.Adapter<AdapterChecklistHistory.ViewHolder>() {
+class AdapterChecklistHistory (private var listaElementos:List<ChecklistHistory>): RecyclerView.Adapter<AdapterChecklistHistory.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val type = itemView.findViewById<TextView>(R.id.type)!!

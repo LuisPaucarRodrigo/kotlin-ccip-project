@@ -20,9 +20,9 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentProcessManualsBinding
-import com.hybrid.projectarea.model.FolderArchiveResponse
-import com.hybrid.projectarea.model.FormProcessManuals
-import com.hybrid.projectarea.model.GetProcessManuals
+import com.hybrid.projectarea.domain.model.FolderArchiveResponse
+import com.hybrid.projectarea.domain.model.FormProcessManuals
+import com.hybrid.projectarea.domain.model.GetProcessManuals
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
@@ -78,8 +78,6 @@ class ProcessManualsFragment : Fragment() {
     }
 
     private fun requestManuals(root: String = "1", path: String = "") {
-
-        val arrayList = ArrayList<GetProcessManuals>()
         binding.recyclerviewManuals.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -92,37 +90,34 @@ class ProcessManualsFragment : Fragment() {
                     FormProcessManuals(root, path),
                     object : AuthManager.inGetProcessManuals {
                         override fun onProcessManualsSuccess(response: FolderArchiveResponse) {
-                            binding.shimmerManuals.beforeViewElement.isVisible = false
-                            binding.recyclerviewManuals.afterViewElement.isVisible = true
-                            binding.recyclerviewManuals.swipe.isRefreshing = false
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                binding.shimmerManuals.beforeViewElement.isVisible = false
+                                binding.recyclerviewManuals.afterViewElement.isVisible = true
+                                binding.recyclerviewManuals.swipe.isRefreshing = false
 
-                            previousPath = response.previousPath
-                            currentPath = response.currentPath
+                                previousPath = response.previousPath
+                                currentPath = response.currentPath
 
-                            if (previousPath != "" || response.currentPath != "LocalDrive") {
-                                binding.previousPath.isVisible = true
-                            }
-                            response.folders_archives.forEach { item ->
-                                val element =
-                                    GetProcessManuals(item.name, item.type, item.path, item.size)
-                                arrayList.add(element)
-                            }
-                            val adapter = AdapterProcessManuals(
-                                arrayList,
-                                object : AdapterProcessManuals.OnItemClickListener {
-                                    override fun onItemClick(position: Int) {
-                                        val item = arrayList[position]
-                                        when (item.type) {
-                                            "folder" -> {
-                                                requestManuals("", item.path)
+                                if (previousPath != "" || response.currentPath != "LocalDrive") {
+                                    binding.previousPath.isVisible = true
+                                }
+                                val adapter = AdapterProcessManuals(
+                                    response.folders_archives,
+                                    object : AdapterProcessManuals.OnItemClickListener {
+                                        override fun onItemClick(position: Int) {
+                                            val item = response.folders_archives[position]
+                                            when (item.type) {
+                                                "folder" -> {
+                                                    requestManuals("", item.path)
+                                                }
+
+                                                "archive" -> downloadArchive(item.path)
                                             }
 
-                                            "archive" -> downloadArchive(item.path)
                                         }
-
-                                    }
-                                })
-                            binding.recyclerviewManuals.recyclerview.adapter = adapter
+                                    })
+                                binding.recyclerviewManuals.recyclerview.adapter = adapter
+                            }
                         }
 
                         override fun onProcessManualsNoAuthenticated() {
@@ -130,8 +125,11 @@ class ProcessManualsFragment : Fragment() {
                         }
 
                         override fun onProcessManualsFailed(errorMessage: String) {
-                            binding.recyclerviewManuals.swipe.isRefreshing = false
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                binding.recyclerviewManuals.swipe.isRefreshing = false
+                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                    .show()
+                            }
                         }
                     })
             } catch (e: Exception) {

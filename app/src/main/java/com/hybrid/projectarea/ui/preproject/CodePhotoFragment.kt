@@ -58,11 +58,13 @@ class CodePhotoFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.codephotopreproject(token,preproject_id,object : AuthManager.inCodePhotoPreProject{
                     override fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>) {
-                        binding.shimmer.beforeViewElement.isVisible = false
-                        binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
-                        binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                        val adapter = AdapterPreprojectTitle(response)
-                        binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.shimmer.beforeViewElement.isVisible = false
+                            binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
+                            binding.recyclerviewCodePhoto.swipe.isRefreshing = false
+                            val adapter = AdapterPreprojectTitle(response)
+                            binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
+                        }
                     }
 
                     override fun onCodePhotoPreProjectNoAuthenticated() {
@@ -70,8 +72,10 @@ class CodePhotoFragment : Fragment() {
                     }
 
                     override fun onCodePhotoPreProjectFailed(errorMessage: String) {
-                        binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(),errorMessage, Toast.LENGTH_LONG).show()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.recyclerviewCodePhoto.swipe.isRefreshing = false
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
                     }
                 })
             }catch (e: Exception){

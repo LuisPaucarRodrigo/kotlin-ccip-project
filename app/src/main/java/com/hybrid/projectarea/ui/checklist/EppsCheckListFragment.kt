@@ -14,11 +14,11 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentEppsCheckListBinding
+import com.hybrid.projectarea.domain.model.checklistEpps
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.model.checklistEpps
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -122,9 +122,11 @@ class EppsCheckListFragment : Fragment() {
                     checkListEpps,
                     object : AuthManager.inCheckListEpps {
                         override fun onStoreCheckListEppsSuccess() {
-                            Alert.alertSuccess(requireContext(), layoutInflater)
-                            dataCleaning()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Alert.alertSuccess(requireContext(), layoutInflater)
+                                dataCleaning()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
 
                         override fun onStoreCheckListEppsNoAuthenticated() {
@@ -132,9 +134,11 @@ class EppsCheckListFragment : Fragment() {
                         }
 
                         override fun onStoreCheckListEppsFailed(errorMessage: String) {
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                    .show()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
 
                     })

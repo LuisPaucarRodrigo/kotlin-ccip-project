@@ -41,11 +41,11 @@ import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentStoreImageHuaweiBinding
 import com.hybrid.projectarea.domain.model.PhotoRequest
+import com.hybrid.projectarea.domain.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
-import com.hybrid.projectarea.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard

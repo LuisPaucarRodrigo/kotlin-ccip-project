@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentStoreProjectsHuaweiBinding
+import com.hybrid.projectarea.domain.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.utils.Alert
-import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession

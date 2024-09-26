@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.ProjectHuaweiCode
+import com.hybrid.projectarea.domain.model.ProjectHuaweiCode
 
 class AdapterProjectHuaweiCode (private var listaElementos:List<ProjectHuaweiCode>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterProjectHuaweiCode.ViewHolder>() {
 

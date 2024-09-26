@@ -42,12 +42,6 @@ class AdapterPreprojectTitle (private var listaElementos:List<PreprojectTitle>):
                         putString("code_id", item.id)
                     }
                     activity?.findNavController(R.id.container)?.navigate(R.id.to_PreProjectEspecificFragment,args)
-//                    conceptFragment.arguments = args
-//
-//                    activity?.supportFragmentManager?.beginTransaction()
-//                        ?.replace(R.id.contenedor, conceptFragment)
-//                        ?.addToBackStack(null)
-//                        ?.commit()
                 }
             }
         })

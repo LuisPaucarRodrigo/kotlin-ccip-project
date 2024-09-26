@@ -15,7 +15,7 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentChecklistHistoryBinding
-import com.hybrid.projectarea.model.ChecklistHistory
+import com.hybrid.projectarea.domain.model.ChecklistHistory
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
@@ -74,7 +74,6 @@ class ChecklistHistoryFragment : Fragment() {
     }
 
     private fun requestChecklistHistory() {
-        val arrayList = ArrayList<ChecklistHistory>()
         binding.recyclerviewChecklistHistory.recyclerview.layoutManager =
             LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
@@ -84,15 +83,13 @@ class ChecklistHistoryFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.funCheckListHistory(token, object : AuthManager.inCheckListHistory {
                     override fun onStoreCheckListHistorySuccess(response: List<ChecklistHistory>) {
-                        binding.shimmer.beforeViewElement.isVisible = false
-                        binding.recyclerviewChecklistHistory.afterViewElement.isVisible = true
-                        binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
-                        response.forEach { item ->
-                            val element = ChecklistHistory(item.type, item.created_at)
-                            arrayList.add(element)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.shimmer.beforeViewElement.isVisible = false
+                            binding.recyclerviewChecklistHistory.afterViewElement.isVisible = true
+                            binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
+                            val adapter = AdapterChecklistHistory(response)
+                            binding.recyclerviewChecklistHistory.recyclerview.adapter = adapter
                         }
-                        val adapter = AdapterChecklistHistory(arrayList)
-                        binding.recyclerviewChecklistHistory.recyclerview.adapter = adapter
                     }
 
                     override fun onStoreCheckListHistoryNoAuthenticated() {
@@ -100,8 +97,10 @@ class ChecklistHistoryFragment : Fragment() {
                     }
 
                     override fun onStoreCheckListHistoryFailed(errorMessage: String) {
-                        binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
                     }
                 })
             } catch (e: Exception) {

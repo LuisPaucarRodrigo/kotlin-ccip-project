@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
+import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,15 +35,16 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentMobileUnitChecklistBinding
+import com.hybrid.projectarea.domain.model.checkListMobile
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -284,9 +286,11 @@ class MobileUnitChecklistFragment : Fragment() {
                     checkListMobile,
                     object : AuthManager.inCheckListMovil {
                         override fun onStoreCheckListMobileSuccess() {
-                            Alert.alertSuccess(requireContext(), layoutInflater)
-                            dataCleaning()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Alert.alertSuccess(requireContext(), layoutInflater)
+                                dataCleaning()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
 
                         override fun onStoreCheckListMobileNoAuthenticated() {
@@ -294,9 +298,11 @@ class MobileUnitChecklistFragment : Fragment() {
                         }
 
                         override fun onStoreCheckListMobileFailed(errorMessage: String) {
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                    .show()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
                     }
                 )
@@ -333,23 +339,10 @@ class MobileUnitChecklistFragment : Fragment() {
         cameraExecutor.shutdown() // Detener el executor para liberar recursos
     }
 
-    private fun aspectRatio(width: Int, height: Int): Int {
-        val previewRatio = max(width, height).toDouble() / min(width, height)
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-            return AspectRatio.RATIO_4_3
-        }
-        return AspectRatio.RATIO_16_9
-    }
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val windowMetrics = windowManager.currentWindowMetrics
-        val bounds = windowMetrics.bounds
-        val width = bounds.width()
-        val height = bounds.height()
-        val screenAspectRatio = aspectRatio(width, height)
+        val screenAspectRatio = aspectRatio()
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
@@ -630,7 +623,5 @@ class MobileUnitChecklistFragment : Fragment() {
         private val request_permissions = arrayOf(
             Manifest.permission.CAMERA
         )
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 }

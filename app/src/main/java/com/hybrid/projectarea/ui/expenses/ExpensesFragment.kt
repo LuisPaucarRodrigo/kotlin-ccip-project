@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,8 +38,8 @@ import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentExpensesBinding
 import com.hybrid.projectarea.databinding.GalleryOrCameraBinding
+import com.hybrid.projectarea.domain.model.ExpenseForm
 import com.hybrid.projectarea.utils.Alert
-import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
@@ -47,6 +48,7 @@ import com.hybrid.projectarea.utils.showDatePickerDialog
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -163,9 +165,11 @@ class ExpensesFragment : Fragment() {
                     formData,
                     object : AuthManager.inExpenseForm {
                         override fun onExpenseFormSuccess() {
-                            Alert.alertSuccess(requireContext(), layoutInflater)
-                            dataCleaning()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Alert.alertSuccess(requireContext(), layoutInflater)
+                                dataCleaning()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
 
                         override fun onExpenseFormNoAuthenticated() {
@@ -173,9 +177,11 @@ class ExpensesFragment : Fragment() {
                         }
 
                         override fun onExpenseFormFailed(errorMessage: String) {
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                            binding.send.buttonSend.isEnabled = true
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                    .show()
+                                binding.send.buttonSend.isEnabled = true
+                            }
                         }
                     }
                 )
@@ -252,19 +258,24 @@ class ExpensesFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
+        val screenAspectRatio = aspectRatio()
+
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
             val preview = Preview.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
                 .build()
+
             val orientationEventListener = object : OrientationEventListener(requireContext()) {
                 override fun onOrientationChanged(orientation : Int) {
                     // Monitors orientation values to determine the target rotation value

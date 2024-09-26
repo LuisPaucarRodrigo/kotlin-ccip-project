@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.ExpenseHistory
+import com.hybrid.projectarea.domain.model.ExpenseHistory
 
-class AdapterExpenseHistory(private var listaElementos: ArrayList<ExpenseHistory>) :
+class AdapterExpenseHistory(private var listaElementos: List<ExpenseHistory>) :
     RecyclerView.Adapter<AdapterExpenseHistory.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

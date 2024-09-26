@@ -22,7 +22,6 @@ import com.hybrid.projectarea.databinding.ActivityBaseBinding
 import com.hybrid.projectarea.domain.model.UsersResponse
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.ui.auth.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -99,9 +98,12 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val authManager = AuthManager(apiService)
                 authManager.user(token,user_id, object : AuthManager.Users {
                     override fun onUserSuccess(response: UsersResponse) {
-                        nameheader.text = "Nombre: ${ response.name }"
-                        nameheaderdni.text = "Dni: ${ response.dni }"
-                        nameheaderemail.text = "Email: ${ response.email }"
+                        // Necesitamos cambiar al hilo principal para interactuar con la UI
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            nameheader.text = "Nombre: ${response.name}"
+                            nameheaderdni.text = "Dni: ${response.dni}"
+                            nameheaderemail.text = "Email: ${response.email}"
+                        }
                     }
 
                     override fun onUserNoAuthenticated() {
@@ -113,13 +115,14 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                     override fun onUserFailed(errorMessage: String) {
-                        Toast.makeText(this@BaseActivity, errorMessage, Toast.LENGTH_LONG)
-                            .show()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            Toast.makeText(this@BaseActivity, errorMessage, Toast.LENGTH_LONG).show()
+                        }
                     }
                 })
             } catch (e: Exception) {
                 withContext(Dispatchers.Main){
-                    Toast.makeText(this@BaseActivity, "Se produjo un error inesperado", Toast.LENGTH_LONG)
+                    Toast.makeText(this@BaseActivity, "Se produjo un error inesperado: $e", Toast.LENGTH_LONG)
                         .show()
                 }
             }
@@ -152,7 +155,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navController = findNavController(R.id.container)
         navController.popBackStack()
         navController.navigate(id)
-
     }
 
     private fun cerrarsesion() {
@@ -177,14 +179,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val authManager = AuthManager(apiService)
                 authManager.funlogout(token, object : AuthManager.Logout {
                     override fun onLogoutSuccess() {
-                        lifecycleScope.launch {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             deleteTokenFromDataStore()
+                            binding.mitoolbar.root.isVisible = false
+                            openFragment(R.id.AuthFragment)
                         }
-                        binding.mitoolbar.root.isVisible = false
-//                        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-//                        transaction.replace(R.id.contenedor, AuthFragment())
-//                            .commit()
-                        openFragment(R.id.AuthFragment)
                     }
 
                     override fun onLogoutNoAuthenticated() {

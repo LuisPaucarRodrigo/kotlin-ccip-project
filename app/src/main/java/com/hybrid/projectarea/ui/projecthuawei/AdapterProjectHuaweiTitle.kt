@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.ProjectHuaweiTitle
+import com.hybrid.projectarea.domain.model.ProjectHuaweiTitle
 
 class AdapterProjectHuaweiTitle (private var listaElementos:ArrayList<ProjectHuaweiTitle>): RecyclerView.Adapter<AdapterProjectHuaweiTitle.ViewHolder>() {
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {

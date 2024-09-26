@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentHuaweiBinding
-import com.hybrid.projectarea.model.ProjectHuawei
+import com.hybrid.projectarea.domain.model.ProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession

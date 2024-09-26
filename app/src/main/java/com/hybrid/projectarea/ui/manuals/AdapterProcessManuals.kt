@@ -8,9 +8,9 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.GetProcessManuals
+import com.hybrid.projectarea.domain.model.GetProcessManuals
 
-class AdapterProcessManuals (private var listaElementos:ArrayList<GetProcessManuals>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterProcessManuals.ViewHolder>() {
+class AdapterProcessManuals (private var listaElementos:List<GetProcessManuals>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterProcessManuals.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val imageType = itemView.findViewById<ImageView>(R.id.imageType)!!

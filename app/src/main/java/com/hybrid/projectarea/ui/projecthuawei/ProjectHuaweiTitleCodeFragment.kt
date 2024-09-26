@@ -13,7 +13,7 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentProjectHuaweiTitleCodeBinding
-import com.hybrid.projectarea.model.ProjectHuaweiTitle
+import com.hybrid.projectarea.domain.model.ProjectHuaweiTitle
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession

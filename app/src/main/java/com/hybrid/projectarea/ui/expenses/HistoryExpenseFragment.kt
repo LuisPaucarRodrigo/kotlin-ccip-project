@@ -15,7 +15,7 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentHistoryExpenseBinding
-import com.hybrid.projectarea.model.ExpenseHistory
+import com.hybrid.projectarea.domain.model.ExpenseHistory
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
@@ -61,7 +61,6 @@ class HistoryExpenseFragment : Fragment() {
     }
 
     private fun requestHistoryExpense() {
-        val arrayList = ArrayList<ExpenseHistory>()
         binding.recyclerviewHistoryExpense.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -70,19 +69,13 @@ class HistoryExpenseFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.funExpenseHistory(token, object : AuthManager.inExpenseHistory {
                     override fun onExpenseHistorySuccess(response: List<ExpenseHistory>) {
-                        binding.shimmer.beforeViewElement.isVisible = false
-                        binding.recyclerviewHistoryExpense.afterViewElement.isVisible = true
-                        binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
-                        response.forEach { item ->
-                            val element = ExpenseHistory(
-                                item.zone,
-                                item.expense_type,
-                                item.amount
-                            )
-                            arrayList.add(element)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.shimmer.beforeViewElement.isVisible = false
+                            binding.recyclerviewHistoryExpense.afterViewElement.isVisible = true
+                            binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
+                            val adapter = AdapterExpenseHistory(response)
+                            binding.recyclerviewHistoryExpense.recyclerview.adapter = adapter
                         }
-                        val adapter = AdapterExpenseHistory(arrayList)
-                        binding.recyclerviewHistoryExpense.recyclerview.adapter = adapter
                     }
 
                     override fun onExpenseHistoryNoAuthenticated() {
@@ -90,8 +83,10 @@ class HistoryExpenseFragment : Fragment() {
                     }
 
                     override fun onExpenseHistoryFailed(errorMessage: String) {
-                        binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
                     }
                 })
             } catch (e: Exception) {

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.model.ProjectHuawei
+import com.hybrid.projectarea.domain.model.ProjectHuawei
 
 class AdapterProjectHuawei (private var listaElementos:ArrayList<ProjectHuawei>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterProjectHuawei.ViewHolder>() {
 

@@ -1,32 +1,27 @@
 package com.hybrid.projectarea.api
 
+import com.hybrid.projectarea.domain.model.ChecklistHistory
 import com.hybrid.projectarea.domain.model.CodePhotoDescription
+import com.hybrid.projectarea.domain.model.Download
 import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.domain.model.ExpenseForm
+import com.hybrid.projectarea.domain.model.ExpenseHistory
+import com.hybrid.projectarea.domain.model.FolderArchiveResponse
+import com.hybrid.projectarea.domain.model.FormProcessManuals
+import com.hybrid.projectarea.domain.model.FormStoreProjectHuawei
+import com.hybrid.projectarea.domain.model.LoginRequest
+import com.hybrid.projectarea.domain.model.LoginResponse
 import com.hybrid.projectarea.domain.model.Photo
 import com.hybrid.projectarea.domain.model.PhotoRequest
 import com.hybrid.projectarea.domain.model.PreprojectTitle
-import com.hybrid.projectarea.domain.model.ProjectFind
-import com.hybrid.projectarea.domain.model.ProjectRecycler
+import com.hybrid.projectarea.domain.model.ProjectHuawei
+import com.hybrid.projectarea.domain.model.ProjectHuaweiTitle
+import com.hybrid.projectarea.domain.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.domain.model.UsersResponse
-import com.hybrid.projectarea.model.ChecklistHistory
-import com.hybrid.projectarea.model.Download
-
-import com.hybrid.projectarea.model.ExpenseForm
-import com.hybrid.projectarea.model.ExpenseHistory
-import com.hybrid.projectarea.model.FolderArchiveResponse
-import com.hybrid.projectarea.model.FormProcessManuals
-import com.hybrid.projectarea.model.FormStoreProjectHuawei
-import com.hybrid.projectarea.model.LoginRequest
-import com.hybrid.projectarea.model.LoginResponse
-
-import com.hybrid.projectarea.model.ProjectHuawei
-import com.hybrid.projectarea.model.ProjectHuaweiTitle
-import com.hybrid.projectarea.model.ShowProjectHuaweiCode
-
-import com.hybrid.projectarea.model.checkListMobile
-import com.hybrid.projectarea.model.checkListTools
-import com.hybrid.projectarea.model.checklistDay
-import com.hybrid.projectarea.model.checklistEpps
+import com.hybrid.projectarea.domain.model.checkListMobile
+import com.hybrid.projectarea.domain.model.checkListTools
+import com.hybrid.projectarea.domain.model.checklistDay
+import com.hybrid.projectarea.domain.model.checklistEpps
 import okhttp3.ResponseBody
 
 import retrofit2.Call
@@ -41,7 +36,7 @@ import retrofit2.http.Streaming
 interface ApiService {
 
     @POST("login")
-    fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
+    suspend fun login(@Body loginRequest: LoginRequest): Response<LoginResponse>
 
     @GET("users/{id}")
     suspend fun users(@Header("Authorization") token: String,@Path("id") id:String): Response<UsersResponse>
@@ -61,61 +56,52 @@ interface ApiService {
     @GET("register/photo/{id}")
     suspend fun requestRegisterPhoto(@Header("Authorization") token: String,@Path("id") id: String): Response<List<Photo>>
 
-    @GET("project")
-    fun project(@Header("Authorization") token: String): Call<List<ProjectRecycler>>
-
-    @GET("project/show/{id}")
-    fun projectshow(@Header("Authorization") token: String,@Path("id") id: String): Call<ProjectFind>
-
-    @POST("project/store/image")
-    fun storephoto(@Header("Authorization") token: String, @Body photoRequest: PhotoRequest): Call<Void>
-
     @POST("logout")
-    fun logout(@Header("Authorization") token: String): Call<Void>
+    suspend fun logout(@Header("Authorization") token: String): Response<Void>
 
     @GET("huaweiproject/index")
-    fun huaweiProject(@Header("Authorization") token: String):Call<List<ProjectHuawei>>
+    suspend fun huaweiProject(@Header("Authorization") token: String):Response<List<ProjectHuawei>>
 
     @POST("huaweiproject/store")
-    fun huaweiProjectStore(@Header("Authorization") token: String, @Body createProject: FormStoreProjectHuawei): Call<Void>
+    suspend fun huaweiProjectStore(@Header("Authorization") token: String, @Body createProject: FormStoreProjectHuawei): Response<Void>
 
     @GET("huaweiproject/{huawei_project_id}/stages/get")
-    fun pointProjectHuaweiTitleCode(@Header("Authorization") token: String,@Path("huawei_project_id") id: String):Call<List<ProjectHuaweiTitle>>
+    suspend fun pointProjectHuaweiTitleCode(@Header("Authorization") token: String,@Path("huawei_project_id") id: String):Response<List<ProjectHuaweiTitle>>
 
     @GET("huaweiproject/{code}/code/get")
-    fun pointShowProjectHuaweiCode(@Header("Authorization") token: String,@Path("code") id: String):Call<ShowProjectHuaweiCode>
+    suspend fun pointShowProjectHuaweiCode(@Header("Authorization") token: String,@Path("code") id: String):Response<ShowProjectHuaweiCode>
 
     @POST("huaweiproject/stages/codes/store_image")
-    fun storeImagesProjectHuawei(@Header("Authorization") token: String, @Body photoRequest: PhotoRequest): Call<Void>
+    suspend fun storeImagesProjectHuawei(@Header("Authorization") token: String, @Body photoRequest: PhotoRequest): Response<Void>
 
     @GET("huaweiproject/{code}/images/get")
-    fun pointHistoryImageProjectHuawei(@Header("Authorization") token: String,@Path("code") id: String):Call<List<Photo>>
+    suspend fun pointHistoryImageProjectHuawei(@Header("Authorization") token: String,@Path("code") id: String):Response<List<Photo>>
 
     @POST("processmanuals/index")
-    fun getProcessManuals(@Header("Authorization") token: String, @Body formDataACHuawei: FormProcessManuals): Call<FolderArchiveResponse>
+    suspend fun getProcessManuals(@Header("Authorization") token: String, @Body formDataACHuawei: FormProcessManuals): Response<FolderArchiveResponse>
 
     @POST("processmanuals/folder_archive_download")
     @Streaming
-    fun getDownloadPdf(@Header("Authorization") token: String, @Body formDownload: Download): Call<ResponseBody>
+    suspend fun getDownloadPdf(@Header("Authorization") token: String, @Body formDownload: Download): Response<ResponseBody>
 
     @POST("checklisttoolkit")
-    fun postStoreCheckListTools(@Header("Authorization") token: String, @Body checkListTools: checkListTools): Call<Void>
+    suspend fun postStoreCheckListTools(@Header("Authorization") token: String, @Body checkListTools: checkListTools): Response<Void>
 
     @POST("checklistcar")
-    fun postStoreCheckListMobile(@Header("Authorization") token: String, @Body checkListMobile: checkListMobile): Call<Void>
+    suspend fun postStoreCheckListMobile(@Header("Authorization") token: String, @Body checkListMobile: checkListMobile): Response<Void>
 
     @POST("checklistepp")
-    fun postStoreCheckListEpps(@Header("Authorization") token: String, @Body checkListEpps: checklistEpps): Call<Void>
+    suspend fun postStoreCheckListEpps(@Header("Authorization") token: String, @Body checkListEpps: checklistEpps): Response<Void>
 
     @POST("checklistdailytoolkit")
-    fun postStoreCheckListDay(@Header("Authorization") token: String, @Body checkListDay: checklistDay): Call<Void>
+    suspend fun postStoreCheckListDay(@Header("Authorization") token: String, @Body checkListDay: checklistDay): Response<Void>
 
     @GET("checklistHistory")
-    fun checklistHistory(@Header("Authorization") token:String): Call<List<ChecklistHistory>>
+    suspend fun checklistHistory(@Header("Authorization") token:String): Response<List<ChecklistHistory>>
 
     @POST("expense/store")
-    fun expenseStore(@Header("Authorization") token: String, @Body expenseForm:ExpenseForm): Call<Void>
+    suspend fun expenseStore(@Header("Authorization") token: String, @Body expenseForm: ExpenseForm): Response<Void>
 
     @GET("expense/index")
-    fun expenseHistory(@Header("Authorization") token:String): Call<List<ExpenseHistory>>
+    suspend fun expenseHistory(@Header("Authorization") token:String): Response<List<ExpenseHistory>>
 }
