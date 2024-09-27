@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hybrid.projectarea.R
@@ -26,6 +27,9 @@ class CodePhotoFragment : Fragment() {
     private var _binding:FragmentCodePhotoBinding? = null
     private val binding get() = _binding!!
     private var preproject_id = ""
+
+    private lateinit var codePhotoViewModel: CodePhotoViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preproject_id = requireArguments().getString("preproject_id").toString()
@@ -35,13 +39,17 @@ class CodePhotoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCodePhotoBinding.inflate(inflater,container,false)
+        codePhotoViewModel = ViewModelProvider(this).get(CodePhotoViewModel::class.java)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val token = TokenAuth.getToken(requireContext(), "token")
+            codePhotoViewModel.getCodePhoto(token, preproject_id)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requestCode()
         binding.recyclerviewCodePhoto.swipe.setColorSchemeResources(R.color.azulccip,R.color.greenccip)
         binding.recyclerviewCodePhoto.swipe.setProgressBackgroundColorSchemeResource(R.color.white)
         binding.recyclerviewCodePhoto.swipe.setOnRefreshListener {
@@ -53,31 +61,20 @@ class CodePhotoFragment : Fragment() {
         binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val token = TokenAuth.getToken(requireContext(),"token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                val authManager = AuthManager(apiService)
-                authManager.codephotopreproject(token,preproject_id,object : AuthManager.inCodePhotoPreProject{
-                    override fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.shimmer.beforeViewElement.isVisible = false
-                            binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
-                            binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                            val adapter = AdapterPreprojectTitle(response)
-                            binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
-                        }
-                    }
+                codePhotoViewModel.data.observe(viewLifecycleOwner){ success ->
+                    binding.shimmer.beforeViewElement.isVisible = false
+                    binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
+                    binding.recyclerviewCodePhoto.swipe.isRefreshing = false
+                    val adapter = AdapterPreprojectTitle(success)
+                    binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
+                }
 
-                    override fun onCodePhotoPreProjectNoAuthenticated() {
-                        DeleteTokenAndCloseSession(this@CodePhotoFragment)
+                codePhotoViewModel.error.observe(viewLifecycleOwner){ error ->
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        binding.recyclerviewCodePhoto.swipe.isRefreshing = false
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
                     }
-
-                    override fun onCodePhotoPreProjectFailed(errorMessage: String) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                        }
-                    }
-                })
+                }
             }catch (e: Exception){
                 withContext(Dispatchers.Main) {
                     Toast.makeText(

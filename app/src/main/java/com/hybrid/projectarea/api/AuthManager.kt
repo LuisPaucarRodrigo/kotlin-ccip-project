@@ -125,33 +125,33 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun codephotopreproject(token: String, id: String, authListener: inCodePhotoPreProject) {
-        try {
-            val response = apiService.codephotopreproject(token, id)
-            if (response.isSuccessful) {
-                val authToken = response.body()
-                authToken?.let {
-                    authListener.onCodePhotoPreProjectSuccess(it)
-                }
-//                        ?: run {
-//                        authListener.onPreProjectFailed()
-//                    }
-            } else if(response.code() == 401) {
-                authListener.onCodePhotoPreProjectNoAuthenticated()
-            } else {
-                val errorBody = response.errorBody()?.string()
-                val errorMessage = try {
-                    JSONObject(errorBody).getString("error")
-                } catch (e: JSONException) {
-                    "Ocurrió un error desconocido"
-                }
-                authListener.onCodePhotoPreProjectFailed(errorMessage)
-            }
-        } catch (e: Exception){
-            authListener.onCodePhotoPreProjectFailed(e.message ?: "Ocurrió un error")
-
-        }
-    }
+//    suspend fun codephotopreproject(token: String, id: String, authListener: inCodePhotoPreProject) {
+//        try {
+//            val response = apiService.codephotopreproject(token, id)
+//            if (response.isSuccessful) {
+//                val authToken = response.body()
+//                authToken?.let {
+//                    authListener.onCodePhotoPreProjectSuccess(it)
+//                }
+////                        ?: run {
+////                        authListener.onPreProjectFailed()
+////                    }
+//            } else if(response.code() == 401) {
+//                authListener.onCodePhotoPreProjectNoAuthenticated()
+//            } else {
+//                val errorBody = response.errorBody()?.string()
+//                val errorMessage = try {
+//                    JSONObject(errorBody).getString("error")
+//                } catch (e: JSONException) {
+//                    "Ocurrió un error desconocido"
+//                }
+//                authListener.onCodePhotoPreProjectFailed(errorMessage)
+//            }
+//        } catch (e: Exception){
+//            authListener.onCodePhotoPreProjectFailed(e.message ?: "Ocurrió un error")
+//
+//        }
+//    }
 
     suspend fun codephotospecific(token: String, id: String, authListener: inCodePhotoDescription) {
         try{
