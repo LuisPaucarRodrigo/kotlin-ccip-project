@@ -12,7 +12,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.model.PreprojectTitle
 
-class AdapterPrepropjectTitle (private var listaElementos:ArrayList<PreprojectTitle>): RecyclerView.Adapter<AdapterPrepropjectTitle.ViewHolder>() {
+class AdapterPrepropjectTitle (private var listaElementos:List<PreprojectTitle>): RecyclerView.Adapter<AdapterPrepropjectTitle.ViewHolder>() {
+
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val title = itemView.findViewById<TextView>(R.id.title)!!
         val recyclerview = itemView.findViewById<RecyclerView>(R.id.recyclerviewtitle)!!
@@ -37,7 +38,7 @@ class AdapterPrepropjectTitle (private var listaElementos:ArrayList<PreprojectTi
                     val conceptFragment = PreProjectEspecificFragment()
 
                     val args = Bundle().apply {
-                        putString("id", item.id)
+                        putString("code_id", item.id)
                     }
                     conceptFragment.arguments = args
 

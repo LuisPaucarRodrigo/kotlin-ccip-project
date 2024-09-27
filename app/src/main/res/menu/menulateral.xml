@@ -35,13 +35,12 @@
         <!--            android:title="@string/projects"-->
         <!--            android:icon="@drawable/icon_home"-->
         <!--            android:iconTint="@color/menuLateralTools"-->
-        <!--            />-->
-        <!--        <item-->
-        <!--            android:id="@+id/nav_huawei"-->
-        <!--            android:title="Huawei"-->
-        <!--            android:icon="@drawable/icon_home"-->
-        <!--            android:iconTint="@color/menuLateralTools"-->
-        <!--            />-->
+                    />
+<!--        <item-->
+<!--            android:id="@+id/nav_huawei"-->
+<!--            android:title="Huawei"-->
+<!--            android:icon="@drawable/icon_home"-->
+<!--            android:iconTint="@color/menuLateralTools"/>-->
         <item
             android:id="@+id/nav_logout"
             android:icon="@android:drawable/ic_lock_power_off"

@@ -1,25 +1,20 @@
-package com.hybrid.projectarea.view
+package com.hybrid.projectarea.view.projecthuawei
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentStoreProjectsHuaweiBinding
-import com.hybrid.projectarea.databinding.SuccessfulRequestBinding
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,7 +45,6 @@ class StoreProjectsHuaweiFragment : Fragment() {
     }
 
     private fun sendFormData(formData: FormStoreProjectHuawei) {
-        println(formData)
         lifecycleScope.launch {
             val token = TokenAuth.getToken(requireContext(),"token")
             val apiService = withContext(Dispatchers.IO){
@@ -59,7 +53,12 @@ class StoreProjectsHuaweiFragment : Fragment() {
             val authManager = AuthManager(apiService)
             authManager.funStorePtojectHuawei(token,formData,object: AuthManager.inStoreProjectHuawei{
                 override fun onStoreProjectHuaweiSuccess() {
+                    dataCleaning()
                     Alert.alertSuccess(requireContext(),layoutInflater)
+                }
+
+                override fun onStoreProjectHuaweiNoAuthenticated() {
+                    DeleteTokenAndCloseSession(this@StoreProjectsHuaweiFragment)
                 }
 
                 override fun onStoreProjectHuaweiFailed(errorMessage: String) {
@@ -74,34 +73,18 @@ class StoreProjectsHuaweiFragment : Fragment() {
     private fun getFormData(): FormStoreProjectHuawei {
         return FormStoreProjectHuawei(
             site = binding.addSite.text.toString(),
-            elaborated = binding.addElaborated.text.toString(),
-            code = binding.addCode.text.toString(),
-            name = binding.addName.text.toString(),
-            address = binding.addAddress.text.toString(),
-            reference = binding.addReference.text.toString(),
-            access = binding.addAccess.text.toString()
+            diu = binding.addDiu.text.toString(),
         )
     }
 
     private fun areAllFieldsFilled(formData: FormStoreProjectHuawei): Boolean {
         return with(formData) {
-            site.isNotEmpty() && elaborated.isNotEmpty() && code.isNotEmpty() && name.isNotEmpty() &&
-                    address.isNotEmpty() && reference.isNotEmpty() && access.isNotEmpty()
+            site.isNotEmpty() && diu.isNotEmpty()
         }
     }
 
-    private fun alertSuccess() {
-        val builder = AlertDialog.Builder(requireContext())
-        val alertDialogBinding = SuccessfulRequestBinding.inflate(layoutInflater)
-        val dialogView = alertDialogBinding.root
-        builder.setView(dialogView)
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.show()
-        Handler(Looper.getMainLooper()).postDelayed({
-            dialog.dismiss()
-        },1500)
+    private fun dataCleaning() {
+        binding.addSite.text.clear()
+        binding.addDiu.text.clear()
     }
-
-
 }

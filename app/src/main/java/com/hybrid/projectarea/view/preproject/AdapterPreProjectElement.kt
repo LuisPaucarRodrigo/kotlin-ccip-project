@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
 
-class AdapterPreProjectElement (private var listaElementos:ArrayList<ElementPreProjectRecyclerView>,private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterPreProjectElement.ViewHolder>() {
+class AdapterPreProjectElement (private var listaElementos:List<ElementPreProjectRecyclerView>,private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterPreProjectElement.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val code = itemView.findViewById<TextView>(R.id.code)!!

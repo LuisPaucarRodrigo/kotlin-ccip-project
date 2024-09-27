@@ -18,6 +18,7 @@ import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.view.BaseActivity
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,7 +56,6 @@ class PreProjectFragment : Fragment() {
     }
 
     private fun requestPreProject() {
-        val arrayList = ArrayList<ElementPreProjectRecyclerView>()
         binding.recyclerviewPreproject.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -68,24 +68,14 @@ class PreProjectFragment : Fragment() {
                         binding.shimmer.beforeViewElement.isVisible = false
                         binding.recyclerviewPreproject.afterViewElement.isVisible = true
                         binding.recyclerviewPreproject.swipe.isRefreshing = false
-                        response.forEach { item ->
-                            val element = ElementPreProjectRecyclerView(
-                                item.id,
-                                item.code,
-                                item.description,
-                                item.date,
-                                item.observation ?: ""
-                            )
-                            arrayList.add(element)
-                        }
                         val conceptFragment = CodePhotoFragment()
                         val adapter = AdapterPreProjectElement(
-                            arrayList,
+                            response,
                             object : AdapterPreProjectElement.OnItemClickListener {
                                 override fun onItemClick(position: Int) {
-                                    val item = arrayList[position]
+                                    val item = response[position]
                                     val args = Bundle()
-                                    args.putString("id", item.id)
+                                    args.putString("preproject_id", item.id)
                                     conceptFragment.arguments = args
 
                                     val transition: FragmentTransaction =
@@ -96,6 +86,10 @@ class PreProjectFragment : Fragment() {
                                 }
                             })
                         binding.recyclerviewPreproject.recyclerview.adapter = adapter
+                    }
+
+                    override fun onPreProjectNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@PreProjectFragment)
                     }
 
                     override fun onPreProjectFailed(error: String) {

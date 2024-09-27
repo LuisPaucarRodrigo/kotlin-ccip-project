@@ -1,14 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg"
     tools:context=".view.projecthuawei.StoreImageHuaweiFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/formPreproject"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:paddingHorizontal="20dp"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <ImageButton
+            android:id="@+id/imagesCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:src="@drawable/baseline_checklist_rtl_24" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Codigo de Anteproyecto"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/txtTitle"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/qanelabolt"/>
+
+                    <TextView
+                        android:id="@+id/codePreproject"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:layout_weight="1.7"
+                        android:text="@string/code_preproject"
+                        android:textColor="@color/black" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Escenario"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/txtTitle"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/qanelabolt"/>
+
+                    <TextView
+                        android:id="@+id/codePhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:text="code_photo"
+                        android:textColor="@color/black"
+                        android:gravity="start" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Descripcion del Escenario"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/txtTitle"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/qanelabolt"/>
+
+                    <TextView
+                        android:id="@+id/codeDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:text="descripcion de escenario"
+                        android:textColor="@color/black"
+                        android:gravity="start" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Estatus"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/txtTitle"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/qanelabolt"/>
+
+                    <TextView
+                        android:id="@+id/codeStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:text="Estatus de escenario"
+                        android:textColor="@color/black"
+                        android:gravity="start" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Site"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt" />
+
+                    <EditText
+                        android:id="@+id/textSite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/txt"
+                        android:textSize="17sp"
+                        android:hint="Site"
+                        android:paddingVertical="16dp"
+                        android:inputType="textMultiLine" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/description"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt" />
+
+                    <EditText
+                        android:id="@+id/textDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/txt"
+                        android:textSize="17sp"
+                        android:hint="@string/enter_description"
+                        android:paddingVertical="16dp"
+                        android:inputType="textMultiLine" />
+                </LinearLayout>
+
+                <include android:id="@+id/photo" layout="@layout/component_photo"/>
+
+                <include android:id="@+id/send" layout="@layout/component_send"/>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cameraPreproject"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageButton
+            android:id="@+id/closeCamera"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginBottom="50dp"
+            android:layout_marginEnd="50dp"
+            android:elevation="2dp"
+            android:src="@drawable/baseline_close_24"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/vertical_centerline" />
+
+        <ImageButton
+            android:id="@+id/captureButton"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginBottom="50dp"
+            android:layout_marginStart="50dp"
+            android:elevation="2dp"
+            android:src="@drawable/baseline_camera_24"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vertical_centerline" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vertical_centerline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".50" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

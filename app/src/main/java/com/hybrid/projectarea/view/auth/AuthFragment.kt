@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.fragment.app.FragmentTransaction
@@ -17,6 +19,7 @@ import com.hybrid.projectarea.databinding.FragmentAuthBinding
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
 import com.hybrid.projectarea.model.RetrofitClient
+import com.hybrid.projectarea.view.BaseActivity
 import com.hybrid.projectarea.view.dataStore
 import com.hybrid.projectarea.view.preproject.PreProjectFragment
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +40,7 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        (activity as BaseActivity).supportActionBar?.hide()
         binding.BtnAuth.setOnClickListener {
             val formData = getFormData()
             if (areAllFieldsFilled(formData)){

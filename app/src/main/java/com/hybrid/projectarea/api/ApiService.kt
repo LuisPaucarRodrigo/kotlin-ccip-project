@@ -2,25 +2,24 @@ package com.hybrid.projectarea.api
 
 import com.hybrid.projectarea.model.ChecklistHistory
 import com.hybrid.projectarea.model.CodePhotoDescription
-import com.hybrid.projectarea.model.CodePhotoPreProject
 import com.hybrid.projectarea.model.Download
 import com.hybrid.projectarea.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.model.ExpenseHistory
 import com.hybrid.projectarea.model.FolderArchiveResponse
-import com.hybrid.projectarea.model.FormDataACHuawei
 import com.hybrid.projectarea.model.FormProcessManuals
 import com.hybrid.projectarea.model.FormStoreProjectHuawei
 import com.hybrid.projectarea.model.LoginRequest
 import com.hybrid.projectarea.model.LoginResponse
-import com.hybrid.projectarea.model.NameRectifiers
 import com.hybrid.projectarea.model.Photo
 
 import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.PreprojectTitle
 import com.hybrid.projectarea.model.ProjectFind
 import com.hybrid.projectarea.model.ProjectHuawei
+import com.hybrid.projectarea.model.ProjectHuaweiTitle
 import com.hybrid.projectarea.model.ProjectRecycler
+import com.hybrid.projectarea.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.model.UsersResponse
 import com.hybrid.projectarea.model.checkListMobile
 import com.hybrid.projectarea.model.checkListTools
@@ -77,11 +76,17 @@ interface ApiService {
     @POST("huaweiproject/store")
     fun huaweiProjectStore(@Header("Authorization") token: String, @Body createProject: FormStoreProjectHuawei): Call<Void>
 
-    @POST("storeDatosACHuawei")
-    fun storeDatosACHuawei(@Header("Authorization") token:String, @Body formDataACHuawei: FormDataACHuawei): Call<Void>
+    @GET("huaweiproject/{huawei_project_id}/stages/get")
+    fun pointProjectHuaweiTitleCode(@Header("Authorization") token: String,@Path("huawei_project_id") id: String):Call<List<ProjectHuaweiTitle>>
 
-    @GET("RectifiersHuawei/{id}")
-    fun rectifiersProjectHuawei(@Header("Authorization") token:String,@Path("id") id:String): Call<List<NameRectifiers>>
+    @GET("huaweiproject/{code}/code/get")
+    fun pointShowProjectHuaweiCode(@Header("Authorization") token: String,@Path("code") id: String):Call<ShowProjectHuaweiCode>
+
+    @POST("huaweiproject/stages/codes/store_image")
+    fun storeImagesProjectHuawei(@Header("Authorization") token: String, @Body photoRequest: PhotoRequest): Call<Void>
+
+    @GET("huaweiproject/{code}/images/get")
+    fun pointHistoryImageProjectHuawei(@Header("Authorization") token: String,@Path("code") id: String):Call<List<Photo>>
 
     @POST("processmanuals/index")
     fun getProcessManuals(@Header("Authorization") token: String, @Body formDataACHuawei: FormProcessManuals): Call<FolderArchiveResponse>

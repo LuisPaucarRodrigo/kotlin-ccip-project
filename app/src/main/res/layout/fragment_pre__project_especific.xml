@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:background="@color/bg"
     tools:context=".view.preproject.PreProjectEspecificFragment">
+
     <LinearLayout
         android:id="@+id/formPreproject"
         android:layout_width="match_parent"
@@ -79,7 +80,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="17sp"
-                        android:text="code_photo"
+                        android:text="scenary"
                         android:textColor="@color/black"
                         android:gravity="start" />
                 </LinearLayout>
@@ -104,9 +105,34 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="17sp"
-                        android:text="descripcion de escenario"
+                        android:text="description of scenary"
                         android:textColor="@color/black"
                         android:gravity="start" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/imageReference"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Imagenes de Referencia"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/txtTitle"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/qanelabolt"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerImages"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -129,7 +155,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="17sp"
-                        android:text="Estatus de escenario"
+                        android:text="state of scenary"
                         android:textColor="@color/black"
                         android:gravity="start" />
                 </LinearLayout>

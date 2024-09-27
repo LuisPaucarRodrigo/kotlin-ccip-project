@@ -8,11 +8,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
@@ -20,15 +22,20 @@ import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -50,6 +57,9 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
@@ -74,7 +84,6 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         selectionCamera()
-
         binding.captureButton.setOnClickListener {
             takePhoto()
         }
@@ -112,20 +121,46 @@ class CameraFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return AspectRatio.RATIO_4_3
+        }
+        return AspectRatio.RATIO_16_9
+    }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
+        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowMetrics = windowManager.currentWindowMetrics
+        val bounds = windowMetrics.bounds
+        val width = bounds.width()
+        val height = bounds.height()
+        val screenAspectRatio = aspectRatio(width, height)
+
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+//            val aspectRatioStrategy = AspectRatioStrategy(AspectRatio.RATIO_4_3, AspectRatio.RATIO_16_9)
+
+//            val resolutionSelector = ResolutionSelector.Builder()
+//                .setAspectRatioStrategy(aspectRatioStrategy)
+//                .build()
 
             // Preview
             val preview = Preview.Builder()
+//                .setResolutionSelector(resolutionSelector)
+
+                .setTargetAspectRatio(screenAspectRatio)
+//                .setTargetResolution(Size(width-100, height))
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
+
             imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
             val orientationEventListener = object : OrientationEventListener(requireContext()) {
@@ -144,10 +179,11 @@ class CameraFragment : Fragment() {
             orientationEventListener.enable()
 
             val imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetRotation(binding.previewView.display.rotation)
                 .build()
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = CameraSelector.Builder()
+                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                .build()
             try {
                 cameraProvider.unbindAll()
                 val camera = cameraProvider.bindToLifecycle(
@@ -337,5 +373,7 @@ class CameraFragment : Fragment() {
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 }

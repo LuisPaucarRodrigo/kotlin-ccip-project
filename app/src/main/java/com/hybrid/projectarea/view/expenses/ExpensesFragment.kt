@@ -1,16 +1,24 @@
 package com.hybrid.projectarea.view.expenses
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -24,11 +32,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentExpensesBinding
+import com.hybrid.projectarea.databinding.GalleryOrCameraBinding
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.model.ExpenseForm
 import com.hybrid.projectarea.utils.HideKeyboard
@@ -38,16 +48,17 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.utils.showDatePickerDialog
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.security.Permissions
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-typealias LumaListener = (luma: Double) -> Unit
 
 class ExpensesFragment : Fragment() {
     private var _binding: FragmentExpensesBinding? = null
@@ -73,13 +84,13 @@ class ExpensesFragment : Fragment() {
             setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         }
         val optionsZone =
-            arrayOf("Arequipa", "Chala", "Moquegua Pint", "Moquegua Pext", "Tacna", "MDD1", "MDD2")
+            arrayOf("Arequipa", "Chala", "Moquegua", "Tacna", "MDD1", "MDD2")
         val adapterZone =
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, optionsZone)
         binding.zone.adapter = adapterZone
 
         val optionsExpense =
-            arrayOf("Hospedaje", "Movilidad", "Peaje", "Fletes", "Consumibles", "Otros")
+            arrayOf("Hospedaje", "Pasaje Interprovincial", "Peaje","Taxis y Pasajes" ,"Mensajeria", "Consumibles","Bandeos", "Otros")
         val adapterExpense =
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, optionsExpense)
         binding.typeExpense.adapter = adapterExpense
@@ -97,16 +108,8 @@ class ExpensesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnDocumentPhoto.setOnClickListener {
-            if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
-                binding.formPreproject.isVisible = false
-                binding.cameraPreproject.isVisible = true
-                (activity as? AppCompatActivity)?.supportActionBar?.hide()
-                startCamera()
-            } else {
-                requestPermissionLauncherCameraLocation.launch(
-                    request_permissions
-                )
-            }
+            selectionCameraOrGallery()
+
         }
 
         binding.options.btnHistory.setOnClickListener {
@@ -171,6 +174,10 @@ class ExpensesFragment : Fragment() {
                             binding.send.buttonSend.isEnabled = true
                         }
 
+                        override fun onExpenseFormNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@ExpensesFragment)
+                        }
+
                         override fun onExpenseFormFailed(errorMessage: String) {
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
                                 .show()
@@ -192,7 +199,64 @@ class ExpensesFragment : Fragment() {
         }
     }
 
+    private fun selectionCameraOrGallery(){
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val bottomSheetView = GalleryOrCameraBinding.inflate(layoutInflater)
+        val dialogView = bottomSheetView.root
+
+        bottomSheetDialog.setContentView(dialogView)
+        bottomSheetDialog.show()
+
+        bottomSheetView.btnGallery.setOnClickListener {
+            val apiPermissions = when {
+                Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU -> {
+                    request_permissions_gallery
+                }
+                else -> {
+                    request_permissions_gallery_api33
+                }
+            }
+            if (RequestPermissions.hasPermissions(requireContext(),apiPermissions)) {
+                pickPhotoFromGallery()
+            } else {
+                requestPermissionLauncherCameraLocation.launch(apiPermissions)
+            }
+            bottomSheetDialog.dismiss()
+        }
+        bottomSheetView.btnCamera.setOnClickListener {
+            HideKeyboard.hideKeyboard(binding.root)
+            if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
+                binding.formPreproject.isVisible = false
+                binding.cameraPreproject.isVisible = true
+                startCamera()
+            } else {
+                requestPermissionLauncherCameraLocation.launch(
+                    request_permissions
+                )
+            }
+            bottomSheetDialog.dismiss()
+        }
+    }
+
+    private fun pickPhotoFromGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        startForActivityGallery.launch(intent)
+    }
+
+    private val startForActivityGallery = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ){result ->
+        if (result.resultCode == Activity.RESULT_OK){
+            val uri = result.data?.data
+            val bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, Uri.parse(uri.toString()))
+            bills = encodeImage(bitmap)!!
+            binding.btnDocumentPhoto.text = "Imagen Subida"
+        }
+    }
+
     private fun startCamera() {
+        (activity as? AppCompatActivity)?.supportActionBar?.hide()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
@@ -233,9 +297,27 @@ class ExpensesFragment : Fragment() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
+
+                // Pinch-to-zoom setup
+                val cameraControl = camera.cameraControl
+                val cameraInfo = camera.cameraInfo
+
+                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                        val delta = detector.scaleFactor
+                        cameraControl.setZoomRatio(currentZoomRatio * delta)
+                        return true
+                    }
+                })
+
+                binding.previewView.setOnTouchListener { _, event ->
+                    scaleGestureDetector.onTouchEvent(event)
+                    true
+                }
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -280,6 +362,10 @@ class ExpensesFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         val cameraPermissionGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val galleryPermissionGranted = when {
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU -> permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
+            else -> permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+        }
 
         if (cameraPermissionGranted) {
             binding.formPreproject.isVisible = false
@@ -291,6 +377,16 @@ class ExpensesFragment : Fragment() {
                 getString(R.string.enable_camera_permission),
                 Snackbar.LENGTH_LONG
             ).show()
+
+            if (galleryPermissionGranted) {
+                pickPhotoFromGallery()
+            } else {
+                Snackbar.make(
+                    binding.root,
+                    "Permisos de Galeria no concedidos",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
@@ -337,14 +433,22 @@ class ExpensesFragment : Fragment() {
             binding.txtDateDocument
         )
         arrayText.forEach { it.text.clear() }
-
         bills = ""
+        binding.btnDocumentPhoto.text = "Subir Foto"
     }
 
     companion object {
         private const val TAG = "CameraXApp"
         private val request_permissions = arrayOf(
             Manifest.permission.CAMERA
+        )
+
+        private val request_permissions_gallery = arrayOf(
+            Manifest.permission.READ_MEDIA_IMAGES
+        )
+
+        private val request_permissions_gallery_api33 = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
     }
 }

@@ -1,29 +1,36 @@
 package com.hybrid.projectarea.view.preproject
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -32,6 +39,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
@@ -42,9 +51,11 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentPreProjectEspecificBinding
+import com.hybrid.projectarea.databinding.PhotoCodeBinding
 import com.hybrid.projectarea.model.CodePhotoDescription
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
+import com.hybrid.projectarea.model.Images
 import com.hybrid.projectarea.model.PhotoRequest
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
@@ -53,22 +64,22 @@ import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
-import com.hybrid.projectarea.utils.startCamera
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-typealias LumaListener = (luma: Double) -> Unit
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class PreProjectEspecificFragment : Fragment() {
 
     private var _binding: FragmentPreProjectEspecificBinding? = null
     private val binding get() = _binding!!
-    private var photoString: String? = null
+    private var photoString: String = ""
 
     //    private var intent: Intent? = null
     private lateinit var file: File
@@ -81,7 +92,7 @@ class PreProjectEspecificFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preprojectCodeId = requireArguments().getString("id").toString()
+        preprojectCodeId = requireArguments().getString("code_id").toString()
     }
 
     override fun onCreateView(
@@ -116,8 +127,14 @@ class PreProjectEspecificFragment : Fragment() {
 
         binding.send.buttonSend.setOnClickListener {
             HideKeyboard.hideKeyboard(binding.root)
-            binding.send.buttonSend.isEnabled = false
-            send(binding.addDescription.text.toString())
+            val formData = collectFormData()
+            if (areAllFieldsFilled(formData)){
+                binding.send.buttonSend.isEnabled = false
+                send(formData)
+            }else{
+                Toast.makeText(context, "Por favor, llena todos los campos", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
         binding.captureButton.setOnClickListener {
@@ -132,51 +149,44 @@ class PreProjectEspecificFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    private fun send(description: String) {
-        if (description.isNotBlank() && photoString != null) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val token = TokenAuth.getToken(requireContext(), "token")
-                    val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                    val authManager = AuthManager(apiService)
-                    val formImageProject = PhotoRequest(
-                        preprojectCodeId,
-                        description,
-                        photoString.toString(),
-                        latitude.toString(),
-                        longitude.toString()
-                    )
-                    authManager.preProjectPhoto(
-                        token,
-                        formImageProject,
-                        object : AuthManager.PreProjectAddPhoto {
-                            override fun onPreProjectAddPhotoSuccess() {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-
-                            override fun onPreProjectAddPhotoFailed(errorMessage: String) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
+    private fun send(formData: PhotoRequest) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val token = TokenAuth.getToken(requireContext(), "token")
+                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val authManager = AuthManager(apiService)
+                authManager.preProjectPhoto(
+                    token,
+                    formData,
+                    object : AuthManager.PreProjectAddPhoto {
+                        override fun onPreProjectAddPhotoSuccess() {
+                            Alert.alertSuccess(requireContext(), layoutInflater)
+                            dataCleaning()
+                            binding.send.buttonSend.isEnabled = true
                         }
-                    )
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
-                        binding.send.buttonSend.isEnabled = true
+
+                        override fun onPreProjectAddPhotoNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@PreProjectEspecificFragment)
+                        }
+
+                        override fun onPreProjectAddPhotoFailed(errorMessage: String) {
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
+                                .show()
+                            binding.send.buttonSend.isEnabled = true
+                        }
                     }
+                )
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
+                    binding.send.buttonSend.isEnabled = true
                 }
             }
-        } else {
-            Snackbar.make(binding.root, "Complete los campos", Snackbar.LENGTH_LONG).show()
-            binding.send.buttonSend.isEnabled = true
         }
     }
 
     private fun apiRequestPreProject() {
+        binding.recyclerImages.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
@@ -184,13 +194,31 @@ class PreProjectEspecificFragment : Fragment() {
                 val authManager = AuthManager(apiService)
                 authManager.codephotospecific(
                     token,
-                    requireArguments().getString("id").toString(),
+                    preprojectCodeId,
                     object : AuthManager.inCodePhotoDescription {
                         override fun onCodePhotoDescriptionPreProjectSuccess(response: CodePhotoDescription) {
                             binding.codePreproject.text = response.codePreproject
                             binding.codePhoto.text = response.code
                             binding.codeStatus.text = response.status
                             binding.codeDescription.text = response.description
+
+                            if (response.images.isNotEmpty()) {
+                                binding.imageReference.isVisible = true
+                                val adapter = AdapterReferenceImage(
+                                    response.images,
+                                    object : AdapterReferenceImage.OnItemClickListener {
+                                        override fun onItemClick(position: Int) {
+                                            val item = response.images[position]
+                                            showImageDialog(item.image)
+                                        }
+                                    }
+                                )
+                                binding.recyclerImages.adapter = adapter
+                            }
+                        }
+
+                        override fun onCodePhotoDescriptionPreProjectNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@PreProjectEspecificFragment)
                         }
 
                         override fun onCodePhotoDesrriptionPreProjectFailed() {
@@ -209,7 +237,27 @@ class PreProjectEspecificFragment : Fragment() {
         }
     }
 
+    // Función para mostrar la imagen ampliada en un Dialog
+    private fun showImageDialog(imageUrl: String) {
+        val builder = AlertDialog.Builder(requireActivity())
+        val alertDialogBinding = PhotoCodeBinding.inflate(layoutInflater)
+        val dialogView = alertDialogBinding.root
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+
+        // Cargar la imagen ampliada
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .placeholder(R.drawable.baseline_downloading_24)
+            .error(R.drawable.baseline_error_24)
+            .into(alertDialogBinding.photo)
+
+    }
     private fun selectionCamera() {
+        HideKeyboard.hideKeyboard(binding.root)
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
             checkGpsStatus().addOnSuccessListener {
                 binding.formPreproject.isVisible = false
@@ -237,20 +285,37 @@ class PreProjectEspecificFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return AspectRatio.RATIO_4_3
+        }
+        return AspectRatio.RATIO_16_9
+    }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+
+        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowMetrics = windowManager.currentWindowMetrics
+        val bounds = windowMetrics.bounds
+        val width = bounds.width()
+        val height = bounds.height()
+        val screenAspectRatio = aspectRatio(width, height)
 
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
             val preview = Preview.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
             imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
             val orientationEventListener = object : OrientationEventListener(requireContext()) {
@@ -270,11 +335,31 @@ class PreProjectEspecificFragment : Fragment() {
                 .build()
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
+
+                // Pinch-to-zoom setup
+                val cameraControl = camera.cameraControl
+                val cameraInfo = camera.cameraInfo
+
+                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                        val delta = detector.scaleFactor
+                        cameraControl.setZoomRatio(currentZoomRatio * delta)
+                        return true
+                    }
+                })
+
+                binding.previewView.setOnTouchListener { _, event ->
+                    scaleGestureDetector.onTouchEvent(event)
+                    true
+                }
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
@@ -329,7 +414,7 @@ class PreProjectEspecificFragment : Fragment() {
                     longitude!!,
                     binding.codePreproject.text.toString()
                 )
-                photoString = encodeImage(modifiedImage)
+                photoString = encodeImage(modifiedImage)!!
                 binding.photo.photoPreview.setImageBitmap(modifiedImage)
             } else {
                 requestGPSEnable()
@@ -400,10 +485,26 @@ class PreProjectEspecificFragment : Fragment() {
         }
     }
 
+    private fun collectFormData(): PhotoRequest {
+        return PhotoRequest(
+            id = preprojectCodeId,
+            description = binding.addDescription.text.toString(),
+            photo = photoString,
+            latitude = latitude.toString(),
+            longitude = longitude.toString(),
+        )
+    }
+
+    private fun areAllFieldsFilled(formData: PhotoRequest): Boolean {
+        return formData.id.isNotEmpty() && formData.description.isNotEmpty() &&
+                formData.photo.isNotEmpty() && formData.longitude!!.isNotEmpty() &&
+                formData.latitude!!.isNotEmpty()
+    }
+
     private fun dataCleaning() {
         binding.addDescription.text.clear()
         binding.photo.photoPreview.setImageResource(0)
-        photoString = null
+        photoString = ""
     }
 
     companion object {
@@ -412,5 +513,7 @@ class PreProjectEspecificFragment : Fragment() {
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 }

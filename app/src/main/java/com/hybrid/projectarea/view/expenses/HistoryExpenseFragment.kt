@@ -18,6 +18,8 @@ import com.hybrid.projectarea.databinding.FragmentHistoryExpenseBinding
 import com.hybrid.projectarea.model.ExpenseHistory
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -85,6 +87,10 @@ class HistoryExpenseFragment : Fragment() {
                         }
                         val adapter = AdapterExpenseHistory(arrayList)
                         binding.recyclerviewHistoryExpense.recyclerview.adapter = adapter
+                    }
+
+                    override fun onExpenseHistoryNoAuthenticated() {
+                        DeleteTokenAndCloseSession(this@HistoryExpenseFragment)
                     }
 
                     override fun onExpenseHistoryFailed(errorMessage: String) {

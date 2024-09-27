@@ -1,8 +1,6 @@
 package com.hybrid.projectarea.model
 
-import androidx.camera.core.processing.SurfaceProcessorNode.In
 import com.google.gson.annotations.SerializedName
-import java.util.Date
 
 data class LoginRequest(
     val dni: String,
@@ -25,6 +23,7 @@ data class PhotoRequest(
     val id: String,
     val description: String,
     val photo: String,
+    val site: String? = null,
     val latitude: String? = null,
     val longitude: String? = null,
 )
@@ -73,6 +72,11 @@ data class CodePhotoDescription(
     val code: String,
     val description: String,
     val status: String,
+    val images: List<Images>
+)
+
+data class Images(
+    val image: String
 )
 
 data class Photo(
@@ -83,56 +87,19 @@ data class Photo(
 
 data class ProjectHuawei(
     val id: String,
-    val site: String,
-    val elaborated: String,
+    val assigned_diu: String,
+    val huawei_site: HuaweiSite,
     val code: String,
-    val name: String,
-    val address: String,
-    val reference: String,
-    val access: String
+)
+
+data class HuaweiSite(
+    val id: String,
+    val name: String
 )
 
 data class FormStoreProjectHuawei(
     val site: String,
-    val elaborated: String,
-    val code: String,
-    val name: String,
-    val address: String,
-    val reference: String,
-    val access: String
-)
-
-
-data class FormDataACHuawei(
-    val power: String,
-    val concessionaire: String,
-    val supply: String,
-    val type: String,
-    val caliber: String,
-    val fuses: String,
-    val calibertg: String,
-    val itm: String,
-    val powere: String,
-    val brand: String,
-    val tankCapacity: String,
-    val typee: String,
-    val tableTransfer: String,
-    val capacity: String,
-    val fijacion: String,
-    val typet: String,
-    val section: String,
-    val itmMajor: String,
-    val rs: String,
-    val rt: String,
-    val st: String,
-    val r: String,
-    val s: String,
-    val t: String
-)
-
-data class NameRectifiers(
-    val id: String,
-    val brand:String,
+    val diu: String,
 )
 
 data class FormProcessManuals(
@@ -355,4 +322,31 @@ data class ExpenseHistory(
     val zone :String,
     val expense_type: String,
     val amount :String,
+)
+
+data class ProjectHuaweiTitle(
+    val id: String,
+    val description: String,
+    val huawei_project_codes: List<ProjectHuaweiCode>
+)
+
+data class ProjectHuaweiCode(
+    val id: String,
+    val huawei_code: HuaweiCode,
+    val status: Int,
+    val state: Int,
+    val rejected_quantity: Int
+)
+
+data class HuaweiCode(
+    val id: String,
+    val code: String
+)
+
+data class ShowProjectHuaweiCode(
+    val id: String,
+    val project_code: String,
+    val code: String,
+    val description: String,
+    val code_status: Int,
 )

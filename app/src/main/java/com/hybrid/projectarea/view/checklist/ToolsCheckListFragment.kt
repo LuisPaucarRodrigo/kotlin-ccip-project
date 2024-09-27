@@ -1,19 +1,25 @@
 package com.hybrid.projectarea.view.checklist
 
 import android.Manifest
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -40,6 +46,8 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.model.checkListTools
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
+import com.hybrid.projectarea.view.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,6 +55,9 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 
 class ToolsCheckListFragment : Fragment() {
@@ -238,6 +249,10 @@ class ToolsCheckListFragment : Fragment() {
                             binding.send.buttonSend.isEnabled = true
                         }
 
+                        override fun onStoreCheckListToolsNoAuthenticated() {
+                            DeleteTokenAndCloseSession(this@ToolsCheckListFragment)
+                        }
+
                         override fun onStoreCheckListToolsFailed(errorMessage: String) {
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
                                 .show()
@@ -260,6 +275,7 @@ class ToolsCheckListFragment : Fragment() {
     }
 
     private fun selectionCameraAndPhoto() {
+        HideKeyboard.hideKeyboard(binding.root)
         if (RequestPermissions.hasPermissions(requireContext(), request_permissions)) {
             binding.formPreproject.isVisible = false
             binding.cameraPreproject.isVisible = true
@@ -282,9 +298,23 @@ class ToolsCheckListFragment : Fragment() {
         cameraExecutor.shutdown() // Detener el executor para liberar recursos
     }
 
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return AspectRatio.RATIO_4_3
+        }
+        return AspectRatio.RATIO_16_9
+    }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+
+        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowMetrics = windowManager.currentWindowMetrics
+        val bounds = windowMetrics.bounds
+        val width = bounds.width()
+        val height = bounds.height()
+        val screenAspectRatio = aspectRatio(width, height)
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
@@ -292,13 +322,17 @@ class ToolsCheckListFragment : Fragment() {
 
             // Preview
             val preview = Preview.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
+
             val orientationEventListener = object : OrientationEventListener(requireContext()) {
                 override fun onOrientationChanged(orientation : Int) {
                     // Monitors orientation values to determine the target rotation value
@@ -329,9 +363,27 @@ class ToolsCheckListFragment : Fragment() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
+
+                // Pinch-to-zoom setup
+                val cameraControl = camera.cameraControl
+                val cameraInfo = camera.cameraInfo
+
+                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                        val delta = detector.scaleFactor
+                        cameraControl.setZoomRatio(currentZoomRatio * delta)
+                        return true
+                    }
+                })
+
+                binding.previewView.setOnTouchListener { _, event ->
+                    scaleGestureDetector.onTouchEvent(event)
+                    true
+                }
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -596,5 +648,7 @@ class ToolsCheckListFragment : Fragment() {
         private val request_permissions = arrayOf(
             Manifest.permission.CAMERA
         )
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 }

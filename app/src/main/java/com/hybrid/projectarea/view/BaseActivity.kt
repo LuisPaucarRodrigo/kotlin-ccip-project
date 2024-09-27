@@ -28,6 +28,7 @@ import com.hybrid.projectarea.view.checklist.DayCheckListFragment
 import com.hybrid.projectarea.view.expenses.ExpensesFragment
 import com.hybrid.projectarea.view.manuals.ProcessManualsFragment
 import com.hybrid.projectarea.view.preproject.PreProjectFragment
+import com.hybrid.projectarea.view.projecthuawei.HuaweiFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,6 +79,16 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         nameheader.text = "Nombre: ${ response.name }"
                         nameheaderdni.text = "Dni: ${ response.dni }"
                         nameheaderemail.text = "Email: ${ response.email }"
+                    }
+
+                    override fun onUserNoAuthenticated() {
+                        lifecycleScope.launch {
+                            deleteTokenFromDataStore()
+                        }
+                        binding.mitoolbar.root.isVisible = false
+                        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+                        transaction.replace(R.id.contenedor, AuthFragment())
+                            .commit()
                     }
 
                     override fun onUserFailed(errorMessage: String) {
@@ -144,7 +155,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
                 val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
                 val authManager = AuthManager(apiService)
-                authManager.logout(token, object : AuthManager.Logout {
+                authManager.funlogout(token, object : AuthManager.Logout {
                     override fun onLogoutSuccess() {
                         lifecycleScope.launch {
                             deleteTokenFromDataStore()
@@ -155,13 +166,19 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             .commit()
                     }
 
+                    override fun onLogoutNoAuthenticated() {
+                        TODO("Not yet implemented")
+                    }
+
                     override fun onLogoutFailed () {
                         Toast.makeText(this@BaseActivity, getString(R.string.check_connection), Toast.LENGTH_LONG).show()
                     }
                 }
                 )
             } catch (e: Exception) {
-                // Manejar errores
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@BaseActivity, "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -172,5 +189,4 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             preferences.remove(stringPreferencesKey("user_id"))
         }
     }
-
 }
