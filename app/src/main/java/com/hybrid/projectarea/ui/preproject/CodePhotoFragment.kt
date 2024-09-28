@@ -39,6 +39,7 @@ class CodePhotoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCodePhotoBinding.inflate(inflater,container,false)
+
         codePhotoViewModel = ViewModelProvider(this).get(CodePhotoViewModel::class.java)
         lifecycleScope.launch(Dispatchers.IO) {
             val token = TokenAuth.getToken(requireContext(), "token")
