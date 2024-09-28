@@ -236,7 +236,7 @@ class ToolsCheckListFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funPostCheckListTools(
                     token,

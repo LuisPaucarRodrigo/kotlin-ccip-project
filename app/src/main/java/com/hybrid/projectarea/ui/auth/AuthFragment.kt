@@ -52,7 +52,7 @@ class AuthFragment : Fragment() {
     private fun sendFormData(formData: LoginRequest) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val apiService = RetrofitClient.getClient().create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient()
                 val authManager = AuthManager(apiService)
                 authManager.login(formData, object : AuthManager.AuthListener {
                     override fun onLoginSuccess(response: LoginResponse) {

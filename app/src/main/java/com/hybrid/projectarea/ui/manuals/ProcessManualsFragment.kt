@@ -82,7 +82,7 @@ class ProcessManualsFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
 
                 authManager.funGetProcessManuals(
@@ -150,7 +150,7 @@ class ProcessManualsFragment : Fragment() {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
                 val apiService =
-                    RetrofitClient.getClient(token).create(ApiService::class.java)
+                    RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
 
                 authManager.funGetDownloadManuals(

@@ -9,7 +9,6 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class CodePhotoRepository(private val apiService: ApiService) {
-
     suspend fun codePhotoPreProject(token: String, id: String): Result<List<PreprojectTitle>> {
         return withContext(Dispatchers.IO) {
             try {

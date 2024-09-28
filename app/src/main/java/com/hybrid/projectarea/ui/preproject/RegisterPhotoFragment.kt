@@ -55,7 +55,7 @@ class RegisterPhotoFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(),"token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funRegisterPhoto(token,requireArguments().getString("id").toString(),object : AuthManager.inRegisterPhoto{
                     override fun onRegisterPhotoSuccess(response: List<Photo>) {

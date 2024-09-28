@@ -94,7 +94,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             try {
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
                 val user_id = TokenAuth.getToken(this@BaseActivity,"userId")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.user(token,user_id, object : AuthManager.Users {
                     override fun onUserSuccess(response: UsersResponse) {
@@ -175,7 +175,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funlogout(token, object : AuthManager.Logout {
                     override fun onLogoutSuccess() {

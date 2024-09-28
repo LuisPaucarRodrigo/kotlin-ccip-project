@@ -54,7 +54,7 @@ class HuaweiFragment : Fragment() {
         lifecycleScope.launch {
             val token = TokenAuth.getToken(requireContext(),"token")
             val apiService = withContext(Dispatchers.IO){
-                RetrofitClient.getClient(token).create(ApiService::class.java)
+                RetrofitClient.getClient(token)
             }
             val authManager = AuthManager(apiService)
             authManager.funGetProjectHuawei(token, object: AuthManager.inGetProjectHuawei{

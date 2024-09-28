@@ -137,7 +137,7 @@ class StoreImageHuaweiFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funStoreImageProjectHuawei(token,formData,object : AuthManager.inStoreImageProjectHuawei {
                     override fun onStoreImageProjectHuaweiSuccess() {
@@ -187,7 +187,7 @@ class StoreImageHuaweiFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funShowProjectHuaweiCode(token,projectHuaweiCodeId,
                     object : AuthManager.inShowProjectHuaweiCode {

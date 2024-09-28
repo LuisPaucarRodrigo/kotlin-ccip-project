@@ -39,16 +39,29 @@ class CodePhotoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCodePhotoBinding.inflate(inflater,container,false)
-        codePhotoViewModel = ViewModelProvider(this).get(CodePhotoViewModel::class.java)
-        lifecycleScope.launch(Dispatchers.IO) {
-            val token = TokenAuth.getToken(requireContext(), "token")
-            codePhotoViewModel.getCodePhoto(token, preproject_id)
-        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        codePhotoViewModel = ViewModelProvider(this).get(CodePhotoViewModel::class.java)
+        requestCode()
+        codePhotoViewModel.data.observe(viewLifecycleOwner){ success ->
+            binding.shimmer.beforeViewElement.isVisible = false
+            binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
+            binding.recyclerviewCodePhoto.swipe.isRefreshing = false
+            val adapter = AdapterPreprojectTitle(success)
+            binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
+        }
+
+        codePhotoViewModel.error.observe(viewLifecycleOwner){ error ->
+            lifecycleScope.launch(Dispatchers.Main) {
+                binding.recyclerviewCodePhoto.swipe.isRefreshing = false
+                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+            }
+        }
 
         binding.recyclerviewCodePhoto.swipe.setColorSchemeResources(R.color.azulccip,R.color.greenccip)
         binding.recyclerviewCodePhoto.swipe.setProgressBackgroundColorSchemeResource(R.color.white)
@@ -61,20 +74,8 @@ class CodePhotoFragment : Fragment() {
         binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                codePhotoViewModel.data.observe(viewLifecycleOwner){ success ->
-                    binding.shimmer.beforeViewElement.isVisible = false
-                    binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
-                    binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                    val adapter = AdapterPreprojectTitle(success)
-                    binding.recyclerviewCodePhoto.recyclerview.adapter = adapter
-                }
-
-                codePhotoViewModel.error.observe(viewLifecycleOwner){ error ->
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        binding.recyclerviewCodePhoto.swipe.isRefreshing = false
-                        Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
-                    }
-                }
+                val token = TokenAuth.getToken(requireContext(), "token")
+                codePhotoViewModel.getCodePhoto(token, preproject_id)
             }catch (e: Exception){
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
