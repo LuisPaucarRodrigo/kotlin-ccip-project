@@ -69,7 +69,7 @@ class ExpensesFragment : Fragment() {
     private lateinit var file: File
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
+    private lateinit var expenseHistoryViewModel: ExpenseHistoryViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -104,6 +104,18 @@ class ExpensesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        expenseHistoryViewModel.postSuccess.observe(viewLifecycleOwner){ success ->
+            Alert.alertSuccess(requireContext(), layoutInflater)
+            dataCleaning()
+            binding.send.buttonSend.isEnabled = true
+        }
+
+        expenseHistoryViewModel.error.observe(viewLifecycleOwner){ error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                .show()
+            binding.send.buttonSend.isEnabled = true
+        }
 
         binding.btnDocumentPhoto.setOnClickListener {
             selectionCameraOrGallery()
@@ -154,37 +166,11 @@ class ExpensesFragment : Fragment() {
         findNavController().navigate(id)
     }
 
-    private fun send(formData: ExpenseForm) {
+    private fun send(expenses: ExpenseForm) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.funExpenseForm(
-                    token,
-                    formData,
-                    object : AuthManager.inExpenseForm {
-                        override fun onExpenseFormSuccess() {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                        override fun onExpenseFormNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@ExpensesFragment)
-                        }
-
-                        override fun onExpenseFormFailed(errorMessage: String) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-                    }
-                )
+                expenseHistoryViewModel.postExpenses(token,expenses)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(

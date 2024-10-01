@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5dp"
                 android:backgroundTint="@android:color/transparent"
-                android:text="Movil"
+                android:text="Vehicular"
                 android:textColor="@color/azulccip" />
 
             <Button
