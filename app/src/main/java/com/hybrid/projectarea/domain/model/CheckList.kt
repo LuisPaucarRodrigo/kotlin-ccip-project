@@ -70,7 +70,7 @@ data class checkListTools(
     val goodTools: String
 )
 
-data class checkListMobile(
+data class checkListVehicle(
     val reason:String,
     val additionalEmployees: String,
     val zone: String,
@@ -122,7 +122,7 @@ data class checkListMobile(
     val frontLeftTire: String,
 )
 
-data class checklistDay(
+data class checklistDiary(
     @SerializedName("personal_2") val personal2: String?,
     @SerializedName("zone") val zone: String,
     @SerializedName("power_meter") val powerMeter: String,

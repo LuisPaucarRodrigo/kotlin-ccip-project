@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.checklist.vehicular
+package com.hybrid.projectarea.ui.checklist.vehicle
 
 import android.Manifest
 import android.os.Bundle
@@ -23,13 +23,14 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentMobileUnitChecklistBinding
-import com.hybrid.projectarea.domain.model.checkListMobile
+import com.hybrid.projectarea.domain.model.checkListVehicle
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
@@ -46,7 +47,7 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MobileUnitChecklistFragment : Fragment() {
+class VehicleChecklistFragment : Fragment() {
     private var _binding: FragmentMobileUnitChecklistBinding? = null
     private val binding get() = _binding!!
 
@@ -64,6 +65,7 @@ class MobileUnitChecklistFragment : Fragment() {
     private lateinit var file: File
     private var identifierBtn: String? = null
 
+    private lateinit var vehicleChecklistViewModel: VehicleChecklistViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -144,7 +146,19 @@ class MobileUnitChecklistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        vehicleChecklistViewModel = ViewModelProvider(this)[VehicleChecklistViewModel::class.java]
 
+        vehicleChecklistViewModel.postSuccess.observe(viewLifecycleOwner){
+            Alert.alertSuccess(requireContext(), layoutInflater)
+            dataCleaning()
+            binding.send.buttonSend.isEnabled = true
+        }
+
+        vehicleChecklistViewModel.error.observe(viewLifecycleOwner){ error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                .show()
+            binding.send.buttonSend.isEnabled = true
+        }
         binding.scrollChecklist.checkListDay.setOnClickListener {
             openFragment(R.id.action_MobileCheckListFragment_to_DayCheckListFragment)
         }
@@ -263,37 +277,11 @@ class MobileUnitChecklistFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    private fun sendCheckListMovil(checkListMobile: checkListMobile) {
+    private fun sendCheckListMovil(checkListVehicle: checkListVehicle) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.funCheckListMobile(
-                    token,
-                    checkListMobile,
-                    object : AuthManager.inCheckListMovil {
-                        override fun onStoreCheckListMobileSuccess() {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                        override fun onStoreCheckListMobileNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@MobileUnitChecklistFragment)
-                        }
-
-                        override fun onStoreCheckListMobileFailed(errorMessage: String) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-                    }
-                )
+                vehicleChecklistViewModel.postVehicle(token, checkListVehicle)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -457,8 +445,8 @@ class MobileUnitChecklistFragment : Fragment() {
         findNavController().navigate(id)
     }
 
-    private fun collectVehicleFormData(): checkListMobile {
-        return checkListMobile(
+    private fun collectVehicleFormData(): checkListVehicle {
+        return checkListVehicle(
             reason = binding.spinnerReason.selectedItem.toString(),
             additionalEmployees = binding.txtAddiotionalEmployees.text.toString(),
             zone = binding.spinnerZone.selectedItem.toString(),
@@ -508,7 +496,7 @@ class MobileUnitChecklistFragment : Fragment() {
         )
     }
 
-    private fun areAllFieldsFilled(formData: checkListMobile): Boolean {
+    private fun areAllFieldsFilled(formData: checkListVehicle): Boolean {
         return formData.reason.isNotEmpty() && formData.zone.isNotEmpty() && formData.km.isNotEmpty() && formData.plate.isNotEmpty() &&
                 formData.circulation.isNotEmpty() && formData.technique.isNotEmpty() && formData.soat.isNotEmpty() &&
                 formData.hornState.isNotEmpty() && formData.brakesState.isNotEmpty() && formData.headlightsState.isNotEmpty() && formData.intermitentlightState.isNotEmpty() &&

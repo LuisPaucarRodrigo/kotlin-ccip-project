@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.domain.repository
+package com.hybrid.projectarea.domain.repository.preproject
 
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.domain.model.PreProject

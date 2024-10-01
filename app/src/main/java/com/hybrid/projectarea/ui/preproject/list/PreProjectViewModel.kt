@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hybrid.projectarea.domain.model.PreProject
-import com.hybrid.projectarea.domain.repository.PreProjectRepository
+import com.hybrid.projectarea.domain.repository.preproject.PreProjectRepository
 import com.hybrid.projectarea.model.RetrofitClient
 import kotlinx.coroutines.launch
 

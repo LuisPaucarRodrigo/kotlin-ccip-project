@@ -24,6 +24,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -41,7 +42,6 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
-import com.hybrid.projectarea.ui.checklist.LumaListener
 import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,6 +64,7 @@ class ToolsCheckListFragment : Fragment() {
     private lateinit var file: File
     private var identifierBtn: String? = null
 
+    private lateinit var toolsCheckListViewModel: ToolsCheckListViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -163,6 +164,20 @@ class ToolsCheckListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolsCheckListViewModel = ViewModelProvider(this)[ToolsCheckListViewModel::class.java]
+
+        toolsCheckListViewModel.postSuccess.observe(viewLifecycleOwner){
+            Alert.alertSuccess(requireContext(), layoutInflater)
+            dataCleaning()
+            binding.send.buttonSend.isEnabled = true
+        }
+
+        toolsCheckListViewModel.error.observe(viewLifecycleOwner){ error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                .show()
+            binding.send.buttonSend.isEnabled = true
+        }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
         binding.scrollChecklist.checkListDay.setOnClickListener {
             openFragment(R.id.action_ToolsCheckListFragment_to_DayCheckListFragment)
@@ -229,34 +244,7 @@ class ToolsCheckListFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.funPostCheckListTools(
-                    token,
-                    formTools,
-                    object : AuthManager.incheckListTools {
-                        override fun onStoreCheckListToolsSuccess() {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                        override fun onStoreCheckListToolsNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@ToolsCheckListFragment)
-                        }
-
-                        override fun onStoreCheckListToolsFailed(errorMessage: String) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                    }
-                )
+                toolsCheckListViewModel.postTools(token,formTools)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -332,11 +320,6 @@ class ToolsCheckListFragment : Fragment() {
             orientationEventListener.enable()
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        Log.d(TAG, "Average luminosity: $luma")
-                    })
-                }
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -396,28 +379,6 @@ class ToolsCheckListFragment : Fragment() {
                 }
             }
         )
-    }
-
-    private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
-
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
-
-        override fun analyze(image: ImageProxy) {
-
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
-
-            listener(luma)
-
-            image.close()
-        }
     }
 
     private val requestPermissionLauncherCameraLocation = registerForActivityResult(

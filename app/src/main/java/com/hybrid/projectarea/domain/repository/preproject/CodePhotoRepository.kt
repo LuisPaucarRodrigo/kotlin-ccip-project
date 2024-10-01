@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.domain.repository
+package com.hybrid.projectarea.domain.repository.preproject
 
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.domain.model.PreprojectTitle
@@ -15,15 +15,15 @@ class CodePhotoRepository(private val apiService: ApiService) {
                 if (response.isSuccessful) {
                     Result.success(response.body()!!)
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody).getString("error")
-                    } catch (e: JSONException) {
-                        "Ocurrió un error desconocido"
-                    }
                     if (response.code() == 401) {
-                        Result.failure(Exception("Token no válido: $errorMessage"))
+                        Result.failure(Exception("Token no válido"))
                     } else {
+                        val errorBody = response.errorBody()?.string()
+                        val errorMessage = try {
+                            JSONObject(errorBody).getString("error")
+                        } catch (e: JSONException) {
+                            "Ocurrió un error desconocido"
+                        }
                         Result.failure(Exception("Error: $errorMessage"))
                     }
                 }

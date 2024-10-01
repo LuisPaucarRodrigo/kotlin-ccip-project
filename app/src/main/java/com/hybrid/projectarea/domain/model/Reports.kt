@@ -2,7 +2,7 @@ package com.hybrid.projectarea.domain.model
 
 import com.google.gson.annotations.SerializedName
 
-data class PhotoRequest(
+data class ImageReport(
     val id: String,
     val description: String,
     val photo: String,

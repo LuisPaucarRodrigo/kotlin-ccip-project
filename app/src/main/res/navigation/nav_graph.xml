@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/PreProjectEspecificFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.reports.entry.PreProjectEspecificFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.reports.entry.EnterImageFragment"
         tools:layout="@layout/fragment_pre__project_especific" >
         <action
             android:id="@+id/to_RegisterPhotoFragment"
@@ -69,7 +69,7 @@
 
     <fragment
         android:id="@+id/DayCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.diary.DayCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.diary.DiaryCheckListFragment"
         tools:layout="@layout/fragment_day_check_list" >
         <action
             android:id="@+id/action_DayCheckListFragment_to_MobileCheckListFragment"
@@ -106,7 +106,7 @@
 
     <fragment
         android:id="@+id/MobileCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.vehicular.MobileUnitChecklistFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.vehicle.VehicleChecklistFragment"
         tools:layout="@layout/fragment_mobile_unit_checklist" >
         <action
             android:id="@+id/action_MobileCheckListFragment_to_DayCheckListFragment"

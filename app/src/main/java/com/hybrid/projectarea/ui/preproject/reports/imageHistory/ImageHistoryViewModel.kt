@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hybrid.projectarea.domain.model.Photo
-import com.hybrid.projectarea.domain.repository.ImageHistoryRepository
+import com.hybrid.projectarea.domain.repository.preproject.ImageHistoryRepository
 import com.hybrid.projectarea.model.RetrofitClient
 import kotlinx.coroutines.launch
 

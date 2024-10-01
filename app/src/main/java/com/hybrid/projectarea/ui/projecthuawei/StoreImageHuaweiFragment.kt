@@ -40,7 +40,7 @@ import com.hybrid.projectarea.R
 import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentStoreImageHuaweiBinding
-import com.hybrid.projectarea.domain.model.PhotoRequest
+import com.hybrid.projectarea.domain.model.ImageReport
 import com.hybrid.projectarea.domain.model.ShowProjectHuaweiCode
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
@@ -133,7 +133,7 @@ class StoreImageHuaweiFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    private fun send(formData: PhotoRequest) {
+    private fun send(formData: ImageReport) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
@@ -428,8 +428,8 @@ class StoreImageHuaweiFragment : Fragment() {
         }
     }
 
-    private fun collectFormData(): PhotoRequest {
-        return PhotoRequest(
+    private fun collectFormData(): ImageReport {
+        return ImageReport(
             id = projectHuaweiCodeId,
             site = binding.textSite.text.toString(),
             description = binding.textDescription.text.toString(),
@@ -439,7 +439,7 @@ class StoreImageHuaweiFragment : Fragment() {
         )
     }
 
-    private fun areAllFieldsFilled(formData: PhotoRequest): Boolean {
+    private fun areAllFieldsFilled(formData: ImageReport): Boolean {
         return formData.id!!.isNotEmpty() && formData.site!!.isNotEmpty() && formData.description.isNotEmpty() &&
                 formData.photo.isNotEmpty() && formData.longitude!!.isNotEmpty() &&
                 formData.latitude!!.isNotEmpty()

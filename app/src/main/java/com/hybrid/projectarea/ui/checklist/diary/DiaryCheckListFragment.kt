@@ -9,25 +9,24 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentDayCheckListBinding
-import com.hybrid.projectarea.domain.model.checklistDay
+import com.hybrid.projectarea.domain.model.checklistDiary
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
-import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class DayCheckListFragment : Fragment() {
+class DiaryCheckListFragment : Fragment() {
     private var _binding: FragmentDayCheckListBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var diaryCheckListViewModel: DiaryCheckListViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -76,7 +75,18 @@ class DayCheckListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Checklist"
+        diaryCheckListViewModel = ViewModelProvider(this)[DiaryCheckListViewModel::class.java]
+        diaryCheckListViewModel.postSuccess.observe(viewLifecycleOwner){
+            Alert.alertSuccess(requireContext(), layoutInflater)
+            dataCleaning()
+            binding.send.buttonSend.isEnabled = true
+        }
 
+        diaryCheckListViewModel.error.observe(viewLifecycleOwner){ error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                .show()
+            binding.send.buttonSend.isEnabled = true
+        }
         binding.scrollChecklist.checkListEpps.setOnClickListener {
             openFragment(R.id.action_DayCheckListFragment_to_EppsCheckListFragment)
         }
@@ -106,37 +116,11 @@ class DayCheckListFragment : Fragment() {
         }
     }
 
-    private fun send(checkListDay: checklistDay) {
+    private fun send(checkListDay: checklistDiary) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.funCheckListDay(
-                    token,
-                    checkListDay,
-                    object : AuthManager.inCheckListDay {
-                        override fun onStoreCheckListDaySuccess() {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                        override fun onStoreCheckListDayNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@DayCheckListFragment)
-                        }
-
-                        override fun onStoreCheckListDayFailed(errorMessage: String) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                    })
+                diaryCheckListViewModel.postDiary(token, checkListDay)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -154,8 +138,8 @@ class DayCheckListFragment : Fragment() {
         findNavController().navigate(id)
     }
 
-    private fun collectFormData(): checklistDay {
-        return checklistDay(
+    private fun collectFormData(): checklistDiary {
+        return checklistDiary(
             personal2 = binding.personal2.text?.toString(),
             zone = binding.zone.selectedItem.toString(),
             powerMeter = binding.powerMeter.selectedItem.toString(),
@@ -179,7 +163,7 @@ class DayCheckListFragment : Fragment() {
         )
     }
 
-    private fun areAllFieldsFilled(formData: checklistDay): Boolean {
+    private fun areAllFieldsFilled(formData: checklistDiary): Boolean {
         return formData.zone.isNotEmpty() &&
                 formData.powerMeter.isNotEmpty() &&
                 formData.ammeterClamp.isNotEmpty() &&

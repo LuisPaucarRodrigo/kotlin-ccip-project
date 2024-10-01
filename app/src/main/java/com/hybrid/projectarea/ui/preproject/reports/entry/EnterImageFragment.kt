@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +47,7 @@ import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentPreProjectEspecificBinding
 import com.hybrid.projectarea.databinding.PhotoCodeBinding
 import com.hybrid.projectarea.domain.model.CodePhotoDescription
-import com.hybrid.projectarea.domain.model.PhotoRequest
+import com.hybrid.projectarea.domain.model.ImageReport
 import com.hybrid.projectarea.model.DateTimeLocationManager
 import com.hybrid.projectarea.model.ImageOverlay
 import com.hybrid.projectarea.model.RequestPermissions
@@ -65,7 +66,7 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class PreProjectEspecificFragment : Fragment() {
+class EnterImageFragment : Fragment() {
 
     private var _binding: FragmentPreProjectEspecificBinding? = null
     private val binding get() = _binding!!
@@ -80,6 +81,7 @@ class PreProjectEspecificFragment : Fragment() {
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
 
+    private lateinit var enterImageViewModel: EnterImageViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preprojectCodeId = requireArguments().getString("code_id").toString()
@@ -95,8 +97,42 @@ class PreProjectEspecificFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        enterImageViewModel = ViewModelProvider(this)[EnterImageViewModel::class.java]
         apiRequestPreProject()
+        enterImageViewModel.data.observe(viewLifecycleOwner){ success ->
+
+            binding.codePreproject.text = success.codePreproject
+            binding.codePhoto.text = success.code
+            binding.codeStatus.text = success.status
+            binding.codeDescription.text = success.description
+
+            if (success.images.isNotEmpty()) {
+                binding.recyclerImages.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+                binding.imageReference.isVisible = true
+                val adapter = AdapterReferenceImage(
+                    success.images,
+                    object : AdapterReferenceImage.OnItemClickListener {
+                        override fun onItemClick(position: Int) {
+                            val item = success.images[position]
+                            showImageDialog(item.image)
+                        }
+                    }
+                )
+                binding.recyclerImages.adapter = adapter
+            }
+        }
+
+        enterImageViewModel.error.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                .show()
+            binding.send.buttonSend.isEnabled = true
+        }
+
+        enterImageViewModel.postSuccess.observe(viewLifecycleOwner){
+            Alert.alertSuccess(requireContext(), layoutInflater)
+            dataCleaning()
+            binding.send.buttonSend.isEnabled = true
+        }
 
         binding.imagesCode.setOnClickListener {
             val args = Bundle()
@@ -133,37 +169,11 @@ class PreProjectEspecificFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    private fun send(formData: PhotoRequest) {
+    private fun send(formData: ImageReport) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.preProjectPhoto(
-                    token,
-                    formData,
-                    object : AuthManager.PreProjectAddPhoto {
-                        override fun onPreProjectAddPhotoSuccess() {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                        override fun onPreProjectAddPhotoNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@PreProjectEspecificFragment)
-                        }
-
-                        override fun onPreProjectAddPhotoFailed(errorMessage: String) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-                    }
-                )
+                enterImageViewModel.postImageReport(token,formData)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
@@ -174,51 +184,11 @@ class PreProjectEspecificFragment : Fragment() {
     }
 
     private fun apiRequestPreProject() {
-        binding.recyclerImages.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.codephotospecific(
-                    token,
-                    preprojectCodeId,
-                    object : AuthManager.inCodePhotoDescription {
-                        override fun onCodePhotoDescriptionPreProjectSuccess(response: CodePhotoDescription) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                binding.codePreproject.text = response.codePreproject
-                                binding.codePhoto.text = response.code
-                                binding.codeStatus.text = response.status
-                                binding.codeDescription.text = response.description
-
-                                if (response.images.isNotEmpty()) {
-                                    binding.imageReference.isVisible = true
-                                    val adapter = AdapterReferenceImage(
-                                        response.images,
-                                        object : AdapterReferenceImage.OnItemClickListener {
-                                            override fun onItemClick(position: Int) {
-                                                val item = response.images[position]
-                                                showImageDialog(item.image)
-                                            }
-                                        }
-                                    )
-                                    binding.recyclerImages.adapter = adapter
-                                }
-                            }
-                        }
-
-                        override fun onCodePhotoDescriptionPreProjectNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@PreProjectEspecificFragment)
-                        }
-
-                        override fun onCodePhotoDesrriptionPreProjectFailed() {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.check_connection),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    })
+                enterImageViewModel.getData(token,preprojectCodeId)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Se produjo un error inesperado.", Toast.LENGTH_LONG).show()
@@ -461,8 +431,8 @@ class PreProjectEspecificFragment : Fragment() {
         }
     }
 
-    private fun collectFormData(): PhotoRequest {
-        return PhotoRequest(
+    private fun collectFormData(): ImageReport {
+        return ImageReport(
             id = preprojectCodeId,
             description = binding.addDescription.text.toString(),
             photo = photoString,
@@ -471,7 +441,7 @@ class PreProjectEspecificFragment : Fragment() {
         )
     }
 
-    private fun areAllFieldsFilled(formData: PhotoRequest): Boolean {
+    private fun areAllFieldsFilled(formData: ImageReport): Boolean {
         return formData.id.isNotEmpty() && formData.description.isNotEmpty() &&
                 formData.photo.isNotEmpty() && formData.longitude!!.isNotEmpty() &&
                 formData.latitude!!.isNotEmpty()

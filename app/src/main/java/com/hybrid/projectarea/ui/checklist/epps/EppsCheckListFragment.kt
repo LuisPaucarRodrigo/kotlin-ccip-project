@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hybrid.projectarea.R
@@ -26,6 +27,8 @@ import kotlinx.coroutines.withContext
 class EppsCheckListFragment : Fragment() {
     private var _binding: FragmentEppsCheckListBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var eppsCheckListViewModel: EppsCheckListViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,7 +83,19 @@ class EppsCheckListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        eppsCheckListViewModel = ViewModelProvider(this)[EppsCheckListViewModel::class.java]
 
+        eppsCheckListViewModel.postSuccess.observe(viewLifecycleOwner){
+            Alert.alertSuccess(requireContext(), layoutInflater)
+            dataCleaning()
+            binding.send.buttonSend.isEnabled = true
+        }
+
+        eppsCheckListViewModel.error.observe(viewLifecycleOwner){ error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
+                .show()
+            binding.send.buttonSend.isEnabled = true
+        }
         binding.scrollChecklist.checkListDay.setOnClickListener {
             openFragment(R.id.action_EppsCheckListFragment_to_DayCheckListFragment)
         }
@@ -114,33 +129,7 @@ class EppsCheckListFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.funCheckListEpps(
-                    token,
-                    checkListEpps,
-                    object : AuthManager.inCheckListEpps {
-                        override fun onStoreCheckListEppsSuccess() {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Alert.alertSuccess(requireContext(), layoutInflater)
-                                dataCleaning()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                        override fun onStoreCheckListEppsNoAuthenticated() {
-                            DeleteTokenAndCloseSession(this@EppsCheckListFragment)
-                        }
-
-                        override fun onStoreCheckListEppsFailed(errorMessage: String) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG)
-                                    .show()
-                                binding.send.buttonSend.isEnabled = true
-                            }
-                        }
-
-                    })
+                eppsCheckListViewModel.postEpps(token,checkListEpps)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(

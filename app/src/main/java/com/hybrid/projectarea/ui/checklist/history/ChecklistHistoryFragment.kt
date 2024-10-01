@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,8 @@ import kotlinx.coroutines.withContext
 class ChecklistHistoryFragment : Fragment() {
     private var _binding: FragmentChecklistHistoryBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var checklistHistoryViewModel: ChecklistHistoryViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,7 +42,21 @@ class ChecklistHistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checklistHistoryViewModel = ViewModelProvider(this)[ChecklistHistoryViewModel::class.java]
         requestChecklistHistory()
+        binding.recyclerviewChecklistHistory.recyclerview.layoutManager = LinearLayoutManager(context)
+        checklistHistoryViewModel.data.observe(viewLifecycleOwner){ success ->
+            binding.shimmer.beforeViewElement.isVisible = false
+            binding.recyclerviewChecklistHistory.afterViewElement.isVisible = true
+            binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
+            val adapter = AdapterChecklistHistory(success)
+            binding.recyclerviewChecklistHistory.recyclerview.adapter = adapter
+        }
+
+        checklistHistoryViewModel.error.observe(viewLifecycleOwner){ error ->
+            binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
+            Toast.makeText(requireContext(),error,Toast.LENGTH_LONG).show()
+        }
 
         binding.recyclerviewChecklistHistory.swipe.setColorSchemeResources(
             R.color.azulccip,
@@ -73,35 +90,10 @@ class ChecklistHistoryFragment : Fragment() {
     }
 
     private fun requestChecklistHistory() {
-        binding.recyclerviewChecklistHistory.recyclerview.layoutManager =
-            LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token)
-                val authManager = AuthManager(apiService)
-                authManager.funCheckListHistory(token, object : AuthManager.inCheckListHistory {
-                    override fun onStoreCheckListHistorySuccess(response: List<ChecklistHistory>) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.shimmer.beforeViewElement.isVisible = false
-                            binding.recyclerviewChecklistHistory.afterViewElement.isVisible = true
-                            binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
-                            val adapter = AdapterChecklistHistory(response)
-                            binding.recyclerviewChecklistHistory.recyclerview.adapter = adapter
-                        }
-                    }
-
-                    override fun onStoreCheckListHistoryNoAuthenticated() {
-                        DeleteTokenAndCloseSession(this@ChecklistHistoryFragment)
-                    }
-
-                    override fun onStoreCheckListHistoryFailed(errorMessage: String) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.recyclerviewChecklistHistory.swipe.isRefreshing = false
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                        }
-                    }
-                })
+                checklistHistoryViewModel.getChecklist(token)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
