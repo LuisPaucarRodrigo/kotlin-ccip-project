@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.expenses
+package com.hybrid.projectarea.ui.expenses.history
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,18 +13,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
-import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentHistoryExpenseBinding
-import com.hybrid.projectarea.domain.model.ExpenseHistory
-import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HistoryExpenseFragment : Fragment() {
+class ExpenseHistoryFragment : Fragment() {
     private var _binding: FragmentHistoryExpenseBinding? = null
     private val binding get() = _binding!!
 

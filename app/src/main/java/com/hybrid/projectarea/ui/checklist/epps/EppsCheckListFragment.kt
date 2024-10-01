@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.checklist
+package com.hybrid.projectarea.ui.checklist.epps
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentEppsCheckListBinding
 import com.hybrid.projectarea.domain.model.checklistEpps

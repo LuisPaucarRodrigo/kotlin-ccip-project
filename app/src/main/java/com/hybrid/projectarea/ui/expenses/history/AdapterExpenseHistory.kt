@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.expenses
+package com.hybrid.projectarea.ui.expenses.history
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
 import com.hybrid.projectarea.domain.model.ExpenseHistory

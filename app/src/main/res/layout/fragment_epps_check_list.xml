@@ -6,7 +6,7 @@
     android:background="@color/bg"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    tools:context=".ui.checklist.EppsCheckListFragment">
+    tools:context=".ui.checklist.epps.EppsCheckListFragment">
 
     <include android:id="@+id/scrollChecklist" layout="@layout/scroolbar_checklist_horizontal"/>
 

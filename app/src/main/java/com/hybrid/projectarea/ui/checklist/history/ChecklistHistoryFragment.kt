@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.checklist
+package com.hybrid.projectarea.ui.checklist.history
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentChecklistHistoryBinding
 import com.hybrid.projectarea.domain.model.ChecklistHistory

@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject.preproject
+package com.hybrid.projectarea.ui.preproject.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

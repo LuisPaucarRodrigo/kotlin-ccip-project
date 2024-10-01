@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject
+package com.hybrid.projectarea.ui.preproject.reports.entry
 
 import android.view.LayoutInflater
 import android.view.View

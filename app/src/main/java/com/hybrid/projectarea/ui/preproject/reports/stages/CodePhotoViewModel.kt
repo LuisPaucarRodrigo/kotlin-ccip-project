@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject.stages
+package com.hybrid.projectarea.ui.preproject.reports.stages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

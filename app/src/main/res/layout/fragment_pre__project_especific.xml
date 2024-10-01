@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/bg"
-    tools:context=".ui.preproject.PreProjectEspecificFragment">
+    tools:context=".ui.preproject.reports.entry.PreProjectEspecificFragment">
 
     <LinearLayout
         android:id="@+id/formPreproject"

@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject.imageHistory
+package com.hybrid.projectarea.ui.preproject.reports.imageHistory
 
 import android.graphics.Color
 import android.view.LayoutInflater

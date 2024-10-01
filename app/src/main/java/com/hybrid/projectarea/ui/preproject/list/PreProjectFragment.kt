@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject.preproject
+package com.hybrid.projectarea.ui.preproject.list
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

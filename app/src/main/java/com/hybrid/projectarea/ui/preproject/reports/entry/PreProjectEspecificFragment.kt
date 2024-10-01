@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject
+package com.hybrid.projectarea.ui.preproject.reports.entry
 
 import android.Manifest
 import android.content.Context
@@ -57,7 +57,6 @@ import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
-import com.hybrid.projectarea.ui.preproject.imageHistory.RegisterPhotoFragment
 import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -100,7 +99,6 @@ class PreProjectEspecificFragment : Fragment() {
         apiRequestPreProject()
 
         binding.imagesCode.setOnClickListener {
-            val conceptFragment = RegisterPhotoFragment()
             val args = Bundle()
             args.putString("id", preprojectCodeId)
 

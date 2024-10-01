@@ -21,7 +21,7 @@ import com.hybrid.projectarea.domain.model.Photo
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
-import com.hybrid.projectarea.ui.preproject.imageHistory.AdapterRegisterPhoto
+import com.hybrid.projectarea.ui.preproject.reports.imageHistory.AdapterRegisterPhoto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

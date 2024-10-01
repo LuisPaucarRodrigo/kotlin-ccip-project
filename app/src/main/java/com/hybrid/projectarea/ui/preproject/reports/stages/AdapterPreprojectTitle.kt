@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject.stages
+package com.hybrid.projectarea.ui.preproject.reports.stages
 
 import android.os.Bundle
 import android.view.LayoutInflater

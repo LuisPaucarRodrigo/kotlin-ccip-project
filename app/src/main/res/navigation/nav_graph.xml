@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/PreProjectFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.preproject.PreProjectFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.list.PreProjectFragment"
         tools:layout="@layout/fragment_pre_project" >
         <action
             android:id="@+id/to_CodePhotoFragment"
@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/CodePhotoFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.stages.CodePhotoFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.reports.stages.CodePhotoFragment"
         tools:layout="@layout/fragment_code_photo" >
         <action
             android:id="@+id/to_PreProjectEspecificFragment"
@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/PreProjectEspecificFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.PreProjectEspecificFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.reports.entry.PreProjectEspecificFragment"
         tools:layout="@layout/fragment_pre__project_especific" >
         <action
             android:id="@+id/to_RegisterPhotoFragment"
@@ -43,13 +43,13 @@
 
     <fragment
         android:id="@+id/RegisterPhotoFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.imageHistory.RegisterPhotoFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.reports.imageHistory.RegisterPhotoFragment"
         tools:layout="@layout/fragment_register_photo" >
     </fragment>
 
     <fragment
         android:id="@+id/ExpensesFragment"
-        android:name="com.hybrid.projectarea.ui.expenses.ExpensesFragment"
+        android:name="com.hybrid.projectarea.ui.expenses.entry.ExpensesEntryFragment"
         tools:layout="@layout/fragment_expenses" >
 
         <action
@@ -59,7 +59,7 @@
 
     <fragment
         android:id="@+id/HistoryExpensesFragment"
-        android:name="com.hybrid.projectarea.ui.expenses.HistoryExpenseFragment"
+        android:name="com.hybrid.projectarea.ui.expenses.history.ExpenseHistoryFragment"
         tools:layout="@layout/fragment_history_expense" >
         <action
             android:id="@+id/to_ExpensesFragment"
@@ -69,7 +69,7 @@
 
     <fragment
         android:id="@+id/DayCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.DayCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.diary.DayCheckListFragment"
         tools:layout="@layout/fragment_day_check_list" >
         <action
             android:id="@+id/action_DayCheckListFragment_to_MobileCheckListFragment"
@@ -88,7 +88,7 @@
 
     <fragment
         android:id="@+id/EppsCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.EppsCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.epps.EppsCheckListFragment"
         tools:layout="@layout/fragment_epps_check_list" >
         <action
             android:id="@+id/action_EppsCheckListFragment_to_MobileCheckListFragment"
@@ -106,7 +106,7 @@
 
     <fragment
         android:id="@+id/MobileCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.MobileUnitChecklistFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.vehicular.MobileUnitChecklistFragment"
         tools:layout="@layout/fragment_mobile_unit_checklist" >
         <action
             android:id="@+id/action_MobileCheckListFragment_to_DayCheckListFragment"
@@ -125,7 +125,7 @@
 
     <fragment
         android:id="@+id/ToolsCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.ToolsCheckListFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.tools.ToolsCheckListFragment"
         tools:layout="@layout/fragment_tools_check_list" >
         <action
             android:id="@+id/action_ToolsCheckListFragment_to_EppsCheckListFragment"
@@ -144,7 +144,7 @@
 
     <fragment
         android:id="@+id/HistoryCheckListFragment"
-        android:name="com.hybrid.projectarea.ui.checklist.ChecklistHistoryFragment"
+        android:name="com.hybrid.projectarea.ui.checklist.history.ChecklistHistoryFragment"
         tools:layout="@layout/fragment_checklist_history" >
         <action
             android:id="@+id/action_HistoryCheckListFragment_to_DayCheckListFragment"

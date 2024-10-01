@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.expenses
+package com.hybrid.projectarea.ui.expenses.entry
 
 import android.Manifest
 import android.app.Activity
@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,20 +33,16 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
-import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentExpensesBinding
 import com.hybrid.projectarea.databinding.GalleryOrCameraBinding
 import com.hybrid.projectarea.domain.model.ExpenseForm
 import com.hybrid.projectarea.utils.Alert
 import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RequestPermissions
-import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.utils.showDatePickerDialog
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
-import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
 import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +53,7 @@ import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ExpensesFragment : Fragment() {
+class ExpensesEntryFragment : Fragment() {
     private var _binding: FragmentExpensesBinding? = null
     private val binding get() = _binding!!
 
@@ -69,7 +64,7 @@ class ExpensesFragment : Fragment() {
     private lateinit var file: File
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private lateinit var expenseHistoryViewModel: ExpenseHistoryViewModel
+    private lateinit var expenseViewModel: ExpenseEntryViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -105,13 +100,13 @@ class ExpensesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        expenseHistoryViewModel.postSuccess.observe(viewLifecycleOwner){ success ->
+        expenseViewModel.postSuccess.observe(viewLifecycleOwner){ success ->
             Alert.alertSuccess(requireContext(), layoutInflater)
             dataCleaning()
             binding.send.buttonSend.isEnabled = true
         }
 
-        expenseHistoryViewModel.error.observe(viewLifecycleOwner){ error ->
+        expenseViewModel.error.observe(viewLifecycleOwner){ error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_LONG)
                 .show()
             binding.send.buttonSend.isEnabled = true
@@ -170,7 +165,7 @@ class ExpensesFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                expenseHistoryViewModel.postExpenses(token,expenses)
+                expenseViewModel.postExpenses(token,expenses)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(

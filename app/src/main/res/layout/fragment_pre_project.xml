@@ -6,7 +6,7 @@
     android:paddingHorizontal="20dp"
     android:orientation="vertical"
     android:background="@color/bg"
-    tools:context=".ui.preproject.preproject.PreProjectFragment">
+    tools:context=".ui.preproject.list.PreProjectFragment">
 
     <include android:id="@+id/recyclerviewPreproject" layout="@layout/recyclerciew"/>
     <include android:id="@+id/shimmer" layout="@layout/shimmer"/>

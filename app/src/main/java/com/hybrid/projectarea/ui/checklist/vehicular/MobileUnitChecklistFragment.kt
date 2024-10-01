@@ -1,62 +1,50 @@
-package com.hybrid.projectarea.ui.checklist
+package com.hybrid.projectarea.ui.checklist.vehicular
 
 import android.Manifest
-import android.content.Context
 import android.os.Bundle
 import android.os.Environment
-import android.util.DisplayMetrics
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
 import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentMobileUnitChecklistBinding
 import com.hybrid.projectarea.domain.model.checkListMobile
-import com.hybrid.projectarea.utils.Alert
-import com.hybrid.projectarea.utils.HideKeyboard
 import com.hybrid.projectarea.model.RequestPermissions
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
+import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.utils.Alert
+import com.hybrid.projectarea.utils.HideKeyboard
+import com.hybrid.projectarea.utils.aspectRatio
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
-import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
-import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-
-typealias LumaListener = (luma: Double) -> Unit
 
 class MobileUnitChecklistFragment : Fragment() {
     private var _binding: FragmentMobileUnitChecklistBinding? = null
@@ -308,7 +296,11 @@ class MobileUnitChecklistFragment : Fragment() {
                 )
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Se produjo un error inesperado. Por favor inténtalo de nuevo.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Se produjo un error inesperado. Por favor inténtalo de nuevo.",
+                        Toast.LENGTH_LONG
+                    ).show()
                     binding.send.buttonSend.isEnabled = true
                 }
             }
@@ -377,11 +369,6 @@ class MobileUnitChecklistFragment : Fragment() {
             orientationEventListener.enable()
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        Log.d(TAG, "Average luminosity: $luma")
-                    })
-                }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -397,14 +384,16 @@ class MobileUnitChecklistFragment : Fragment() {
                 val cameraControl = camera.cameraControl
                 val cameraInfo = camera.cameraInfo
 
-                val scaleGestureDetector = ScaleGestureDetector(requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                    override fun onScale(detector: ScaleGestureDetector): Boolean {
-                        val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
-                        val delta = detector.scaleFactor
-                        cameraControl.setZoomRatio(currentZoomRatio * delta)
-                        return true
-                    }
-                })
+                val scaleGestureDetector = ScaleGestureDetector(
+                    requireContext(),
+                    object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                        override fun onScale(detector: ScaleGestureDetector): Boolean {
+                            val currentZoomRatio = cameraInfo.zoomState.value?.zoomRatio ?: 1f
+                            val delta = detector.scaleFactor
+                            cameraControl.setZoomRatio(currentZoomRatio * delta)
+                            return true
+                        }
+                    })
 
                 binding.previewView.setOnTouchListener { _, event ->
                     scaleGestureDetector.onTouchEvent(event)
@@ -439,28 +428,6 @@ class MobileUnitChecklistFragment : Fragment() {
                 }
             }
         )
-    }
-
-    private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
-
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
-
-        override fun analyze(image: ImageProxy) {
-
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
-
-            listener(luma)
-
-            image.close()
-        }
     }
 
     private val requestPermissionLauncherCameraLocation = registerForActivityResult(

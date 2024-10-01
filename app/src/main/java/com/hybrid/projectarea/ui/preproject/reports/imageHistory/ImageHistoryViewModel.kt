@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject.imageHistory
+package com.hybrid.projectarea.ui.preproject.reports.imageHistory
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

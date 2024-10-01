@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.checklist
+package com.hybrid.projectarea.ui.checklist.history
 
 import android.view.LayoutInflater
 import android.view.View

@@ -6,7 +6,7 @@
     android:paddingHorizontal="20dp"
     android:orientation="vertical"
     android:background="@color/bg"
-    tools:context=".ui.checklist.ChecklistHistoryFragment">
+    tools:context=".ui.checklist.history.ChecklistHistoryFragment">
 
     <include android:id="@+id/scrollChecklist" layout="@layout/scroolbar_checklist_horizontal"/>
 

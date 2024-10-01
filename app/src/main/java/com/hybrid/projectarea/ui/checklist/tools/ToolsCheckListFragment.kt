@@ -1,10 +1,8 @@
-package com.hybrid.projectarea.ui.checklist
+package com.hybrid.projectarea.ui.checklist.tools
 
 import android.Manifest
-import android.content.Context
 import android.os.Bundle
 import android.os.Environment
-import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,12 +11,10 @@ import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -32,7 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 
 import com.hybrid.projectarea.databinding.FragmentToolsCheckListBinding
@@ -46,6 +41,7 @@ import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.utils.encodeImage
 import com.hybrid.projectarea.utils.rotateAndCreateBitmap
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
+import com.hybrid.projectarea.ui.checklist.LumaListener
 import com.hybrid.projectarea.utils.aspectRatio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,9 +50,6 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 
 class ToolsCheckListFragment : Fragment() {
