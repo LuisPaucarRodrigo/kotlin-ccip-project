@@ -79,7 +79,7 @@ class ChecklistHistoryFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funCheckListHistory(token, object : AuthManager.inCheckListHistory {
                     override fun onStoreCheckListHistorySuccess(response: List<ChecklistHistory>) {

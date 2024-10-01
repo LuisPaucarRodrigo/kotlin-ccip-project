@@ -61,7 +61,7 @@ class PreProjectFragment : Fragment() {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
                 val userId = TokenAuth.getToken(requireContext(), "userId")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.preproject(token, userId, object : AuthManager.PreProjectListener {
                     override fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>) {

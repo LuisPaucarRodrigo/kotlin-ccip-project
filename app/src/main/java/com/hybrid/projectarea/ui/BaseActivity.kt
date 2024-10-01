@@ -12,14 +12,13 @@ import androidx.core.view.isVisible
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.ActivityBaseBinding
-import com.hybrid.projectarea.domain.model.UsersResponse
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import kotlinx.coroutines.Dispatchers
@@ -32,39 +31,31 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var binding:ActivityBaseBinding
 
+    private lateinit var baseViewModel: BaseViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         lifecycleScope.launch {
             val token = TokenAuth.getToken(this@BaseActivity,"token")
             if (token !== "") {
                 openFragment(R.id.PreProjectFragment)
             }
         }
+
+        baseViewModel.data.observe(this) { user ->
+            val navheader = binding.navView.getHeaderView(0)
+            navheader.findViewById<TextView>(R.id.txtnombreuser).text = "Nombre: ${user.name}"
+            navheader.findViewById<TextView>(R.id.txtdniuser).text = "Dni: ${user.dni}"
+            navheader.findViewById<TextView>(R.id.txtemail).text = "Email: ${user.email}"
+        }
+        baseViewModel.error.observe(this) { error ->
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun requestUser(){
-
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            try {
-//                val token = TokenAuth.getToken(this@BaseActivity,"token")
-//                val user_id = TokenAuth.getToken(this@BaseActivity,"userId")
-//
-//                userViewModel.getUser(token,user_id)
-//            } catch (e: Exception) {
-//                withContext(Dispatchers.Main) {
-//                    Toast.makeText(
-//                        this@BaseActivity,
-//                        "Se produjo un error inesperado",
-//                        Toast.LENGTH_LONG
-//                    )
-//                        .show()
-//                }
-//            }
-//        }
-
         binding.mitoolbar.root.isVisible = true
         binding.navView.isVisible = true
 
@@ -72,54 +63,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(binding.mitoolbar.root)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.icon_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val navheader = binding.navView.getHeaderView(0)
-        val nameheader = navheader.findViewById<TextView>(R.id.txtnombreuser)
-        val nameheaderdni = navheader.findViewById<TextView>(R.id.txtdniuser)
-        val nameheaderemail = navheader.findViewById<TextView>(R.id.txtemail)
-
-//        userViewModel.user.observe(this) { user ->
-//            nameheader.text = "Nombre: ${user.name}"
-//            nameheaderdni.text = "Dni: ${user.dni}"
-//            nameheaderemail.text = "Email: ${user.email}"
-//        }
-//        userViewModel.error.observe(this) { error ->
-//            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-//        }
-
-
-
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
                 val user_id = TokenAuth.getToken(this@BaseActivity,"userId")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                val authManager = AuthManager(apiService)
-                authManager.user(token,user_id, object : AuthManager.Users {
-                    override fun onUserSuccess(response: UsersResponse) {
-                        // Necesitamos cambiar al hilo principal para interactuar con la UI
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            nameheader.text = "Nombre: ${response.name}"
-                            nameheaderdni.text = "Dni: ${response.dni}"
-                            nameheaderemail.text = "Email: ${response.email}"
-                        }
-                    }
-
-                    override fun onUserNoAuthenticated() {
-                        lifecycleScope.launch {
-                            deleteTokenFromDataStore()
-                        }
-                        binding.mitoolbar.root.isVisible = false
-                        findNavController(R.id.container).navigate(R.id.AuthFragment)
-                    }
-
-                    override fun onUserFailed(errorMessage: String) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            Toast.makeText(this@BaseActivity, errorMessage, Toast.LENGTH_LONG).show()
-                        }
-                    }
-                })
+                baseViewModel.getUser(token,user_id)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main){
                     Toast.makeText(this@BaseActivity, "Se produjo un error inesperado: $e", Toast.LENGTH_LONG)
@@ -175,7 +123,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
+                val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
                 authManager.funlogout(token, object : AuthManager.Logout {
                     override fun onLogoutSuccess() {
@@ -185,7 +133,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             openFragment(R.id.AuthFragment)
                         }
                     }
-
                     override fun onLogoutNoAuthenticated() {
                         TODO("Not yet implemented")
                     }

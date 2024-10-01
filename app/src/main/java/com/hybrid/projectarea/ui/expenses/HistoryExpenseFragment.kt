@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,8 @@ import kotlinx.coroutines.withContext
 class HistoryExpenseFragment : Fragment() {
     private var _binding: FragmentHistoryExpenseBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var expenseHistoryViewModel: ExpenseHistoryViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,8 +43,21 @@ class HistoryExpenseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        expenseHistoryViewModel = ViewModelProvider(this).get(ExpenseHistoryViewModel::class.java)
         requestHistoryExpense()
+
+        expenseHistoryViewModel.data.observe(viewLifecycleOwner){ success ->
+            binding.recyclerviewHistoryExpense.recyclerview.layoutManager = LinearLayoutManager(context)
+            binding.shimmer.beforeViewElement.isVisible = false
+            binding.recyclerviewHistoryExpense.afterViewElement.isVisible = true
+            binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
+            val adapter = AdapterExpenseHistory(success)
+            binding.recyclerviewHistoryExpense.recyclerview.adapter = adapter
+        }
+
+        expenseHistoryViewModel.error.observe(viewLifecycleOwner){ error ->
+            Toast.makeText(requireContext(),error,Toast.LENGTH_LONG).show()
+        }
         binding.recyclerviewHistoryExpense.swipe.setColorSchemeResources(
             R.color.azulccip,
             R.color.greenccip
@@ -61,34 +77,10 @@ class HistoryExpenseFragment : Fragment() {
     }
 
     private fun requestHistoryExpense() {
-        binding.recyclerviewHistoryExpense.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")
-                val apiService = RetrofitClient.getClient(token).create(ApiService::class.java)
-                val authManager = AuthManager(apiService)
-                authManager.funExpenseHistory(token, object : AuthManager.inExpenseHistory {
-                    override fun onExpenseHistorySuccess(response: List<ExpenseHistory>) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.shimmer.beforeViewElement.isVisible = false
-                            binding.recyclerviewHistoryExpense.afterViewElement.isVisible = true
-                            binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
-                            val adapter = AdapterExpenseHistory(response)
-                            binding.recyclerviewHistoryExpense.recyclerview.adapter = adapter
-                        }
-                    }
-
-                    override fun onExpenseHistoryNoAuthenticated() {
-                        DeleteTokenAndCloseSession(this@HistoryExpenseFragment)
-                    }
-
-                    override fun onExpenseHistoryFailed(errorMessage: String) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.recyclerviewHistoryExpense.swipe.isRefreshing = false
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                        }
-                    }
-                })
+                expenseHistoryViewModel.getExpenses(token)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(

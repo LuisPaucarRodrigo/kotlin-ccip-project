@@ -6,9 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hybrid.projectarea.domain.model.PreprojectTitle
 import com.hybrid.projectarea.domain.repository.CodePhotoRepository
+import com.hybrid.projectarea.model.RetrofitClient
 import kotlinx.coroutines.launch
 
-class CodePhotoViewModel(private val codePhotoRepository: CodePhotoRepository): ViewModel() {
+class CodePhotoViewModel(): ViewModel() {
     private val _codePhotoPreProject = MutableLiveData<List<PreprojectTitle>>()
     val data: LiveData<List<PreprojectTitle>> get() = _codePhotoPreProject
 
@@ -17,6 +18,7 @@ class CodePhotoViewModel(private val codePhotoRepository: CodePhotoRepository): 
 
     fun getCodePhoto(token:String,id:String) {
         viewModelScope.launch {
+            val codePhotoRepository = CodePhotoRepository(RetrofitClient.getClient(token))
             val result = codePhotoRepository.codePhotoPreProject(token, id)
             result.onSuccess { success ->
                 _codePhotoPreProject.value = success

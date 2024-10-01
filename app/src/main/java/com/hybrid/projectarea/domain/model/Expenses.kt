@@ -17,4 +17,6 @@ data class ExpenseHistory(
     val zone :String,
     val expense_type: String,
     val amount :String,
+    val is_accepted:Int?,
+    val description: String
 )
