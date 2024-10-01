@@ -11,7 +11,7 @@ data class PhotoRequest(
     val longitude: String? = null,
 )
 
-data class ElementPreProjectRecyclerView(
+data class PreProject(
     @SerializedName("preproject_id") val id: String,
     val code: String,
     val description: String,

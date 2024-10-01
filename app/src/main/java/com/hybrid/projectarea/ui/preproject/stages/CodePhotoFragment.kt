@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject
+package com.hybrid.projectarea.ui.preproject.stages
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,13 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
-import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentCodePhotoBinding
-import com.hybrid.projectarea.domain.model.PreprojectTitle
-import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
-import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +34,6 @@ class CodePhotoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCodePhotoBinding.inflate(inflater,container,false)
-
         return binding.root
     }
 
@@ -48,6 +42,7 @@ class CodePhotoFragment : Fragment() {
 
         codePhotoViewModel = ViewModelProvider(this).get(CodePhotoViewModel::class.java)
         requestCode()
+        binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         codePhotoViewModel.data.observe(viewLifecycleOwner){ success ->
             binding.shimmer.beforeViewElement.isVisible = false
             binding.recyclerviewCodePhoto.afterViewElement.isVisible = true
@@ -71,7 +66,6 @@ class CodePhotoFragment : Fragment() {
     }
 
     private fun requestCode() {
-        binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")

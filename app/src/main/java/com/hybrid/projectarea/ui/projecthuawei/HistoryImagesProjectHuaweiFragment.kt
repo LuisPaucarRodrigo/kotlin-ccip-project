@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.api.ApiService
 import com.hybrid.projectarea.api.AuthManager
 import com.hybrid.projectarea.databinding.FragmentHistoryImagesProjectHuaweiBinding
 import com.hybrid.projectarea.databinding.PhotoCodeBinding
@@ -22,7 +21,7 @@ import com.hybrid.projectarea.domain.model.Photo
 import com.hybrid.projectarea.model.RetrofitClient
 import com.hybrid.projectarea.model.TokenAuth
 import com.hybrid.projectarea.ui.DeleteTokenAndCloseSession
-import com.hybrid.projectarea.ui.preproject.AdapterRegisterPhoto
+import com.hybrid.projectarea.ui.preproject.imageHistory.AdapterRegisterPhoto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

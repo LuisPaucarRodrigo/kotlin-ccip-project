@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject
+package com.hybrid.projectarea.ui.preproject.preproject
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hybrid.projectarea.R
-import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
+import com.hybrid.projectarea.domain.model.PreProject
 
 
-class AdapterPreProjectElement (private var listaElementos:List<ElementPreProjectRecyclerView>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterPreProjectElement.ViewHolder>() {
+class AdapterPreProjectElement (private var listaElementos:List<PreProject>, private val listener: OnItemClickListener): RecyclerView.Adapter<AdapterPreProjectElement.ViewHolder>() {
 
     inner class ViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val code = itemView.findViewById<TextView>(R.id.code)!!

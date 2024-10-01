@@ -3,7 +3,6 @@ package com.hybrid.projectarea.api
 import com.hybrid.projectarea.domain.model.ChecklistHistory
 import com.hybrid.projectarea.domain.model.CodePhotoDescription
 import com.hybrid.projectarea.domain.model.Download
-import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.domain.model.ExpenseForm
 import com.hybrid.projectarea.domain.model.ExpenseHistory
 import com.hybrid.projectarea.domain.model.FolderArchiveResponse
@@ -13,6 +12,7 @@ import com.hybrid.projectarea.domain.model.LoginRequest
 import com.hybrid.projectarea.domain.model.LoginResponse
 import com.hybrid.projectarea.domain.model.Photo
 import com.hybrid.projectarea.domain.model.PhotoRequest
+import com.hybrid.projectarea.domain.model.PreProject
 import com.hybrid.projectarea.domain.model.PreprojectTitle
 import com.hybrid.projectarea.domain.model.ProjectHuawei
 import com.hybrid.projectarea.domain.model.ProjectHuaweiTitle
@@ -42,7 +42,7 @@ interface ApiService {
     suspend fun users(@Header("Authorization") token: String,@Path("id") id:String): Response<UsersResponse>
 
     @GET("preproject/{id}")
-    suspend fun preproject(@Header("Authorization") token: String, @Path("id") id:String): Response<List<ElementPreProjectRecyclerView>>
+    suspend fun preproject(@Header("Authorization") token: String, @Path("id") id:String): Response<List<PreProject>>
 
     @POST("preprojectimage")
     suspend fun addphotoreport(@Header("Authorization") token: String,@Body photoRequest: PhotoRequest): Response<Void>

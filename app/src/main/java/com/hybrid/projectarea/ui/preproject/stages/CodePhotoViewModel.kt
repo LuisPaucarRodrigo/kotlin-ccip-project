@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject
+package com.hybrid.projectarea.ui.preproject.stages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +9,7 @@ import com.hybrid.projectarea.domain.repository.CodePhotoRepository
 import com.hybrid.projectarea.model.RetrofitClient
 import kotlinx.coroutines.launch
 
-class CodePhotoViewModel(): ViewModel() {
+class CodePhotoViewModel: ViewModel() {
     private val _codePhotoPreProject = MutableLiveData<List<PreprojectTitle>>()
     val data: LiveData<List<PreprojectTitle>> get() = _codePhotoPreProject
 

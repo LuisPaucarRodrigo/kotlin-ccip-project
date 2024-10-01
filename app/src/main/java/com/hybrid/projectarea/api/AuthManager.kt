@@ -1,7 +1,7 @@
 package com.hybrid.projectarea.api
 
 import com.hybrid.projectarea.domain.model.CodePhotoDescription
-import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
+//import com.hybrid.projectarea.domain.model.ElementPreProjectRecyclerView
 import com.hybrid.projectarea.domain.model.Photo
 import com.hybrid.projectarea.domain.model.PhotoRequest
 import com.hybrid.projectarea.domain.model.PreprojectTitle
@@ -76,29 +76,29 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun preproject(token: String, userId: String, authListener: PreProjectListener) {
-        try {
-            val response = apiService.preproject(token, userId)
-            if (response.isSuccessful) {
-                val authToken = response.body()
-                authToken?.let {
-                    authListener.onPreProjectSuccess(it)
-                }
-            } else if(response.code() == 401) {
-                authListener.onPreProjectNoAuthenticated()
-            } else {
-                val errorBody = response.errorBody()?.string()
-                val errorMessage = try {
-                    JSONObject(errorBody).getString("error")
-                } catch (e: JSONException) {
-                    "Ocurrió un error desconocido"
-                }
-                authListener.onPreProjectFailed(errorMessage)
-            }
-        } catch (e: Exception) {
-            authListener.onPreProjectFailed(e.message ?: "Ocurrió un error")
-        }
-    }
+//    suspend fun preproject(token: String, userId: String, authListener: PreProjectListener) {
+//        try {
+//            val response = apiService.preproject(token, userId)
+//            if (response.isSuccessful) {
+//                val authToken = response.body()
+//                authToken?.let {
+//                    authListener.onPreProjectSuccess(it)
+//                }
+//            } else if(response.code() == 401) {
+//                authListener.onPreProjectNoAuthenticated()
+//            } else {
+//                val errorBody = response.errorBody()?.string()
+//                val errorMessage = try {
+//                    JSONObject(errorBody).getString("error")
+//                } catch (e: JSONException) {
+//                    "Ocurrió un error desconocido"
+//                }
+//                authListener.onPreProjectFailed(errorMessage)
+//            }
+//        } catch (e: Exception) {
+//            authListener.onPreProjectFailed(e.message ?: "Ocurrió un error")
+//        }
+//    }
 
     suspend fun preProjectPhoto(
         token: String,
@@ -519,11 +519,11 @@ class AuthManager(private val apiService: ApiService) {
         fun onUserFailed(errorMessage: String)
     }
 
-    interface PreProjectListener {
-        fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>)
-        fun onPreProjectNoAuthenticated()
-        fun onPreProjectFailed(error: String)
-    }
+//    interface PreProjectListener {
+//        fun onPreProjectSuccess(response: List<ElementPreProjectRecyclerView>)
+//        fun onPreProjectNoAuthenticated()
+//        fun onPreProjectFailed(error: String)
+//    }
 
     interface inCodePhotoPreProject {
         fun onCodePhotoPreProjectSuccess(response: List<PreprojectTitle>)

@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/PreProjectFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.PreProjectFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.preproject.PreProjectFragment"
         tools:layout="@layout/fragment_pre_project" >
         <action
             android:id="@+id/to_CodePhotoFragment"
@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/CodePhotoFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.CodePhotoFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.stages.CodePhotoFragment"
         tools:layout="@layout/fragment_code_photo" >
         <action
             android:id="@+id/to_PreProjectEspecificFragment"
@@ -43,7 +43,7 @@
 
     <fragment
         android:id="@+id/RegisterPhotoFragment"
-        android:name="com.hybrid.projectarea.ui.preproject.RegisterPhotoFragment"
+        android:name="com.hybrid.projectarea.ui.preproject.imageHistory.RegisterPhotoFragment"
         tools:layout="@layout/fragment_register_photo" >
     </fragment>
 

@@ -1,17 +1,17 @@
 package com.hybrid.projectarea.domain.repository
 
 import com.hybrid.projectarea.api.ApiService
-import com.hybrid.projectarea.domain.model.PreprojectTitle
+import com.hybrid.projectarea.domain.model.PreProject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 
-class CodePhotoRepository(private val apiService: ApiService) {
-    suspend fun codePhotoPreProject(token: String, id: String): Result<List<PreprojectTitle>> {
+class PreProjectRepository(private val apiService: ApiService) {
+    suspend fun preproject(token: String,id:String): Result<List<PreProject>>{
         return withContext(Dispatchers.IO) {
             try {
-                val response = apiService.codephotopreproject(token, id)
+                val response = apiService.preproject(token, id)
                 if (response.isSuccessful) {
                     Result.success(response.body()!!)
                 } else {

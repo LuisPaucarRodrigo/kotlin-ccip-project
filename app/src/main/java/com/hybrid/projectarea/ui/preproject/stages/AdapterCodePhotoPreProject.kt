@@ -1,4 +1,4 @@
-package com.hybrid.projectarea.ui.preproject
+package com.hybrid.projectarea.ui.preproject.stages
 
 import android.graphics.Color
 import android.view.LayoutInflater
