@@ -57,7 +57,7 @@ class ProjectHuaweiTitleCodeFragment : Fragment() {
                 val token = TokenAuth.getToken(requireContext(),"token")
                 val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
-                authManager.funProjectHuaweiTitleCode(token,projectHuawei_id!!,object : AuthManager.inProjectHuaweiTitleCode{
+                authManager.funProjectHuaweiTitleCode(projectHuawei_id!!,object : AuthManager.inProjectHuaweiTitleCode{
                     override fun onProjectHuaweiTitleCodeSuccess(response: List<ProjectHuaweiTitle>) {
                         binding.shimmer.beforeViewElement.isVisible = false
                         binding.recyclerviewProjectHuaweiTitleCode.afterViewElement.isVisible = true

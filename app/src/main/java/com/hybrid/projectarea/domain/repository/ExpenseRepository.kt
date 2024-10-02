@@ -8,10 +8,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class ExpenseRepository(private val apiService: ApiService) {
-    suspend fun getExpenses(token:String):Result<List<ExpenseHistory>>{
+    suspend fun getExpenses():Result<List<ExpenseHistory>>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.expenseHistory(token)
+                val response = apiService.expenseHistory()
                 if (response.isSuccessful){
                     Result.success(response.body()!!)
                 } else {
@@ -33,10 +33,10 @@ class ExpenseRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun postExpenses(token: String,expense: ExpenseForm):Result<Unit>{
+    suspend fun postExpenses(expense: ExpenseForm):Result<Unit>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.expenseStore(token,expense)
+                val response = apiService.expenseStore(expense)
                 if (response.isSuccessful){
                     Result.success(Unit)
                 }else {

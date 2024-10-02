@@ -7,10 +7,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class ImageHistoryRepository(private val apiService: ApiService) {
-    suspend fun getPhotos(token:String,code_id:String):Result<List<Photo>> {
+    suspend fun getPhotos(code_id:String):Result<List<Photo>> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = apiService.requestRegisterPhoto(token, code_id)
+                val response = apiService.requestRegisterPhoto(code_id)
                 if (response.isSuccessful) {
                     Result.success(response.body()!!)
                 } else {

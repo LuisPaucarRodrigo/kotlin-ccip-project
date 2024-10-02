@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hybrid.projectarea.domain.model.PreprojectTitle
 import com.hybrid.projectarea.domain.repository.preproject.CodePhotoRepository
 import com.hybrid.projectarea.model.RetrofitClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CodePhotoViewModel: ViewModel() {
@@ -17,16 +18,16 @@ class CodePhotoViewModel: ViewModel() {
     val error: LiveData<String> get() = _error
 
     fun getCodePhoto(token:String,id:String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val codePhotoRepository = CodePhotoRepository(RetrofitClient.getClient(token))
-            val result = codePhotoRepository.codePhotoPreProject(token, id)
+            val result = codePhotoRepository.codePhotoPreProject(id)
             result.onSuccess { success ->
-                _codePhotoPreProject.value = success
+                _codePhotoPreProject.postValue(success)
             }.onFailure { exception ->
                 if (exception.message == "Token no válido") {
-                    _error.value = "Token no válido. Cerrando sesión."
+                    _error.postValue("Token no válido. Cerrando sesión.")
                 } else {
-                    _error.value = exception.message
+                    _error.postValue(exception.message)
                 }
             }
         }

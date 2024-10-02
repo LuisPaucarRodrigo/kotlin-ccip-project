@@ -20,8 +20,8 @@ class ExpenseHistoryViewModel:ViewModel() {
 
     fun getExpenses(token:String){
         viewModelScope.launch(Dispatchers.IO) {
-            val expenseRepository = ExpenseRepository(RetrofitClient.getClient())
-            val result = expenseRepository.getExpenses(token)
+            val expenseRepository = ExpenseRepository(RetrofitClient.getClient(token))
+            val result = expenseRepository.getExpenses()
             result.onSuccess { success ->
                 _expensesHistory.postValue(success)
             }.onFailure { exception ->

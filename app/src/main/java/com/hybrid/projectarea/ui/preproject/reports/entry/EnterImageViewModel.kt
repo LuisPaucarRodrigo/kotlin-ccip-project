@@ -23,8 +23,8 @@ class EnterImageViewModel:ViewModel() {
 
     fun getData(token:String, code_id: String){
         viewModelScope.launch(Dispatchers.IO) {
-            val enterImageRepository = EnterImageRepository(RetrofitClient.getClient())
-            val result = enterImageRepository.getData(token,code_id)
+            val enterImageRepository = EnterImageRepository(RetrofitClient.getClient(token))
+            val result = enterImageRepository.getData(code_id)
             result.onSuccess { success ->
                 _codeData.postValue(success)
             }.onFailure { exception ->
@@ -35,8 +35,8 @@ class EnterImageViewModel:ViewModel() {
 
     fun postImageReport(token:String, image: ImageReport){
         viewModelScope.launch(Dispatchers.IO) {
-            val enterImageRepository = EnterImageRepository(RetrofitClient.getClient())
-            val result = enterImageRepository.postImage(token,image)
+            val enterImageRepository = EnterImageRepository(RetrofitClient.getClient(token))
+            val result = enterImageRepository.postImage(image)
             result.onSuccess {
                 _postSuccess.postValue(true)
             }.onFailure { exception ->

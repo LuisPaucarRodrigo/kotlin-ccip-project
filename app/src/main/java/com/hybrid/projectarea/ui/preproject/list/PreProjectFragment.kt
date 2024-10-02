@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -57,7 +58,8 @@ class PreProjectFragment : Fragment() {
             binding.recyclerviewPreproject.recyclerview.adapter = adapter
         }
         preProjectViewModel.error.observe(viewLifecycleOwner){ error ->
-            Toast.makeText(requireContext(),error,Toast.LENGTH_LONG).show()
+            println("dasdas"+error)
+            Toast.makeText(requireContext(),"dasdas"+error,Toast.LENGTH_LONG).show()
         }
 
         binding.recyclerviewPreproject.swipe.setColorSchemeResources(
@@ -71,7 +73,6 @@ class PreProjectFragment : Fragment() {
     }
 
     private fun requestPreProject() {
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(requireContext(), "token")

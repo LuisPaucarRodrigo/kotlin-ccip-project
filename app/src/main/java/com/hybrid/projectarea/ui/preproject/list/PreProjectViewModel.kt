@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hybrid.projectarea.domain.model.PreProject
 import com.hybrid.projectarea.domain.repository.preproject.PreProjectRepository
 import com.hybrid.projectarea.model.RetrofitClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PreProjectViewModel: ViewModel() {
@@ -17,16 +18,16 @@ class PreProjectViewModel: ViewModel() {
     val error: LiveData<String> get() = _error
 
     fun getPreproject(token:String,id:String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val preprojectRepository = PreProjectRepository(RetrofitClient.getClient(token))
-            val result = preprojectRepository.preproject(token,id)
+            val result = preprojectRepository.preproject(id)
             result.onSuccess { success ->
-                _preprojects.value = success
+                _preprojects.postValue(success)
             }.onFailure { exception ->
                 if (exception.message == "Token no Valido"){
-                    _error.value = "Token no valido. Cerrando sesion"
+                    _error.postValue("Token no valido. Cerrando sesion")
                 }else{
-                    _error.value = exception.message
+                    _error.postValue(exception.message)
                 }
 
             }

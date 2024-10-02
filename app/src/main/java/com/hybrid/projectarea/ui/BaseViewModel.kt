@@ -19,8 +19,8 @@ class BaseViewModel: ViewModel() {
 
     fun getUser(token:String,user_id:String){
         viewModelScope.launch(Dispatchers.IO) {
-            val usersRepository = UsersRepository(RetrofitClient.getClient())
-            val result = usersRepository.fetchUsers(token, user_id)
+            val usersRepository = UsersRepository(RetrofitClient.getClient(token))
+            val result = usersRepository.fetchUsers(user_id)
             result.onSuccess { success ->
                 _users.postValue(success)
             }.onFailure { exception ->

@@ -9,11 +9,12 @@ import org.json.JSONObject
 
 
 class UsersRepository(private val apiService: ApiService) {
-    suspend fun fetchUsers(token:String,user_id:String): Result<UsersResponse> {
+    suspend fun fetchUsers(user_id:String): Result<UsersResponse> {
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.users(token,user_id)
+                val response = apiService.users(user_id)
                 if (response.isSuccessful){
+                    println("Responsedbody: ${response.body()!!}")
                     Result.success(response.body()!!)
                 }else{
                     if (response.code() == 401){
@@ -29,7 +30,7 @@ class UsersRepository(private val apiService: ApiService) {
                     }
                 }
             }catch (e: Exception){
-                Result.failure(e)
+                Result.failure(Exception(e))
             }
         }
     }

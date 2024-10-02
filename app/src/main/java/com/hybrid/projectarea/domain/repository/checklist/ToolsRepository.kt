@@ -8,10 +8,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class ToolsRepository(private val apiService: ApiService) {
-    suspend fun postToolsCheckList(token:String,tools: checkListTools):Result<Unit>{
+    suspend fun postToolsCheckList(tools: checkListTools):Result<Unit>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.postStoreCheckListTools(token,tools)
+                val response = apiService.postStoreCheckListTools(tools)
                 if (response.isSuccessful){
                     Result.success(Unit)
                 }else{

@@ -8,10 +8,10 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class CodePhotoRepository(private val apiService: ApiService) {
-    suspend fun codePhotoPreProject(token: String, id: String): Result<List<PreprojectTitle>> {
+    suspend fun codePhotoPreProject(id: String): Result<List<PreprojectTitle>> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = apiService.codephotopreproject(token, id)
+                val response = apiService.codephotopreproject(id)
                 if (response.isSuccessful) {
                     Result.success(response.body()!!)
                 } else {

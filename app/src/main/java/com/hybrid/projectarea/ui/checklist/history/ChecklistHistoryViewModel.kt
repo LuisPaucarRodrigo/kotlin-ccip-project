@@ -19,8 +19,8 @@ class ChecklistHistoryViewModel:ViewModel() {
 
     fun getChecklist(token:String){
         viewModelScope.launch(Dispatchers.IO) {
-            val checklistRepository = CheckListHistoryRepository(RetrofitClient.getClient())
-            val result = checklistRepository.getChecklist(token)
+            val checklistRepository = CheckListHistoryRepository(RetrofitClient.getClient(token))
+            val result = checklistRepository.getChecklist()
             result.onSuccess { success ->
                 _history.postValue(success)
             }.onFailure { exception ->

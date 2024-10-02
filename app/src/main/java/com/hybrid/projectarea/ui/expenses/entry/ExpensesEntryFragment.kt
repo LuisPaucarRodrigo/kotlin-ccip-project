@@ -28,6 +28,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -99,7 +100,7 @@ class ExpensesEntryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        expenseViewModel = ViewModelProvider(this)[ExpenseEntryViewModel::class.java]
         expenseViewModel.postSuccess.observe(viewLifecycleOwner){ success ->
             Alert.alertSuccess(requireContext(), layoutInflater)
             dataCleaning()

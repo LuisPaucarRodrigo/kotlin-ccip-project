@@ -86,7 +86,6 @@ class ProcessManualsFragment : Fragment() {
                 val authManager = AuthManager(apiService)
 
                 authManager.funGetProcessManuals(
-                    token,
                     FormProcessManuals(root, path),
                     object : AuthManager.inGetProcessManuals {
                         override fun onProcessManualsSuccess(response: FolderArchiveResponse) {
@@ -154,7 +153,6 @@ class ProcessManualsFragment : Fragment() {
                 val authManager = AuthManager(apiService)
 
                 authManager.funGetDownloadManuals(
-                    token,
                     path,
                     object : AuthManager.inGetDownloadManuls {
                         override fun onDownloadManualsSuccess(response: ResponseBody) {

@@ -57,7 +57,7 @@ class HuaweiFragment : Fragment() {
                 RetrofitClient.getClient(token)
             }
             val authManager = AuthManager(apiService)
-            authManager.funGetProjectHuawei(token, object: AuthManager.inGetProjectHuawei{
+            authManager.funGetProjectHuawei(object: AuthManager.inGetProjectHuawei{
                 override fun onProjectHuaweiSuccess(response: List<ProjectHuawei>) {
                     binding.shimmer.beforeViewElement.isVisible = false
                     binding.recyclerviewHuawei.afterViewElement.isVisible = true

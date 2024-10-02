@@ -9,10 +9,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class EnterImageRepository(private val apiService: ApiService) {
-    suspend fun getData(token:String,code_id: String):Result<CodePhotoDescription>{
+    suspend fun getData(code_id: String):Result<CodePhotoDescription>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.codephotoespecific(token,code_id)
+                val response = apiService.codephotoespecific(code_id)
                 if (response.isSuccessful){
                     Result.success(response.body()!!)
                 }else{
@@ -34,10 +34,10 @@ class EnterImageRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun postImage(token:String,image: ImageReport):Result<Unit>{
+    suspend fun postImage(image: ImageReport):Result<Unit>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.postImageReport(token,image)
+                val response = apiService.postImageReport(image)
                 if (response.isSuccessful){
                     Result.success(Unit)
                 }else{

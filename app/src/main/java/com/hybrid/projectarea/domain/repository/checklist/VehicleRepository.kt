@@ -7,10 +7,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class VehicleRepository(private val apiService: ApiService)  {
-    suspend fun postVehicleCheckList(token:String,vehicle: checkListVehicle):Result<Unit>{
+    suspend fun postVehicleCheckList(vehicle: checkListVehicle):Result<Unit>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.postStoreCheckListVehicle(token,vehicle)
+                val response = apiService.postStoreCheckListVehicle(vehicle)
                 if (response.isSuccessful){
                     Result.success(Unit)
                 }else{

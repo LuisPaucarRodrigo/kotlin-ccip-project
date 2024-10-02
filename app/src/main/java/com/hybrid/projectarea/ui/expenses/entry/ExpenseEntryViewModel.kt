@@ -19,8 +19,8 @@ class ExpenseEntryViewModel: ViewModel() {
 
     fun postExpenses(token: String,expenses: ExpenseForm){
         viewModelScope.launch(Dispatchers.IO) {
-            val expenseRepository = ExpenseRepository(RetrofitClient.getClient())
-            val result = expenseRepository.postExpenses(token,expenses)
+            val expenseRepository = ExpenseRepository(RetrofitClient.getClient(token))
+            val result = expenseRepository.postExpenses(expenses)
             result.onSuccess {
                 _postSuccess.postValue(true)
             }.onFailure { exception ->

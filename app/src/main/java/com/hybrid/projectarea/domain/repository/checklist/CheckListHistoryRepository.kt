@@ -8,10 +8,10 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class CheckListHistoryRepository(private val apiService: ApiService) {
-    suspend fun getChecklist(token:String):Result<List<ChecklistHistory>>{
+    suspend fun getChecklist():Result<List<ChecklistHistory>>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.checklistHistory(token)
+                val response = apiService.checklistHistory()
                 if (response.isSuccessful){
                     Result.success(response.body()!!)
                 } else {

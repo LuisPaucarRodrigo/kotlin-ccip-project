@@ -51,7 +51,7 @@ class StoreProjectsHuaweiFragment : Fragment() {
                 RetrofitClient.getClient(token)
             }
             val authManager = AuthManager(apiService)
-            authManager.funStorePtojectHuawei(token,formData,object: AuthManager.inStoreProjectHuawei{
+            authManager.funStorePtojectHuawei(formData,object: AuthManager.inStoreProjectHuawei{
                 override fun onStoreProjectHuaweiSuccess() {
                     dataCleaning()
                     Alert.alertSuccess(requireContext(),layoutInflater)

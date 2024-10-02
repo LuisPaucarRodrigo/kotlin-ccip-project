@@ -139,7 +139,7 @@ class StoreImageHuaweiFragment : Fragment() {
                 val token = TokenAuth.getToken(requireContext(), "token")
                 val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
-                authManager.funStoreImageProjectHuawei(token,formData,object : AuthManager.inStoreImageProjectHuawei {
+                authManager.funStoreImageProjectHuawei(formData,object : AuthManager.inStoreImageProjectHuawei {
                     override fun onStoreImageProjectHuaweiSuccess() {
                         Alert.alertSuccess(requireContext(), layoutInflater)
                         dataCleaning()
@@ -189,7 +189,7 @@ class StoreImageHuaweiFragment : Fragment() {
                 val token = TokenAuth.getToken(requireContext(), "token")
                 val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
-                authManager.funShowProjectHuaweiCode(token,projectHuaweiCodeId,
+                authManager.funShowProjectHuaweiCode(projectHuaweiCodeId,
                     object : AuthManager.inShowProjectHuaweiCode {
                         override fun onShowprojectHuaweiCodeSuccess(response: ShowProjectHuaweiCode) {
                             binding.codePreproject.text = response.project_code

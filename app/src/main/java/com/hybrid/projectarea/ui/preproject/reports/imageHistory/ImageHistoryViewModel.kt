@@ -19,8 +19,8 @@ class ImageHistoryViewModel :ViewModel(){
 
     fun getImagesHistory(token:String,code_id:String){
         viewModelScope.launch {
-            val imageHistoryRepository = ImageHistoryRepository(RetrofitClient.getClient("das"))
-            val result = imageHistoryRepository.getPhotos(token, code_id)
+            val imageHistoryRepository = ImageHistoryRepository(RetrofitClient.getClient(token))
+            val result = imageHistoryRepository.getPhotos(code_id)
             result.onSuccess { success ->
                 _imageHistory.value = success
             }.onFailure { exception ->

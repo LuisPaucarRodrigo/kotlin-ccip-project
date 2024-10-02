@@ -8,10 +8,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class EppsRepository(private val apiService: ApiService) {
-    suspend fun postEppsCheckList(token:String,epps: checklistEpps):Result<Unit>{
+    suspend fun postEppsCheckList(epps: checklistEpps):Result<Unit>{
         return withContext(Dispatchers.IO){
             try {
-                val response = apiService.postStoreCheckListEpps(token,epps)
+                val response = apiService.postStoreCheckListEpps(epps)
                 if (response.isSuccessful){
                     Result.success(Unit)
                 }else{

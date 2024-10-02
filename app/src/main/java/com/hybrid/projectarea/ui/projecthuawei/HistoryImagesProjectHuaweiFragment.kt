@@ -63,7 +63,7 @@ class HistoryImagesProjectHuaweiFragment : Fragment() {
                 val token = TokenAuth.getToken(requireContext(),"token")
                 val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
-                authManager.funHistoryImageProjectHuawei(token,projectHuaweiCode_id,object : AuthManager.inRegisterPhoto{
+                authManager.funHistoryImageProjectHuawei(projectHuaweiCode_id,object : AuthManager.inRegisterPhoto{
                     override fun onRegisterPhotoSuccess(response: List<Photo>) {
                         lifecycleScope.launch(Dispatchers.Main) {
                             binding.shimmer.beforeViewElement.isVisible = false

@@ -15,8 +15,8 @@ import org.json.JSONObject
 
 class AuthManager(private val apiService: ApiService) {
 
-    suspend fun funlogout(token: String, authListener: Logout) {
-        val response = apiService.logout(token)
+    suspend fun funlogout( authListener: Logout) {
+        val response = apiService.logout()
         if (response.isSuccessful) {
             authListener.onLogoutSuccess()
         } else if(response.code() == 401) {
@@ -26,8 +26,8 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun funGetProjectHuawei(token: String, authListener: inGetProjectHuawei) {
-        val response = apiService.huaweiProject(token)
+    suspend fun funGetProjectHuawei( authListener: inGetProjectHuawei) {
+        val response = apiService.huaweiProject()
         if (response.isSuccessful) {
             val authToken = response.body()
             authToken?.let {
@@ -47,11 +47,11 @@ class AuthManager(private val apiService: ApiService) {
     }
 
     suspend fun funStorePtojectHuawei(
-        token: String,
+
         formStoreProjectHuawei: FormStoreProjectHuawei,
         authListener: inStoreProjectHuawei
     ) {
-        val response = apiService.huaweiProjectStore(token, formStoreProjectHuawei)
+        val response = apiService.huaweiProjectStore(formStoreProjectHuawei)
         if (response.isSuccessful) {
             authListener.onStoreProjectHuaweiSuccess()
         } else if(response.code() == 401) {
@@ -68,11 +68,11 @@ class AuthManager(private val apiService: ApiService) {
     }
 
     suspend fun funGetProcessManuals(
-        token: String,
+
         formProcessManuals: FormProcessManuals,
         authListener: inGetProcessManuals
     ) {
-        val response = apiService.getProcessManuals(token, formProcessManuals)
+        val response = apiService.getProcessManuals(formProcessManuals)
         if (response.isSuccessful) {
             val authToken = response.body()
             authToken?.let {
@@ -91,8 +91,8 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun funGetDownloadManuals(token: String, path: String, authListener: inGetDownloadManuls) {
-        val response = apiService.getDownloadPdf(token, Download(path))
+    suspend fun funGetDownloadManuals( path: String, authListener: inGetDownloadManuls) {
+        val response = apiService.getDownloadPdf(Download(path))
         if (response.isSuccessful) {
             val authToken = response.body()
             authToken?.let {
@@ -111,8 +111,8 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun funProjectHuaweiTitleCode(token: String, id: String, authListener: inProjectHuaweiTitleCode) {
-        val response = apiService.pointProjectHuaweiTitleCode(token, id)
+    suspend fun funProjectHuaweiTitleCode( id: String, authListener: inProjectHuaweiTitleCode) {
+        val response = apiService.pointProjectHuaweiTitleCode(id)
         if (response.isSuccessful) {
             val authToken = response.body()
             authToken?.let {
@@ -131,8 +131,8 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun funShowProjectHuaweiCode(token: String, id: String, authListener: inShowProjectHuaweiCode) {
-        val response = apiService.pointShowProjectHuaweiCode(token, id)
+    suspend fun funShowProjectHuaweiCode( id: String, authListener: inShowProjectHuaweiCode) {
+        val response = apiService.pointShowProjectHuaweiCode(id)
         if (response.isSuccessful) {
             val authToken = response.body()
             authToken?.let {
@@ -151,8 +151,8 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun funStoreImageProjectHuawei(token: String,photoRequest: ImageReport , authListener: inStoreImageProjectHuawei) {
-        val response = apiService.storeImagesProjectHuawei(token, photoRequest)
+    suspend fun funStoreImageProjectHuawei(photoRequest: ImageReport , authListener: inStoreImageProjectHuawei) {
+        val response = apiService.storeImagesProjectHuawei(photoRequest)
         if (response.isSuccessful) {
             authListener.onStoreImageProjectHuaweiSuccess()
         } else if(response.code() == 401) {
@@ -168,8 +168,8 @@ class AuthManager(private val apiService: ApiService) {
         }
     }
 
-    suspend fun funHistoryImageProjectHuawei(token: String,code_id: String , authListener: inRegisterPhoto) {
-        val response = apiService.pointHistoryImageProjectHuawei(token, code_id)
+    suspend fun funHistoryImageProjectHuawei(code_id: String , authListener: inRegisterPhoto) {
+        val response = apiService.pointHistoryImageProjectHuawei(code_id)
         if (response.isSuccessful) {
             val authToken = response.body()
             authToken?.let {

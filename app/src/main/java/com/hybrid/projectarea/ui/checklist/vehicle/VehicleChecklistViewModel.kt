@@ -20,8 +20,8 @@ class VehicleChecklistViewModel:ViewModel() {
 
     fun postVehicle(token:String, vehicle: checkListVehicle){
         viewModelScope.launch(Dispatchers.IO) {
-            val vehicleRepository = VehicleRepository(RetrofitClient.getClient())
-            val result = vehicleRepository.postVehicleCheckList(token,vehicle)
+            val vehicleRepository = VehicleRepository(RetrofitClient.getClient(token))
+            val result = vehicleRepository.postVehicleCheckList(vehicle)
             result.onSuccess {
                 _postSuccess.postValue(true)
             }.onFailure { exception ->

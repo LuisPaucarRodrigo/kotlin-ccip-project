@@ -19,8 +19,8 @@ class DiaryCheckListViewModel:ViewModel() {
 
     fun postDiary(token:String,diary: checklistDiary){
         viewModelScope.launch(Dispatchers.IO) {
-            val diaryRepository = DiaryRepository(RetrofitClient.getClient())
-            val result = diaryRepository.postDiaryCheckList(token,diary)
+            val diaryRepository = DiaryRepository(RetrofitClient.getClient(token))
+            val result = diaryRepository.postDiaryCheckList(diary)
             result.onSuccess {
                 _postSuccess.postValue(true)
             }.onFailure { exception ->

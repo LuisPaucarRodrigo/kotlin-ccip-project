@@ -21,8 +21,8 @@ class ToolsCheckListViewModel:ViewModel() {
 
     fun postTools(token:String,tools: checkListTools){
         viewModelScope.launch(Dispatchers.IO) {
-            val toolsRepository = ToolsRepository(RetrofitClient.getClient())
-            val result = toolsRepository.postToolsCheckList(token,tools)
+            val toolsRepository = ToolsRepository(RetrofitClient.getClient(token))
+            val result = toolsRepository.postToolsCheckList(tools)
             result.onSuccess {
                 _postSuccess.postValue(true)
             }.onFailure { exception ->

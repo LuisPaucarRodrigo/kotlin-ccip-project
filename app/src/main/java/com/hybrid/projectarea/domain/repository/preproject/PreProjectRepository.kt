@@ -8,10 +8,10 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class PreProjectRepository(private val apiService: ApiService) {
-    suspend fun preproject(token: String,id:String): Result<List<PreProject>>{
+    suspend fun preproject(id:String): Result<List<PreProject>>{
         return withContext(Dispatchers.IO) {
             try {
-                val response = apiService.preproject(token, id)
+                val response = apiService.preproject(id)
                 if (response.isSuccessful) {
                     Result.success(response.body()!!)
                 } else {

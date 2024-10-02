@@ -7,10 +7,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class DiaryRepository(private val apiService: ApiService) {
-    suspend fun postDiaryCheckList(token:String,diary: checklistDiary):Result<Unit>{
+    suspend fun postDiaryCheckList(diary: checklistDiary):Result<Unit>{
         return withContext(Dispatchers.IO){
                 try {
-                    val response = apiService.postStoreCheckListDay(token,diary)
+                    val response = apiService.postStoreCheckListDay(diary)
                     if (response.isSuccessful){
                         Result.success(Unit)
                     }else{

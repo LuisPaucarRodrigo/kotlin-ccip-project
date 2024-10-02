@@ -40,7 +40,7 @@ class CodePhotoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        codePhotoViewModel = ViewModelProvider(this).get(CodePhotoViewModel::class.java)
+        codePhotoViewModel = ViewModelProvider(this)[CodePhotoViewModel::class.java]
         requestCode()
         binding.recyclerviewCodePhoto.recyclerview.layoutManager = LinearLayoutManager(context)
         codePhotoViewModel.data.observe(viewLifecycleOwner){ success ->

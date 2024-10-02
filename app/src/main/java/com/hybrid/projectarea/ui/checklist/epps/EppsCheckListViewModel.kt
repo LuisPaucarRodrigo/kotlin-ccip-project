@@ -19,8 +19,8 @@ class EppsCheckListViewModel:ViewModel() {
 
     fun postEpps(token:String,epps: checklistEpps){
         viewModelScope.launch(Dispatchers.IO) {
-            val eppsRepository = EppsRepository(RetrofitClient.getClient())
-            val result = eppsRepository.postEppsCheckList(token,epps)
+            val eppsRepository = EppsRepository(RetrofitClient.getClient(token))
+            val result = eppsRepository.postEppsCheckList(epps)
             result.onSuccess {
                 _postSuccess.postValue(true)
             }.onFailure { exception ->

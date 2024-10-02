@@ -36,7 +36,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         binding = ActivityBaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        baseViewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
+        baseViewModel = ViewModelProvider(this)[BaseViewModel::class.java]
         lifecycleScope.launch {
             val token = TokenAuth.getToken(this@BaseActivity,"token")
             if (token !== "") {
@@ -46,15 +46,16 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         baseViewModel.data.observe(this) { user ->
             val navheader = binding.navView.getHeaderView(0)
-            navheader.findViewById<TextView>(R.id.txtnombreuser).text = "Nombre: ${user.name}"
-            navheader.findViewById<TextView>(R.id.txtdniuser).text = "Dni: ${user.dni}"
-            navheader.findViewById<TextView>(R.id.txtemail).text = "Email: ${user.email}"
+            navheader.findViewById<TextView>(R.id.txtnombreuser).text = "Nombre: ${user.name ?: "N/A"}"
+            navheader.findViewById<TextView>(R.id.txtdniuser).text = "Dni: ${user.dni ?: "N/A"}"
+            navheader.findViewById<TextView>(R.id.txtemail).text = "Email: ${user.email ?: "N/A"}"
         }
-        baseViewModel.error.observe(this) { error ->
-            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-        }
-    }
 
+        baseViewModel.error.observe(this) { error ->
+            Toast.makeText(this@BaseActivity, error, Toast.LENGTH_LONG).show()
+        }
+
+    }
     fun requestUser(){
         binding.mitoolbar.root.isVisible = true
         binding.navView.isVisible = true
@@ -63,6 +64,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(binding.mitoolbar.root)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.icon_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
@@ -125,10 +127,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val token = TokenAuth.getToken(this@BaseActivity,"token")
                 val apiService = RetrofitClient.getClient(token)
                 val authManager = AuthManager(apiService)
-                authManager.funlogout(token, object : AuthManager.Logout {
+                authManager.funlogout(object : AuthManager.Logout {
                     override fun onLogoutSuccess() {
                         lifecycleScope.launch(Dispatchers.Main) {
                             deleteTokenFromDataStore()
+                            RetrofitClient.deleteHttpClient()
                             binding.mitoolbar.root.isVisible = false
                             openFragment(R.id.AuthFragment)
                         }
